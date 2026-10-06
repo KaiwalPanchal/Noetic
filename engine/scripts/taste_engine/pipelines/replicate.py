@@ -13,7 +13,6 @@ from taste_engine.orchestration.registry import arg, pipeline
 from taste_engine.orchestration.run import PipelineError
 from taste_engine.orchestration.steps import agent_step
 from taste_engine.tools import prompts
-from taste_engine.tools.agents import AGENTS
 
 
 @pipeline("replicate", kind="code", help="reference sites → build brief (→ code with --build)", args=[
@@ -21,7 +20,7 @@ from taste_engine.tools.agents import AGENTS
   arg("urls", nargs="+", help="reference URLs (awwwards, dribbble, portfolios…)"),
   arg("--goal", default="", help="what you want to build"),
   arg("--build", help="path to a git repo: an agent implements the brief on a new branch (never commits)"),
-  arg("--build-agent", choices=AGENTS, help="force the build agent (default: config agents.build)"),
+  arg("--build-agent", help="force the build agent (default: config steps.build, then the ordered agents list)"),
 ])
 def replicate(run, a):
   cfg = run.cfg

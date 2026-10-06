@@ -33,7 +33,7 @@ console = Console()
 @app.command()
 def doctor():
   """Verifies installed LLM CLIs, MCP server readiness, and security policy gates."""
-  from taste_engine.tools.agents import AGENTS, available, run_agent
+  from taste_engine.tools.agents import available, known_agents
 
   console.print("[bold cyan]Running OverMind System Diagnostic & Health Check...[/bold cyan]\n")
 
@@ -51,8 +51,8 @@ def doctor():
   agent_table.add_column("Installed", style="magenta")
   agent_table.add_column("Status", style="green")
 
-  for name in AGENTS:
-    is_avail = available(name)
+  for name in known_agents(cfg.commands if cfg else None):
+    is_avail = available(name, cfg.commands if cfg else None)
     status_str = "Ready" if is_avail else "Not on PATH"
     agent_table.add_row(name, "[OK]" if is_avail else "[X]", status_str)
 
@@ -74,6 +74,51 @@ def doctor():
     console.print(f"[red][X][/red] Security Gate Error: {e}")
 
   console.print("\n[bold green]System diagnostic complete.[/bold green]")
+
+
+@app.command()
+def projects(
+    as_json: bool = typer.Option(False, "--json", help="Print JSON instead of a table"),
+):
+  """Lists projects from <overmind>/wiki/projects (no LLM; the private profile is never read)."""
+  from taste_engine.knowledge import registry
+
+  cfg = load_config()
+  rows = registry.load_projects(cfg)
+  if as_json:
+    typer.echo(json.dumps(rows, indent=2, ensure_ascii=False))
+    return
+  if cfg.overmind is None:
+    typer.echo("paths.overmind is not set in taste-engine.config.json")
+  for p in rows:
+    stale = "" if p["stale_days"] is None else f", {p['stale_days']}d since touched"
+    flag = f"  [incomplete: missing {', '.join(p['missing'])}]" if p["incomplete"] else ""
+    gate = f"  gate: {p['gate']}" if p["gate"] else ""
+    typer.echo(f"{p['name']} [{p['status'] or '?'}] goal: {p['goal'] or '-'}; next: {p['next_action'] or '-'}{stale}{gate}{flag}")
+
+
+@app.command()
+def briefing(
+    as_json: bool = typer.Option(False, "--json", help="Print the deterministic briefing as JSON"),
+    narrate: bool = typer.Option(False, "--narrate", help="Run the overmind agent contract over the briefing; lands a pending_review note"),
+    agent: str = typer.Option(None, "--agent", help="With --narrate: force one agent (no fallback)"),
+):
+  """What needs doing next and what is blocked. Works with no agent CLI installed unless --narrate."""
+  from taste_engine.pipelines.briefing import build_briefing, render_briefing_text
+
+  if agent and not narrate:
+    console.print("[red]--agent only applies with --narrate[/red]")
+    raise typer.Exit(code=2)
+  cfg = load_config()
+  if narrate:
+    from taste_engine.orchestration.cli import execute
+    from taste_engine.orchestration.registry import discover
+
+    discover()
+    execute(cfg, "briefing", {"agent": agent})
+    return
+  data = build_briefing(cfg)
+  typer.echo(json.dumps(data, indent=2, ensure_ascii=False) if as_json else render_briefing_text(data))
 
 
 @app.command()

@@ -13,7 +13,8 @@ def vault(tmp_path: Path) -> Path:
   v = tmp_path / "vault"
   (v / "taste-engine").mkdir(parents=True)
   (v / "frameworks").mkdir()
-  (v / CONFIG_NAME).write_text(json.dumps({"owner": "Tester", "private_paths": ["Private"]}), encoding="utf-8")
+  (v / CONFIG_NAME).write_text(json.dumps({"owner": "Tester", "private_paths": ["Private"],
+                                                     "agents": ["claude", "agy", "codex"]}), encoding="utf-8")
   return v
 
 
@@ -70,3 +71,77 @@ def sample_research() -> dict:
       "contradictions": ["Challenges stance Y"],
       "harness_notes": ["could not open the PDF"],
   }
+
+
+TODAY = "2026-10-07"
+
+
+def _w(path: Path, text: str) -> None:
+  path.parent.mkdir(parents=True, exist_ok=True)
+  path.write_text(text, encoding="utf-8")
+
+
+@pytest.fixture
+def ovault(tmp_path: Path) -> Path:
+  """A vault with an OverMind wiki: projects, quests, a log, and a private profile."""
+  v = tmp_path / "ovault"
+  (v / "taste-engine").mkdir(parents=True)
+  (v / "frameworks").mkdir()
+  (v / CONFIG_NAME).write_text(json.dumps({
+      "owner": "Tester", "paths": {"overmind": "OverMind"}, "agents": ["claude", "codex"]}), encoding="utf-8")
+  wiki = v / "OverMind" / "wiki"
+  _w(wiki / "projects" / "alpha.md", """---
+name: Alpha
+status: active
+goal: G1
+competency: C1
+repo: https://example.com/alpha
+next_action: Ship the thing
+last_touched: 2026-09-01
+gate: needs review before release
+---
+# Alpha
+""")
+  _w(wiki / "projects" / "beta.md", """---
+name: Beta
+status: parked
+goal: G2
+competency: C2
+next_action: Revisit later
+last_touched: 2026-06-01
+---
+""")
+  _w(wiki / "projects" / "gamma.md", "---\nname: Gamma\nstatus: active\n---\n")
+  _w(wiki / "projects" / "delta.md", """---
+name: Delta
+status: blocked
+goal: G1
+next_action: Wait for vendor
+last_touched: 2026-10-05
+---
+""")
+  _w(wiki / "quests" / "QUEST-001-ship.md", "---\nstatus: open\ndue: 2026-10-01\n---\nProposed XP: 50\n")
+  _w(wiki / "quests" / "QUEST-002-done.md", "---\nstatus: done\ndue: 2026-09-01\n---\n")
+  _w(wiki / "quests" / "QUEST-003-later.md", "# Later\n**Status:** open\n**Due:** 2026-12-01\n")
+  _w(wiki / "quests" / "XP-LEDGER.md", "not a quest")
+  _w(wiki / "log" / "2026-09.md", "old month line\n")
+  _w(wiki / "log" / "2026-10.md", "\n".join(f"entry {i}" for i in range(30)) + "\n")
+  _w(wiki / "profile" / "secret.md", "SECRET-PROFILE-TOKEN")
+  return v
+
+
+@pytest.fixture
+def ocfg(ovault: Path) -> Config:
+  return Config(ovault, json.loads((ovault / CONFIG_NAME).read_text(encoding="utf-8")))
+
+
+def private_terms():
+  """Strings the owner never wants published, read from the local gitignored .private-strings.
+
+  Empty in CI (the file is not committed), so tests using it are a local guard, not a CI guard.
+  """
+  f = Path(__file__).resolve().parent.parent / ".private-strings"
+  if not f.exists():
+    return []
+  return [ln.strip().lower() for ln in f.read_text(encoding="utf-8").splitlines()
+          if ln.strip() and not ln.lstrip().startswith("#")]

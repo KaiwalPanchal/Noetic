@@ -13,7 +13,7 @@ import json
 import re
 
 from taste_engine.knowledge import context
-from taste_engine.knowledge.config import PROMPTS_DIR, SCHEMAS_DIR, Config
+from taste_engine.knowledge.config import AGENTS_DIR, PROMPTS_DIR, SCHEMAS_DIR, Config
 
 _PLACEHOLDER = re.compile(r"\{\{(\w+)\}\}")
 
@@ -43,3 +43,13 @@ def render_raw(name: str, values: dict) -> str:
 
 def schema(name: str) -> dict:
   return json.loads((SCHEMAS_DIR / f"{name}.json").read_text(encoding="utf-8"))
+
+
+def agent_contract(name: str) -> str:
+  """The canonical, provider-neutral role contract in engine/agents/<name>.md (frontmatter stripped)."""
+  text = (AGENTS_DIR / f"{name}.md").read_text(encoding="utf-8")
+  if text.startswith("---"):
+    end = text.find("\n---", 3)
+    if end != -1:
+      text = text[end + 4:]
+  return text.strip()

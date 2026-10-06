@@ -13,7 +13,7 @@ Source to ingest: $ARGUMENTS
 3. Skim the filenames in `{frameworks}/` and `{engine}/01-taste-graph/`. If this framework (or a close cousin) already exists, **extend that note** instead of duplicating it.
 
 ## 2. Get the material
-- URL → WebFetch it. Book title → check the vault for existing notes on it first (Grep the title), then use your own knowledge of the book, and say which parts came from where. Path → Read it. Pasted text → use it directly.
+- URL → fetch it. Book title → check the vault for existing notes on it first (search the vault for the title), then use your own knowledge of the book, and say which parts came from where. Path → Read it. Pasted text → use it directly.
 - If the source is thin or ambiguous, say so. Don't invent principles the author never stated.
 
 ## 3. Extract the *thinking*, not a summary

@@ -10,10 +10,12 @@ To add one:
        actions.*           → anything outside the vault (behind the gate)
      Wrap every unit of work in run.step("name", ...) so it can be resumed.
   3. Decorate it: @pipeline("<name>", kind="knowledge|content|code|project", help="...", args=[arg(...)])
-  4. Optional: route it to an agent in taste-engine.config.json → "agents": {"<name>": "claude"}
+  4. Optional: route it in taste-engine.config.json → "steps": {"<name>": "<agent>"}
+     (otherwise the ordered "agents" list applies, then the first installed adapter)
 
 Current pipelines
   knowledge: ingest
   content:   curate, research
   code:      replicate
+  project:   briefing
 """

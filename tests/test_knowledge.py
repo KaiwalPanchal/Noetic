@@ -113,7 +113,7 @@ def test_slugify():
 
 def test_config_defaults_and_overrides(vault):
   c = Config(vault, {"agents": {"ingest": "codex"}, "paths": {"twitter": "X"}, "x_char_limit": "400"})
-  assert c.agents["ingest"] == "codex" and c.agents["curate"] == "claude"
+  assert c.agent_order("ingest") == ["codex"] and c.agent_order("curate") == []  # no hardcoded default
   assert c.twitter == vault / "X" and c.x_char_limit == 400
   assert c.state_dir == vault / ".taste-engine"
   assert c.overmind is None

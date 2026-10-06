@@ -2,9 +2,14 @@
 
   python install.py --vault "/path/to/vault" --owner "Ada"
 
-Running it again updates the engine-owned files (commands, scripts, package, templates, prompts, schemas)
-and never touches your notes. Seed files (interests.md, Twitter/README.md,
-posted.md) are created only if they're missing.
+Running it again updates the engine-owned files (canonical commands/agents, scripts, package,
+templates, prompts, schemas) and never touches your notes. Seed files (interests.md,
+Twitter/README.md, posted.md) are created only if they're missing.
+
+Agent adapters (CLAUDE.md, AGENTS.md, GEMINI.md, .claude/, .gemini/, .agent/) are GENERATED from the
+canonical sources by `taste_engine.adapters.sync`. Pick them with --agents (default: all); the choice
+is recorded in the vault config under "adapters". --with-wiki copies the generic OverMind wiki template
+(never overwriting existing files).
 """
 
 from __future__ import annotations
@@ -20,10 +25,12 @@ if sys.stdout and hasattr(sys.stdout, "reconfigure"):
   sys.stdout.reconfigure(encoding="utf-8")
 
 REPO = Path(__file__).resolve().parent
+sys.path.insert(0, str(REPO / "engine" / "scripts"))
 # Canonical home of optional project packs (also importable as taste_engine.projects.*).
 PROJECTS_DIR = REPO / "engine" / "scripts" / "taste_engine" / "projects"
 CONFIG_NAME = "taste-engine.config.json"
-BLOCK_RE = re.compile(r"<!-- taste-engine:start -->.*?<!-- taste-engine:end -->\n?", re.S)
+WIKI_SEED = REPO / "seed" / "overmind-wiki"
+DEFAULT_OVERMIND_DIR = "OverMind"
 
 ENGINE_DIRS = [
   "01-taste-graph/stances",
@@ -38,6 +45,8 @@ ENGINE_DIRS = [
   "03-pipeline/02-drafts",
   "03-pipeline/03-ready-to-post",
   "03-pipeline/04-archive",
+  "canonical/commands",
+  "canonical/agents",
   "playbooks",
   "scripts",
   "templates",
@@ -54,11 +63,14 @@ def build_config(args: argparse.Namespace, vault: Path) -> dict:
   cfg["owner"] = args.owner or cfg.get("owner") or "Owner"
   cfg["agent"] = args.agent or cfg.get("agent") or "Claude Code"
   cfg["x_char_limit"] = args.x_char_limit or cfg.get("x_char_limit") or 280
+  from taste_engine.adapters.sync import resolve_agents  # noqa: E402 (path set above)
+  # The vault config is the single place that records which agent adapters are generated.
+  cfg["adapters"] = resolve_agents([a for a in args.agents.split(",") if a] if args.agents else None, cfg)
   for key, flag, default in [
     ("engine", args.engine_dir, "taste-engine"),
     ("frameworks", args.frameworks_dir, "frameworks"),
     ("twitter", args.twitter_dir, "Twitter"),
-    ("overmind", args.overmind_dir, None),
+    ("overmind", args.overmind_dir, DEFAULT_OVERMIND_DIR if getattr(args, "with_wiki", False) else None),
   ]:
     cfg["paths"][key] = flag or cfg["paths"].get(key) or default
   return cfg
@@ -108,18 +120,30 @@ def seed(src: Path, dst: Path, cfg: dict) -> str | None:
   return str(dst)
 
 
-def update_claude_md(vault: Path, cfg: dict) -> str:
-  block = render((REPO / "seed" / "CLAUDE.block.md").read_text(encoding="utf-8"), cfg)
-  path = vault / "CLAUDE.md"
-  if not path.exists():
-    path.write_text(f"# Vault instructions\n\n{block}", encoding="utf-8")
-    return "created"
-  text = path.read_text(encoding="utf-8")
-  if BLOCK_RE.search(text):
-    path.write_text(BLOCK_RE.sub(lambda _: block, text), encoding="utf-8")
-    return "updated block"
-  path.write_text(text.rstrip() + "\n\n" + block, encoding="utf-8")
-  return "appended block"
+def install_canonical(vault: Path, cfg: dict, project_names: list[str]) -> list[str]:
+  """Copy the provider-neutral sources into the vault; adapters are generated from this copy."""
+  dst = vault / cfg["paths"]["engine"] / "canonical"
+  if dst.exists():
+    shutil.rmtree(dst)
+  written = copy_owned(REPO / "engine" / "commands", dst / "commands", cfg, "*.md", rendered=False)
+  for pname in project_names:
+    if (PROJECTS_DIR / pname / "commands").is_dir():
+      written += copy_owned(PROJECTS_DIR / pname / "commands", dst / "commands", cfg, "*.md", rendered=False)
+  written += copy_owned(REPO / "engine" / "agents", dst / "agents", cfg, "*.md", rendered=False)
+  shutil.copyfile(REPO / "seed" / "AGENTS.block.md", dst / "AGENTS.block.md")
+  return written + [str(dst / "AGENTS.block.md")]
+
+
+def install_wiki(vault: Path, cfg: dict) -> list[str]:
+  """Copy the generic wiki template. Existing files are never overwritten."""
+  base = vault / cfg["paths"]["overmind"]
+  created = []
+  for src in sorted(WIKI_SEED.rglob("*")):
+    if src.is_file():
+      s = seed(src, base / src.relative_to(WIKI_SEED), cfg)
+      if s:
+        created.append(s)
+  return created
 
 
 def install_project(project_name: str, vault: Path, cfg: dict) -> list[str]:
@@ -129,8 +153,7 @@ def install_project(project_name: str, vault: Path, cfg: dict) -> list[str]:
     return []
   engine = vault / cfg["paths"]["engine"]
   written = []
-  if (proj_dir / "commands").is_dir():
-    written += copy_owned(proj_dir / "commands", vault / ".claude" / "commands", cfg, "*.md", rendered=False)
+  # commands are canonical (install_canonical) and reach each agent through the adapters
   if (proj_dir / "prompts").is_dir():
     written += copy_owned(proj_dir / "prompts", engine / "prompts", cfg, "*.md", rendered=False)
   if (proj_dir / "schemas").is_dir():
@@ -162,6 +185,8 @@ def main():
   p.add_argument("--twitter-dir", help="Build-in-public folder (default: Twitter)")
   p.add_argument("--overmind-dir", help="Optional Overmind folder (goals/quests/log integration)")
   p.add_argument("--x-char-limit", type=int, help="Per-tweet limit (default 280; raise for X Premium)")
+  p.add_argument("--agents", help="Comma list of agent adapters to generate: claude,codex,gemini,antigravity,universal (default: all four main ones, or what the vault config already records)")
+  p.add_argument("--with-wiki", action="store_true", help="Copy the generic OverMind wiki template (never overwrites existing files)")
   p.add_argument("--projects", nargs="*", help="Project packs to install (default: all packs in engine/scripts/taste_engine/projects/)")
   args = p.parse_args()
 
@@ -169,7 +194,10 @@ def main():
   if not vault.is_dir():
     sys.exit(f"Vault not found: {vault}")
 
-  cfg = build_config(args, vault)
+  try:
+    cfg = build_config(args, vault)
+  except ValueError as e:
+    sys.exit(str(e))
   engine = vault / cfg["paths"]["engine"]
   frameworks = vault / cfg["paths"]["frameworks"]
 
@@ -181,7 +209,6 @@ def main():
 
   written = []
   # 1. Install core engine harness
-  written += copy_owned(REPO / "engine" / "commands", vault / ".claude" / "commands", cfg, "*.md", rendered=False)
   written += copy_owned(REPO / "engine" / "scripts", engine / "scripts", cfg, "*.py", rendered=False)
   written += copy_package(REPO / "engine" / "scripts" / "taste_engine", engine / "scripts" / "taste_engine")
   for old in OBSOLETE_SCRIPTS:  # modules that moved into the taste_engine package
@@ -193,6 +220,7 @@ def main():
 
   # 2. Install modular project packs
   proj_names = args.projects if args.projects is not None else [p.name for p in sorted(PROJECTS_DIR.iterdir()) if p.is_dir() and not p.name.startswith("__")]
+  written += install_canonical(vault, cfg, proj_names)
   for pname in proj_names:
     written += install_project(pname, vault, cfg)
 
@@ -200,12 +228,19 @@ def main():
     seed(REPO / "seed" / "interests.md", engine / "interests.md", cfg),
   ) if s]
 
-  claude_md = update_claude_md(vault, cfg)
+  wiki = install_wiki(vault, cfg) if args.with_wiki else []
+
+  from taste_engine.adapters.sync import sync
+  report = sync(vault, cfg["adapters"])
 
   print(f"Taste Engine installed into {vault}")
   print(f"  config:     {CONFIG_NAME}")
-  print(f"  CLAUDE.md:  {claude_md}")
-  print(f"  updated {len(written)} engine files (commands, scripts, package, templates, prompts, schemas)")
+  print(f"  adapters:   {', '.join(report.agents)} ({report.summary()})")
+  for n in report.notes:
+    print(f"    note: {n}")
+  print(f"  updated {len(written)} engine files (canonical, scripts, package, templates, prompts, schemas)")
+  if args.with_wiki:
+    print(f"  wiki:       {len(wiki)} template files created under {cfg['paths']['overmind']}/ (existing files kept)")
   for s in seeded:
     print(f"  seeded:     {s}")
   print("\nNext: edit interests.md, then open the vault in Claude Code and try `/ingest <a book you love>`.")

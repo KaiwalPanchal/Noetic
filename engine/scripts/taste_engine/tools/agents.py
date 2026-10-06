@@ -8,8 +8,10 @@ returns an AgentResult. Failures come back as small diagnostic dicts
 (12-factor #9) instead of raw stack traces, so they can be logged or fed back
 to a model without flooding its context.
 
-Supported: claude (Claude Code), codex (OpenAI Codex CLI), agy (Antigravity),
-gemini (Gemini CLI; needs an eligible account or API key).
+Built-in adapters: claude (Claude Code), codex (OpenAI Codex CLI), agy (Antigravity),
+gemini (Gemini CLI; needs an eligible account or API key). Any other CLI plugs in
+through the generic command adapter, configured in `commands` (see below).
+Which agent runs a step is decided by config (orchestration/steps.py), not here.
 """
 
 from __future__ import annotations
@@ -213,24 +215,84 @@ def _gemini(prompt, schema, cwd, web, write, timeout, model) -> AgentResult:
   return AgentResult("gemini", True, data=data)
 
 
+# ── generic command adapter ────────────────────────────────────────────────
+# Any CLI can be plugged in from config, with no code:
+#   "commands": {"mycli": {"argv": ["mycli", "--task-file", "{prompt_file}"], "timeout": 600}}
+# Placeholders in argv: {prompt} (inline text), {prompt_file} (a temp file holding the
+# prompt), {schema_file} (a temp file holding the JSON schema). With neither {prompt} nor
+# {prompt_file}, the prompt is sent on stdin. The agent must print a JSON object.
+
+GENERIC_NAME = "command"
+_PLACEHOLDER = re.compile(r"\{(prompt|prompt_file|schema_file)\}")
+
+
+def _command_adapter(name: str, spec: dict, prompt, schema, cwd, timeout) -> AgentResult:
+  argv = spec.get("argv")
+  if not isinstance(argv, list) or not argv or not all(isinstance(a, str) for a in argv):
+    return _err(name, "BAD_COMMAND_SPEC", "commands.<name>.argv must be a non-empty list of strings")
+  full = prompt + "\n\nReturn ONLY a JSON object matching this JSON Schema:\n" + json.dumps(schema)
+  uses = set(_PLACEHOLDER.findall(" ".join(argv)))
+  with tempfile.TemporaryDirectory() as tmp:
+    values = {"prompt": full}
+    if "prompt_file" in uses:
+      pf = Path(tmp) / "prompt.md"
+      pf.write_text(full, encoding="utf-8")
+      values["prompt_file"] = str(pf)
+    if "schema_file" in uses:
+      sf = Path(tmp) / "schema.json"
+      sf.write_text(json.dumps(schema), encoding="utf-8")
+      values["schema_file"] = str(sf)
+    cmd = [_PLACEHOLDER.sub(lambda m: values[m.group(1)], a) for a in argv]
+    cmd[0] = shutil.which(argv[0]) or argv[0]
+    stdin = None if uses & {"prompt", "prompt_file"} else full
+    proc = _run(cmd, stdin=stdin, cwd=cwd, timeout=int(spec.get("timeout", timeout)))
+  if proc.returncode != 0 and not _extract_json(proc.stdout or ""):
+    return _classify_failure(name, proc)
+  data = _extract_json(proc.stdout or "")
+  if data is None:
+    return _err(name, "NO_STRUCTURED_OUTPUT", proc.stdout or proc.stderr)
+  return AgentResult(name, True, data=data)
+
+
+def _spec_for(agent: str, commands: dict | None) -> dict | None:
+  commands = commands or {}
+  return commands.get(agent) or (commands.get(GENERIC_NAME) if agent == GENERIC_NAME else None)
+
+
 AGENTS = tuple(ADAPTERS)
 
 
-def available(agent: str) -> bool:
+def known_agents(commands: dict | None = None) -> list[str]:
+  return list(dict.fromkeys([*AGENTS, *(commands or {})]))
+
+
+def available(agent: str, commands: dict | None = None) -> bool:
+  spec = _spec_for(agent, commands)
+  if spec is not None:
+    argv = spec.get("argv")
+    return bool(isinstance(argv, list) and argv and shutil.which(argv[0]))
   return agent in ADAPTERS and shutil.which(agent) is not None
 
 
 def run_agent(
   agent: str, prompt: str, schema: dict, *, cwd: Path,
   web: bool = False, write: bool = False, timeout: int = 900, model: str | None = None,
+  commands: dict | None = None,
 ) -> AgentResult:
-  if agent not in ADAPTERS:
-    return _err(agent, "UNKNOWN_AGENT", f"choose one of {AGENTS}")
-  if not available(agent):
-    return _err(agent, "CLI_NOT_FOUND", f"'{agent}' is not on PATH", suggested_fallback="another agent")
+  spec = _spec_for(agent, commands)
+  if spec is None and agent not in ADAPTERS:
+    return _err(agent, "UNKNOWN_AGENT", f"choose one of {known_agents(commands)} or define it under config `commands`")
+  if spec is not None and not (isinstance(spec.get("argv"), list) and spec["argv"]):
+    return _err(agent, "BAD_COMMAND_SPEC", "commands.<name>.argv must be a non-empty list of strings")
+  if not available(agent, commands):
+    cli = spec["argv"][0] if spec else agent
+    return _err(agent, "CLI_NOT_FOUND", f"'{cli}' is not on PATH", suggested_fallback="another agent")
   start = time.time()
   try:
-    result = ADAPTERS[agent](prompt, schema, cwd, web, write, timeout, model)
+    if spec is not None:
+      result = _command_adapter(agent, spec, prompt, schema, cwd, timeout)
+    else:
+      result = ADAPTERS[agent](prompt, schema, cwd, web, write, timeout, model)
   except subprocess.TimeoutExpired:
     result = _err(agent, "TIMEOUT", f"no result after {timeout}s", suggested_fallback="another agent or a longer --timeout")
   except OSError as exc:

@@ -11,7 +11,7 @@ from typing import Callable
 
 from taste_engine.orchestration.run import PipelineError, Run
 from taste_engine.tools import prompts
-from taste_engine.tools.agents import INFRA_ERRORS, run_agent
+from taste_engine.tools.agents import INFRA_ERRORS, available, known_agents, run_agent
 from taste_engine.tools.schema_check import check
 
 
@@ -22,22 +22,29 @@ def agent_step(
 ) -> dict:
   """Run one agent node and return JSON that has passed validation.
 
-  node      routing key in config `agents` (e.g. "draft" → claude)
+  node      routing key: config `steps[node]` first, then the ordered config `agents` list;
+            with neither configured, the first installed adapter is used
   agent     force a specific agent (disables fallback)
   write     the agent may edit files in `cwd` (build steps); never retried blindly
   """
   cfg = run.cfg
   schema = prompts.schema(schema_name)
-  order = [agent or cfg.agents.get(node, "claude")]
-  if not agent:
-    order += [a for a in cfg.agents.get("fallback", []) if a not in order]
+  if agent:
+    order = [agent]
+  else:
+    order = cfg.agent_order(node)
+    if not order:
+      order = [a for a in known_agents(cfg.commands) if available(a, cfg.commands)]
+    if not order:
+      raise PipelineError("NO_AGENT", "no agent configured or installed; set `agents` in taste-engine.config.json "
+                                      "or define a `commands` entry", step=step)
   last = None
 
   for name in order:
     fix = ""
     for attempt in (1, 2):
       res = run_agent(name, prompt + fix, schema, cwd=cwd or cfg.vault, web=web, write=write,
-                      timeout=timeout, model=cfg.models.get(name))
+                      timeout=timeout, model=cfg.models.get(name), commands=cfg.commands)
       info = {"agent": name, "attempt": attempt, "ok": res.ok, "seconds": res.seconds, "cost_usd": res.cost_usd}
       if not res.ok:
         info["error"] = res.error

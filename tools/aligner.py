@@ -1,4 +1,7 @@
-"""OverMind Goal Aligner & Architectural Audit Tool.
+"""OverMind Architect: repository architecture audit tool.
+
+The agent contract it enforces lives in engine/agents/architect.md (the legacy name
+goal_aligner.md is still accepted if present).
 
 Verifies that the codebase and connected vault adhere to OverMind's 4 primitives:
   1. PROJECTS (Where intent lives: active goals, briefs, domain projects)
@@ -22,6 +25,18 @@ if sys.stdout and hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+
+CONTRACT_NAMES = ("architect", "goal_aligner")  # preferred name first; legacy alias second
+
+
+def load_agent_contract(repo_root: Path) -> tuple[str | None, str]:
+    """Return (name, text) of the architect agent contract, or (None, "") when absent."""
+    for name in CONTRACT_NAMES:
+        path = repo_root / "engine" / "agents" / f"{name}.md"
+        if path.is_file():
+            return name, path.read_text(encoding="utf-8")
+    return None, ""
+
 
 class AlignmentIssue:
     def __init__(self, block: str, severity: str, summary: str, details: str, remediation: str):
@@ -239,7 +254,7 @@ def run_audit(repo_root: Path, vault_root: Path | None) -> list[AlignmentIssue]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="OverMind Goal Aligner & Architectural Audit")
+    parser = argparse.ArgumentParser(description="OverMind Architect: repository architecture audit")
     parser.add_argument("--repo", default=str(REPO_ROOT), help="Path to OverMind engine repository")
     parser.add_argument("--vault", help="Path to OverMind/Obsidian vault (optional)")
     args = parser.parse_args()
@@ -266,9 +281,11 @@ def main():
                     break
 
     print("=" * 70)
-    print(" OVERMIND GOAL ALIGNER — ARCHITECTURAL AUDIT")
+    print(" OVERMIND ARCHITECT — ARCHITECTURAL AUDIT")
     print("=" * 70)
+    contract_name, _ = load_agent_contract(repo)
     print(f"Engine Repo: {repo}")
+    print(f"Contract:    {'engine/agents/' + contract_name + '.md' if contract_name else 'not found'}")
     print(f"Vault:       {vault or 'Not specified'}\n")
 
     issues = run_audit(repo, vault)

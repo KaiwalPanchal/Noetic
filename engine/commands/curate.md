@@ -13,7 +13,7 @@ Focus: $ARGUMENTS (if empty, use the highest-weight interests that have the fewe
 3. Read `{engine}/03-pipeline/04-archive/` and `{twitter}/posted.md` so you don't repeat what's already shipped.
 
 ## 2. Gather (vault only, no web)
-Search across the **whole vault**, not just the engine folder. Older notes (books, journals, thoughts) are where unexpected cross-pollination comes from. Use Grep on interest keywords, and read `{engine}/02-signals/`, `{engine}/03-pipeline/00-inbox/` and `{frameworks}/`.
+Search across the **whole vault**, not just the engine folder. Older notes (books, journals, thoughts) are where unexpected cross-pollination comes from. Text-search the vault for interest keywords, and read `{engine}/02-signals/`, `{engine}/03-pipeline/00-inbox/` and `{frameworks}/`.
 Skip private areas: anything under `{overmind}/wiki/profile/`, journals, and finance/personal folders, unless the owner explicitly includes them.
 
 ## 3. Select (taste)

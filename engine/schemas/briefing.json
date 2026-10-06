@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "briefing",
+  "description": "Deterministic OverMind briefing built from wiki frontmatter. focus is an object or null; due is a string (empty when unknown).",
+  "type": "object",
+  "properties": {
+    "generated": {"type": "string"},
+    "focus": {"description": "null, or {kind: quest|project, name, next_action, reason}"},
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "project": {"type": "string"},
+          "gate": {"type": "string"},
+          "kind": {"type": "string", "enum": ["declared", "violation"]}
+        },
+        "required": ["project", "gate", "kind"]
+      }
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "status": {"type": "string"},
+          "goal": {"type": "string"},
+          "next_action": {"type": "string"},
+          "last_touched": {"type": "string"},
+          "stale_days": {"description": "integer days since last_touched, or null when unknown"},
+          "repo": {"type": "string"},
+          "gate": {"type": "string"},
+          "incomplete": {"type": "boolean"}
+        },
+        "required": ["name", "status", "goal", "next_action", "last_touched", "stale_days", "repo", "gate", "incomplete"]
+      }
+    },
+    "quests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "status": {"type": "string"},
+          "due": {"type": "string"},
+          "overdue": {"type": "boolean"}
+        },
+        "required": ["id", "status", "due", "overdue"]
+      }
+    },
+    "stale": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {"name": {"type": "string"}, "stale_days": {"type": "integer"}},
+        "required": ["name", "stale_days"]
+      }
+    },
+    "log_tail": {"type": "array", "items": {"type": "string"}},
+    "warnings": {"type": "array", "items": {"type": "string"}}
+  },
+  "required": ["generated", "focus", "gates", "projects", "quests", "stale", "log_tail"]
+}

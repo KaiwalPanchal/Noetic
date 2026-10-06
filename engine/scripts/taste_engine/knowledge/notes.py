@@ -330,3 +330,29 @@ def set_status(path: Path, status: str, note: str = "") -> None:
   if note:
     lines.append(f'review_note: "{note}"')
   path.write_text("\n".join(lines) + body, encoding="utf-8")
+
+
+def briefing_note(cfg: Config, data: dict, narrative: dict, agent: str, run_id: str) -> Path:
+  """A narrated briefing. Lands pending_review like every generated note."""
+  folder = (cfg.overmind / "wiki" / "briefings") if cfg.overmind else (cfg.engine / "briefings")
+  fm = frontmatter(cfg, agent, run_id, "briefing", {"briefing_date": data["generated"]})
+  actions = "\n".join(
+    f"{n}. **{a['project']}**: {a['action']}" + (f" _(blocked by: {a['blocked_by']})_" if a.get("blocked_by") else "")
+    for n, a in enumerate(narrative["next_actions"], 1)) or "-"
+  body = f"""# Briefing {data['generated']}
+
+{narrative['headline']}
+
+## Next actions
+{actions}
+
+## Gate violations
+{bullets(narrative['gate_violations'])}
+
+## Stale (over 14 days)
+{bullets(narrative['stale_flags'])}
+
+## Check-in
+{bullets(narrative['check_in'])}
+"""
+  return write(folder / f"briefing-{data['generated']}.md", fm + body)

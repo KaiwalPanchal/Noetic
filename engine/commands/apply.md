@@ -23,7 +23,7 @@ Run every angle through the negative filters. Drop or rewrite anything that read
 
 ## 3. Mode: `code` — the "steal like an artist" build brief
 The target is one or more reference URLs: awwwards, dribbble, a portfolio, or any site the owner admires.
-1. Fetch each reference. Use WebFetch for content and structure. If browser tools are available, also inspect layout, typography, color and motion, and take screenshots.
+1. Fetch each reference. Fetch the page for content and structure. If browser tools are available, also inspect layout, typography, color and motion, and take screenshots.
 2. **Deconstruct element by element.** For each notable element (hero, nav, grid, card, transition, cursor effect, scroll behavior, and so on), record:
    - what it is and where it appears
    - the likely implementation (CSS grid/flex, GSAP/ScrollTrigger, Framer Motion, WebGL, View Transitions, and so on)

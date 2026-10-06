@@ -88,6 +88,39 @@ def create_mcp_server(vault_override: Path | None = None) -> MCPServer:
         names.append(f.stem)
     return json.dumps(names, indent=2)
 
+  def _json(obj) -> str:
+    return json.dumps(obj, indent=2, ensure_ascii=False)
+
+  def _projects(cfg) -> dict:
+    from taste_engine.knowledge import registry
+    return {"projects": registry.load_projects(cfg) if cfg else []}
+
+  def _quests(cfg) -> dict:
+    from taste_engine.knowledge import registry
+    return {"quests": registry.load_quests(cfg) if cfg else []}
+
+  def _briefing(cfg) -> dict:
+    # Deterministic and path-confined: reads only wiki projects/quests/log, never the profile.
+    from taste_engine.pipelines.briefing import build_briefing
+    if not cfg:
+      return {"error": "Vault not loaded", "projects": [], "quests": [], "gates": [], "stale": [], "log_tail": []}
+    return build_briefing(cfg)
+
+  @server.resource("overmind://projects")
+  def resource_projects() -> str:
+    """Projects from <overmind>/wiki/projects frontmatter (status, goal, next action, staleness, gate)."""
+    return _json(_projects(_get_cfg())["projects"])
+
+  @server.resource("overmind://quests")
+  def resource_quests() -> str:
+    """Quests from <overmind>/wiki/quests (status, due, overdue)."""
+    return _json(_quests(_get_cfg())["quests"])
+
+  @server.resource("overmind://briefing")
+  def resource_briefing() -> str:
+    """Deterministic briefing: focus, gates, projects, quests, stale items, log tail."""
+    return _json(_briefing(_get_cfg()))
+
   # ── Tools ─────────────────────────────────────────────────────────────────
 
   @server.tool()
@@ -169,6 +202,16 @@ def create_mcp_server(vault_override: Path | None = None) -> MCPServer:
     interests_file = cfg.engine / "interests.md"
     content = interests_file.read_text(encoding="utf-8") if interests_file.exists() else ""
     return {"owner": cfg.owner, "content": content}
+
+  @server.tool()
+  def list_projects() -> dict:
+    """Lists projects with status, goal, next action, staleness and gate. Never reads the private profile."""
+    return _projects(_get_cfg())
+
+  @server.tool()
+  def get_briefing() -> dict:
+    """Returns the deterministic OverMind briefing (what is next, what is blocked, what is stale)."""
+    return _briefing(_get_cfg())
 
   return server
 

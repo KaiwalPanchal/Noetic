@@ -253,3 +253,28 @@ def is_safe_command(cmd_args: list[str]) -> bool:
       return False
 
   return True
+
+
+# ── OverMind wiki access ───────────────────────────────────────────────────
+
+PROFILE_PARTS = ("wiki", "profile")  # <overmind>/wiki/profile/ is private: never read, never quoted
+
+
+def is_profile_path(target: Path | str, overmind_root: Path | str) -> bool:
+  """True when absolute `target` is the private profile directory or anything inside it."""
+  root = Path(overmind_root).resolve()
+  blocked = root.joinpath(*PROFILE_PARTS)
+  resolved = Path(target).resolve()
+  try:
+    resolved.relative_to(blocked)
+    return True
+  except ValueError:
+    return False
+
+
+def validate_overmind_path(target_path: Path | str, vault_root: Path | str, overmind_root: Path | str) -> Path:
+  """validate_vault_path + the OverMind private-profile block. Use for every wiki read."""
+  safe = validate_vault_path(target_path, vault_root)
+  if is_profile_path(safe, overmind_root):
+    raise SecurityViolation("Access to the private profile directory is blocked by policy gate.")
+  return safe

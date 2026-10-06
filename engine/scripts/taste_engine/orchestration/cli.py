@@ -11,7 +11,7 @@ from taste_engine.knowledge.config import Config, load_config
 from taste_engine.knowledge.context import resolve_vault_path
 from taste_engine.orchestration.registry import PIPELINES, discover
 from taste_engine.orchestration.run import PipelineError, Run
-from taste_engine.tools.agents import AGENTS, available, run_agent
+from taste_engine.tools.agents import available, known_agents, run_agent
 
 
 def execute(cfg: Config, command: str, args: dict, run_id: str | None = None):
@@ -60,14 +60,19 @@ def show_status(cfg: Config, run_id: str | None):
 def doctor(cfg: Config):
   schema = {"type": "object", "properties": {"ok": {"type": "boolean"}}, "required": ["ok"], "additionalProperties": False}
   print("Checking agent CLIs (a tiny real call each; costs a few cents):")
-  for name in AGENTS:
-    if not available(name):
+  for name in known_agents(cfg.commands):
+    if not available(name, cfg.commands):
       print(f"  {name:<7} ✗ not installed")
       continue
-    res = run_agent(name, 'Return {"ok": true}.', schema, cwd=cfg.vault, timeout=180, model=cfg.models.get(name))
+    res = run_agent(name, 'Return {"ok": true}.', schema, cwd=cfg.vault, timeout=180, model=cfg.models.get(name),
+                    commands=cfg.commands)
     mark = "✓ ready" if res.ok else f"✗ {res.error['code']}: {res.error['detail'][:90]}"
     print(f"  {name:<7} {mark} ({res.seconds}s)")
-  print("\nRouting:", json.dumps(cfg.agents, ensure_ascii=False))
+  print("\nRouting:", json.dumps(_routing(cfg), ensure_ascii=False))
+
+
+def _routing(cfg: Config) -> dict:
+  return {"agents": cfg.agent_list, "steps": cfg.steps, "legacy": cfg.agents, "commands": sorted(cfg.commands)}
 
 
 def list_everything(cfg: Config):
@@ -75,14 +80,16 @@ def list_everything(cfg: Config):
   for kind in ("knowledge", "content", "code", "project"):
     rows = [p for p in PIPELINES.values() if p.kind == kind]
     for p in rows:
-      routed = cfg.agents.get(p.name, "")
-      print(f"  [{kind:<9}] {p.name:<10} {p.help}" + (f"  (agent: {routed})" if routed else ""))
-  print("\nAGENTS (tools/agents.py)")
-  for name in AGENTS:
-    print(f"  {name:<7} {'installed' if available(name) else 'not installed'}")
-  print("\nROUTING (taste-engine.config.json → agents)")
-  for node, agent in cfg.agents.items():
-    print(f"  {node:<12} {agent}")
+      routed = ", ".join(cfg.agent_order(p.name))
+      print(f"  [{kind:<9}] {p.name:<10} {p.help}" + (f"  (agents: {routed})" if routed else ""))
+  print("\nAGENTS (tools/agents.py + config commands)")
+  for name in known_agents(cfg.commands):
+    print(f"  {name:<7} {'installed' if available(name, cfg.commands) else 'not installed'}")
+  print("\nROUTING (taste-engine.config.json → agents, steps)")
+  print(f"  {'agents':<12} {', '.join(cfg.agent_list) or '(none: first installed adapter is used)'}")
+  for node, agent in {**cfg.agents, **cfg.steps}.items():
+    if node != "fallback":
+      print(f"  {node:<12} {agent}")
 
 
 def main():
@@ -95,7 +102,7 @@ def main():
     for flags, kw in pl.args:
       sp.add_argument(*flags, **kw)
     if pl.agent_flag:
-      sp.add_argument("--agent", choices=AGENTS, help="force one agent for this run (no fallback)")
+      sp.add_argument("--agent", help="force one agent (built-in or config `commands` name) for this run, no fallback")
 
   sp = sub.add_parser("approve", help="[gate] mark a generated note approved")
   sp.add_argument("file")

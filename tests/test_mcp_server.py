@@ -61,3 +61,37 @@ def test_mcp_resource_stances():
   assert "overmind://stances" in resources
   assert "overmind://status" in resources
   assert "overmind://frameworks" in resources
+
+
+def _server_for(vault):
+  return create_mcp_server(vault_override=vault)
+
+
+def test_mcp_registry_resources_registered():
+  uris = {str(r.uri) for r in create_mcp_server()._resource_manager.list_resources()}
+  assert {"overmind://projects", "overmind://quests", "overmind://briefing"} <= uris
+
+
+def test_mcp_list_projects_and_get_briefing_tools(ovault):
+  import json
+  tools = {t.name: t for t in _server_for(ovault)._tool_manager.list_tools()}
+  assert "list_projects" in tools and "get_briefing" in tools
+  projects = tools["list_projects"].fn()
+  assert {p["name"] for p in projects["projects"]} == {"Alpha", "Beta", "Gamma", "Delta"}
+  b = tools["get_briefing"].fn()
+  assert b["focus"]["name"] == "QUEST-001"
+  assert "SECRET-PROFILE-TOKEN" not in json.dumps(projects) + json.dumps(b)
+
+
+def test_mcp_registry_resources_return_json_and_hide_profile(ovault):
+  import json
+  res = {str(r.uri): r for r in _server_for(ovault)._resource_manager.list_resources()}
+  for uri in ("overmind://projects", "overmind://quests", "overmind://briefing"):
+    text = res[uri].fn()
+    assert "SECRET-PROFILE-TOKEN" not in text
+    json.loads(text)
+
+
+def test_mcp_registry_without_vault_is_graceful(tmp_path):
+  tools = {t.name: t for t in _server_for(tmp_path)._tool_manager.list_tools()}
+  assert tools["list_projects"].fn()["projects"] == []

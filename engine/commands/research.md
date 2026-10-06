@@ -12,9 +12,9 @@ Topic: $ARGUMENTS
 2. Read `{engine}/interests.md` and `{engine}/01-taste-graph/negative-filters/*`. Also skim the stances and exemplars so you know what the owner already believes.
 
 ## 2. Search for ground truth, not SEO
-- Run several WebSearch queries in parallel. Prefer primary sources: papers, repos, changelogs, engineering blogs, postmortems, and practitioner threads/Reddit/HN.
+- Run several web searches in parallel. Prefer primary sources: papers, repos, changelogs, engineering blogs, postmortems, and practitioner threads/Reddit/HN.
 - Avoid listicles, "top 10" posts, vendor marketing and AI-generated summaries.
-- WebFetch the 3–6 most promising results and read them properly.
+- Fetch the 3–6 most promising results and read them properly.
 
 ## 3. Filter
 For every source, decide **keep** or **reject**:

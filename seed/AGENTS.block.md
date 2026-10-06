@@ -1,8 +1,8 @@
-<!-- taste-engine:start -->
 ## Taste Engine
 
 This vault runs the open-source Taste Engine. Paths are configured in `taste-engine.config.json`.
 
+- **Overmind** (constitution, projects, goals, quests, log): `{{overmind}}/OVERMIND.md`. Read it at session start. `{{overmind}}/wiki/profile/` is private: never quote it in anything meant for publishing.
 - **Interests** (what to curate for): `{{engine}}/interests.md`
 - **Taste graph** (stances, negative filters, exemplars): `{{engine}}/01-taste-graph/`
 - **Frameworks** (thinking extracted from sources, vault-wide): `{{frameworks}}/`. Build briefs go in `{{frameworks}}/briefs/`
@@ -18,4 +18,3 @@ Rules:
 - AI-written notes use the `author: ai-agent` frontmatter + NOTE callout (`new_curation.py` produces it).
 - The machine drafts; the owner supplies the final taste. Don't mark anything `curated` on the owner's behalf.
 - Ship over meta-structure: don't reorganize the graph when a draft is waiting to be published.
-<!-- taste-engine:end -->
