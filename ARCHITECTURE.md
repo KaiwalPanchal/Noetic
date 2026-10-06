@@ -1,9 +1,34 @@
 # Architecture
 
-OverMind is an agent **framework**, not a fixed app. It has four layers, and every future feature (a new pipeline, tool, agent or action) has a clear home in one of them.
+OverMind is an agent **framework**, not a fixed app. It structures work into composable blocks (**Projects · Knowledge Base · Tools · Actions**), orchestrated by agents and accessible as an **MCP server** to coding agents.
 
-![Overmind Four-Layer Architecture](assets/overmind-architecture.svg)
-
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            CODING AGENTS (CLIENTS)                           │
+│        Claude Code   ·   Cursor   ·   Antigravity   ·   Codex   ·   CLI      │
+└──────────────────────────────────────┬───────────────────────────────────────┘
+                                       │
+                              MCP Protocol / CLI
+                                       │
+┌──────────────────────────────────────▼───────────────────────────────────────┐
+│                              AGENT ORCHESTRATOR                              │
+│         Wires blocks together · Manages flow · Enforces schemas & gates       │
+└───────────┬────────────────────┬────────────────────┬────────────────────┬───┘
+            │                    │                    │                    │
+┌───────────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐
+│     PROJECTS       │   │ KNOWLEDGE BASE │   │     TOOLS      │   │    ACTIONS     │
+├────────────────────┤   ├────────────────┤   ├────────────────┤   ├────────────────┤
+│ · Active Goals     │   │ · Vault Notes  │   │ · Web Scrapers │   │ · Human Gate   │
+│ · Build Briefs     │   │ · Taste Graph  │   │ · Schema Check │   │ · Git Sandbox  │
+│ · Decisions        │   │ · Stances      │   │ · Link Verifier│   │ · Note Writer  │
+│ · Journey Ledger   │   │ · Frameworks   │   │ · Model Adapts │   │ · Staged Posts │
+└────────────────────┘   └────────────────┘   └────────────────┘   └────────────────┘
+            ▲                    ▲                    ▲                    ▲
+            └────────────────────┴──────────┬─────────┴────────────────────┘
+                                            │
+                             COMPOSABLE BUILDING BLOCKS
+                    (Plug and play in whatever order you want)
+```
 
 Code lives in `engine/scripts/taste_engine/`:
 
@@ -38,9 +63,38 @@ Enforced in code, not just requested:
 
 The Claude Code commands follow the same rule: the command file is the harness (see the vault's `CLAUDE.md` block).
 
-## How a pipeline runs
-
-![Multi-Agent Pipeline Harness](assets/overmind-pipeline.svg)
+```
+ [ pipeline.py <command> ]
+            │
+            ▼
+ ┌──────────────────────┐
+ │ Context Assembly     │ ──▶ Budgeted tokens & strict privacy deny-list
+ └──────────┬───────────┘
+            │
+            ▼
+ ┌──────────────────────┐
+ │ Agent Dispatch       │ ──▶ Primary: Claude Code (Sonnet)
+ └──────────┬───────────┘          │ (down / timeout / quota)
+            │                      ▼
+            │                 Fallback: Antigravity / Codex
+            │
+            ▼
+ ┌──────────────────────┐
+ │ Strict Validation    │ ──▶ Schema Check + Link Verifier + Char Counter
+ └──────────┬───────────┘
+            ├─── ✗ Invalid  ──▶ Retry 1x with exact error diagnostic
+            └─── ✓ Valid
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │ status: pending      │ ──▶ Written to Markdown vault
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │ Human Approval Gate  │ ──▶ pipeline.py approve <file>
+         └──────────────────────┘
+```
 
 ```
 python pipeline.py draft "curation-004-….md"

@@ -6,30 +6,87 @@
 
 An open-source agent harness and taste engine for your second brain (Obsidian or any markdown vault).
 
-You can drive OverMind two ways:
-- **Claude Code commands** (`/ingest`, `/apply`, `/draft`, …): interactive, conversationally inside your vault.
-- **A multi-agent Python pipeline** (`python pipeline.py ingest …`): deterministic steps routed across different AI CLIs (**Claude Code**, **Codex**, **Antigravity**, **Gemini**) with automatic fallback, strict schema enforcement, and retry logic.
+OverMind structures your work into **modular, composable blocks**:
+- **Projects:** Active goals, build briefs, roadmaps, and journey logs.
+- **Knowledge Base:** Your markdown vault, taste graph, stances, negative filters, and frameworks.
+- **Tools:** Model adapters, scrapers, schema checkers, link verifiers, and validators.
+- **Actions:** Human-approval gates, sandboxed git branches, and manual post stagers.
 
-There is no database, server, or SaaS. It is your markdown notes, versioned prompts, and a modular four-layer architecture (**Orchestration · Knowledge · Tools · Actions**) that you can inspect, customize, and extend.
+> **The Agent's Role:** The AI agent is not a rigid black box that traps your data — it is strictly an **orchestrator** that wires these blocks together in whatever sequence you need. OverMind can also be exposed as an **MCP (Model Context Protocol)** server to any coding agent (Claude Code, Cursor, Antigravity, Codex).
 
-> *Content is infinite now. Taste — what you select, how you combine it, and what you reject — is what's scarce. OverMind codifies your taste so autonomous agents can think with it.*
+---
+
+## Architecture: Composable Blocks & MCP
+
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            CODING AGENTS (CLIENTS)                           │
+│        Claude Code   ·   Cursor   ·   Antigravity   ·   Codex   ·   CLI      │
+└──────────────────────────────────────┬───────────────────────────────────────┘
+                                       │
+                              MCP Protocol / CLI
+                                       │
+┌──────────────────────────────────────▼───────────────────────────────────────┐
+│                              AGENT ORCHESTRATOR                              │
+│         Wires blocks together · Manages flow · Enforces schemas & gates       │
+└───────────┬────────────────────┬────────────────────┬────────────────────┬───┘
+            │                    │                    │                    │
+┌───────────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐
+│     PROJECTS       │   │ KNOWLEDGE BASE │   │     TOOLS      │   │    ACTIONS     │
+├────────────────────┤   ├────────────────┤   ├────────────────┤   ├────────────────┤
+│ · Active Goals     │   │ · Vault Notes  │   │ · Web Scrapers │   │ · Human Gate   │
+│ · Build Briefs     │   │ · Taste Graph  │   │ · Schema Check │   │ · Git Sandbox  │
+│ · Decisions        │   │ · Stances      │   │ · Link Verifier│   │ · Note Writer  │
+│ · Journey Ledger   │   │ · Frameworks   │   │ · Model Adapts │   │ · Staged Posts │
+└────────────────────┘   └────────────────┘   └────────────────┘   └────────────────┘
+            ▲                    ▲                    ▲                    ▲
+            └────────────────────┴──────────┬─────────┴────────────────────┘
+                                            │
+                             COMPOSABLE BUILDING BLOCKS
+                    (Plug and play in whatever order you want)
+```
+
+### The Four Blocks
+1. **Projects:** Where your intent lives. Contains active goals, site-replication briefs, architectural decisions, and build-in-public logs.
+2. **Knowledge Base:** Ground truth on disk. Your markdown second brain, taste graph (`interests.md`), stances (what you defend), negative filters (what you reject), and deconstructed thinking frameworks.
+3. **Tools:** Pure, stateless instruments. Model adapters (`claude`, `codex`, `agy`), prompt templates, strict JSON schema validators, tweet length calculators, and URL link checkers.
+4. **Actions:** Controlled side effects with built-in safety rails. Every output lands as `status: pending_review`, builds run on isolated git branches, and human approval is required before anything is final.
 
 ---
 
 ## The Loop
 
-![The Overmind Loop](assets/overmind-loop.svg)
+```
+ [ SOURCES ] ───▶ [ /ingest ] ───▶ [ FRAMEWORKS ]
+ (Books, URLs,                     (Mental moves &
+  Papers, Code)                     principles)
+                                         │
+                                         ▼
+                                   [ /apply ]
+                                         │
+                 ┌───────────────────────┼───────────────────────┐
+                 │                       │                       │
+                 ▼                       ▼                       ▼
+          [ CODE BRIEFS ]       [ CONTENT PACKAGES ]     [ DECISIONS ]
+                 │                       │                       │
+                 ▼                       ▼                       ▼
+          [ Coding Agent ]        [ Draft & Ship ]       [ Project Wiki ]
+                 │                       │                       │
+                 ▼                       ▼                       ▼
+           Git Branch              Human Approval          Permanent Note
+          (Sandboxed)              (Zero Auto-Post)          (Ground Truth)
 
-OverMind operates as a continuous learning loop:
+ ─────────────────────────────────────────────────────────────────────────────
+  STEERING FOUNDATION (Taste Graph): interests.md · Stances · Negative Filters
+  FEEDBACK LOOP: /journey records real execution ──▶ compounds back into Taste
+```
 
-1. **Ingest (`/ingest`):** Deconstructs books, essays, repositories, and threads into reusable framework notes: core principles, executable mental moves, anti-patterns, and source genealogy.
-2. **Steer (Taste Graph):** Your explicit stances, negative filters, and exemplars (`interests.md`) steer every operation — mining internal vault ideas (`/curate`) and filtering web noise (`/research`).
-3. **Apply (`/apply`):** Translates frameworks into concrete execution:
-   - **Content Packages:** Outlines and takeaways shaped for social threads.
-   - **Code Build Briefs:** Structural deconstructions (layout, typography, motion, mechanics) ready for coding agents.
-   - **Project Decisions:** Trade-off analysis aligned with your principles.
-4. **Draft & Ship (`/draft` → `/ship`):** Generates threads validated against character limits. **You review and post manually.** OverMind never auto-posts.
-5. **Feedback (`/journey`):** Logs what you shipped, broke, and decided in public, compounding your learnings back into your taste graph.
+OverMind operates as a continuous learning loop across the blocks:
+1. **Ingest (`/ingest`):** Pulls from **Sources** into the **Knowledge Base**, extracting mental moves and core principles.
+2. **Steer (Taste Graph):** The **Knowledge Base** guides what is worth keeping, what gets mined (`/curate`), and what web noise gets rejected (`/research`).
+3. **Apply (`/apply`):** Translates frameworks into target **Projects** (content packages, code build briefs, or decisions).
+4. **Execute & Gate:** The **Agent Orchestrator** triggers **Tools** and **Actions** (coding agents build on git branches; threads are drafted for manual review).
+5. **Feedback (`/journey`):** Real-world build results feed back into the **Knowledge Base**, updating your stances and taste.
 
 ---
 
@@ -37,15 +94,15 @@ OverMind operates as a continuous learning loop:
 
 Run these directly inside your vault with Claude Code:
 
-| Command | What it does |
-|---|---|
-| `/ingest <source>` | Book / URL / notes → framework note: principles, **executable mental moves**, anti-patterns, genealogy |
-| `/apply <framework> content\|code\|project [target]` | Framework → curation package, **site-replication build brief**, or proposed decision |
-| `/curate [topic]` | Mines your vault for non-obvious, on-interest ideas and lists what was rejected |
-| `/research <topic>` | Web research → taste filter → signal notes + curation package, with rejected sources listed |
-| `/draft <note>` | Curation package or journey entry → thread draft, checked against X character limits |
-| `/ship <draft> [posted <url>]` | Stages copy-paste text, then logs it after you post. **Never posts for you.** |
-| `/journey [what happened]` | Build-in-public entry with tweet candidates and automatic privacy filtering |
+| Command | What it does | Blocks Used |
+|---|---|---|
+| `/ingest <source>` | Book / URL / notes → framework note: principles, **mental moves**, anti-patterns | Knowledge |
+| `/apply <framework> content\|code\|project [target]` | Framework → curation package, **build brief**, or proposed decision | Knowledge → Projects |
+| `/curate [topic]` | Mines vault for non-obvious ideas and records what was rejected | Knowledge |
+| `/research <topic>` | Taste-filtered web research → signal notes + curation package | Tools → Knowledge |
+| `/draft <note>` | Curation package or journey entry → thread draft (character-checked) | Projects → Tools |
+| `/ship <draft> [posted <url>]` | Stages copy-paste text, logs post metrics. **Never posts for you.** | Actions |
+| `/journey [what happened]` | Build-in-public entry with tweet candidates and privacy filtering | Projects → Actions |
 
 ### Example: Steal like an artist, for websites
 
@@ -58,28 +115,42 @@ Run these directly inside your vault with Claude Code:
 
 ---
 
-## Architecture
+## Multi-Agent Pipeline & CLI
 
-OverMind decouples control flow from LLM intelligence using a modular four-layer architecture. Every pipeline, agent adapter, and tool lives in a well-defined layer:
+For automated runs, scheduled tasks, or using multiple AI models with failover:
 
-![Overmind Four-Layer Architecture](assets/overmind-architecture.svg)
-
-| Layer | Folder | Responsibility | Design Rule |
-|---|---|---|---|
-| **Orchestration** | `orchestration/` | Pipeline registry (`registry.py`), run state manager (`run.py`), step runner (`steps.py`), CLI | Control flow is deterministic Python. LLM calls are isolated steps, never unbounded loops. |
-| **Knowledge** | `knowledge/` | Config (`config.py`), context builder (`context.py`), note serialization (`notes.py`) | Markdown is the source of truth. Private folders are never read or indexed. |
-| **Tools** | `tools/` | Agent adapters (`agents.py`), versioned prompts, strict schema checkers, URL & tweet validators | Stateless instruments with zero control flow. Fully swappable. |
-| **Actions** | `actions/` | Human gatekeeper (`gate.py`), git branching (`git.py`) | Any outward or destructive action requires `status: approved`. Reversible branches over direct commits. |
-
-*Detailed architecture, layer dependencies, and the 12-factor agent mapping are in [ARCHITECTURE.md](ARCHITECTURE.md).*
-
----
-
-## Multi-Agent Pipeline (CLI)
-
-For headless execution, scheduled tasks, or leveraging multiple AI models across a single task:
-
-![Multi-Agent Pipeline Harness](assets/overmind-pipeline.svg)
+```
+ [ pipeline.py <command> ]
+            │
+            ▼
+ ┌──────────────────────┐
+ │ Context Assembly     │ ──▶ Budgeted tokens & strict privacy deny-list
+ └──────────┬───────────┘
+            │
+            ▼
+ ┌──────────────────────┐
+ │ Agent Dispatch       │ ──▶ Primary: Claude Code (Sonnet)
+ └──────────┬───────────┘          │ (down / timeout / quota)
+            │                      ▼
+            │                 Fallback: Antigravity / Codex
+            │
+            ▼
+ ┌──────────────────────┐
+ │ Strict Validation    │ ──▶ Schema Check + Link Verifier + Char Counter
+ └──────────┬───────────┘
+            ├─── ✗ Invalid  ──▶ Retry 1x with exact error diagnostic
+            └─── ✓ Valid
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │ status: pending      │ ──▶ Written to Markdown vault
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │ Human Approval Gate  │ ──▶ pipeline.py approve <file>
+         └──────────────────────┘
+```
 
 ```bash
 cd <vault>
@@ -102,7 +173,19 @@ python <engine>/scripts/pipeline.py status | resume <run-id>
 - **Human-in-the-loop gate:** All generated notes land as `status: pending_review`. Nothing is published, committed, or posted automatically.
 - **Resumable runs:** Run state is persisted to `.taste-engine/runs/`. Interrupted runs resume from the last successful step without redundant API costs.
 
-Agent CLIs (install whichever you have available): [Claude Code](https://claude.com/claude-code), [Codex CLI](https://github.com/openai/codex), Antigravity CLI (`agy`), Gemini CLI. Configure routing in `taste-engine.config.json`.
+Agent CLIs supported: [Claude Code](https://claude.com/claude-code), [Codex CLI](https://github.com/openai/codex), Antigravity CLI (`agy`), Gemini CLI. Configure routing in `taste-engine.config.json`.
+
+---
+
+## Supplying OverMind as MCP to Coding Agents
+
+Because OverMind separates **Projects**, **Knowledge**, **Tools**, and **Actions** into clean modular interfaces, it can act as a **Model Context Protocol (MCP)** server:
+- **Cursor / Windsurf / Claude Code / Antigravity** can connect to OverMind.
+- Agents can query the **Knowledge Base** (stances, negative filters, frameworks) to guide design choices.
+- Agents can read active **Projects** (build briefs, architectural decisions) to know what to build.
+- Agents can trigger **Tools** (schema checkers, web research) and propose gated **Actions** (revising notes, sandboxed branches).
+
+The coding agent remains the builder; OverMind provides the taste, context, and boundaries.
 
 ---
 
@@ -134,8 +217,6 @@ Re-running `install.py` updates commands, scripts, prompts, schemas, and templat
 ---
 
 ## Vault Structure
-
-After installation, your vault will look like:
 
 ```
 <vault>/
@@ -176,9 +257,9 @@ See [`examples/`](examples/) for an end-to-end framework example (*Steal Like an
 
 ## Contributing
 
-Contributions, bug reports, and pull requests are welcome — especially new command modes for `/apply`, community playbooks, and framework templates.
+Contributions, bug reports, and pull requests are welcome.
 
-If contributing from your own vault, enable the pre-commit privacy hook to safeguard private notes:
+If contributing from your own vault, enable the pre-commit privacy hook:
 
 ```bash
 git config core.hooksPath .githooks
