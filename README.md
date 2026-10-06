@@ -254,6 +254,8 @@ Re-running `install.py` updates commands, scripts, prompts, schemas, and templat
 - **Steal from many, credit all:** Every build brief and post traces its genealogy and credits original creators.
 - **Ship over structure:** Organizing your second brain is not output. Concrete drafts, briefs, and shipped work are.
 
+The thinking behind all of this, in long form: [`PHILOSOPHY.md`](PHILOSOPHY.md).
+
 See [`examples/`](examples/) for an end-to-end framework example (*Steal Like an Artist* by Austin Kleon).
 
 ---
