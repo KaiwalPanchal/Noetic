@@ -18,16 +18,3 @@ Thumbs.db
 .obsidian/
 .private-allow
 
-# Twitter / build-in-public: a personal project, kept local (not part of the core harness)
-engine/commands/draft.md
-engine/commands/ship.md
-engine/commands/journey.md
-engine/prompts/draft.md
-engine/prompts/journey.md
-engine/schemas/thread.json
-engine/schemas/journey.json
-engine/scripts/taste_engine/pipelines/draft.py
-engine/scripts/taste_engine/pipelines/journey.py
-engine/scripts/taste_engine/tools/tweets.py
-engine/scripts/thread_validator.py
-seed/twitter

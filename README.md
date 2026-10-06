@@ -42,18 +42,17 @@ Read the full philosophical grounding in [`PHILOSOPHY.md`](PHILOSOPHY.md) and th
 
 ---
 
-## Architecture: Composable Blocks, Modules & MCP
+### Architecture: The 4 Primitives
 
-OverMind structures your work into **four modular, composable blocks** plus **extensible add-on modules**:
-- **Projects:** Active goals, build briefs, roadmaps, and decisions (e.g., building OverMind itself, or engineering a product).
-- **Knowledge Base:** Your markdown vault, taste graph, stances, negative filters, and frameworks.
-- **Tools:** Model adapters, scrapers, schema checkers, link verifiers, and domain-specific utilities.
-- **Actions:** Human-approval gates, sandboxed git branches, and execution stagers.
-- **Add-on Modules:** External ingress and specialized stores (e.g., Web Clipper with MongoDB Atlas, browser extensions, vector search) configured securely via `.env`.
+OverMind unifies your work into **four core primitives**:
+- **Projects:** Active goals, build briefs, ideas incubator, roadmaps, and domain applications (e.g. `projects/twitter/`, `ideas/`, site replication).
+- **Knowledge Base:** Ground truth on disk — your local markdown vault, taste graph, stances, negative filters, and extracted thinking frameworks.
+- **Tools:** Pure, stateless instruments — model adapters, scrapers, schema checkers, link verifiers, and the Web Clipper (`tools/clipper.py`).
+- **Agents:** Autonomous intelligences and pipeline orchestrators (`compete`, `curate`, `research`, `ingest`, `goal-aligner`) bound by strict human-approval gates.
 
-> **The Inception Loop:** OverMind is a self-bootstrapping meta-harness — **we use OverMind to design, test, and build OverMind itself.** Specific workflows (like content creation, web clipping, or site replication) are not part of the core harness; they are simply **projects and modules** that run on top of it, bringing their own domain tools and goals.
+> **The Inception Loop:** OverMind is a self-bootstrapping meta-harness — **we use OverMind to design, test, and build OverMind itself.** Specific workflows (like Twitter build-in-public or competitor research) are not baked into the core engine; they are modular **projects** or **pipelines** running on top of it.
 >
-> **The Agent's Role:** The AI agent does not own business logic or hoard data. It is strictly an **orchestrator** that wires these blocks together in whatever sequence your project requires. OverMind can also be supplied as an **MCP (Model Context Protocol)** server to any coding agent (Claude Code, Cursor, Antigravity, Codex).
+> **The Agent's Role:** Autonomous agents wire these primitives together. OverMind can also be exposed as an **MCP (Model Context Protocol)** server to any coding agent (Claude Code, Cursor, Antigravity, Codex).
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -61,7 +60,7 @@ OverMind structures your work into **four modular, composable blocks** plus **ex
 │        Claude Code   ·   Cursor   ·   Antigravity   ·   Codex   ·   CLI      │
 └──────────────────────────────────────┬───────────────────────────────────────┘
                                        │
-                              MCP Protocol / CLI
+                               MCP Protocol / CLI
                                        │
 ┌──────────────────────────────────────▼───────────────────────────────────────┐
 │                              AGENT ORCHESTRATOR                              │
@@ -69,12 +68,12 @@ OverMind structures your work into **four modular, composable blocks** plus **ex
 └───────────┬────────────────────┬────────────────────┬────────────────────┬───┘
             │                    │                    │                    │
 ┌───────────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐
-│     PROJECTS       │   │ KNOWLEDGE BASE │   │     TOOLS      │   │    ACTIONS     │
+│     PROJECTS       │   │ KNOWLEDGE BASE │   │     TOOLS      │   │     AGENTS     │
 ├────────────────────┤   ├────────────────┤   ├────────────────┤   ├────────────────┤
-│ · OverMind Engine  │   │ · Vault Notes  │   │ · Model Adapts │   │ · Human Gate   │
-│ · Your Project     │   │ · Taste Graph  │   │ · Schema Check │   │ · Git Sandbox  │
-│ · Site Replication │   │ · Stances      │   │ · Web Scrapers │   │ · Note Writer  │
-│ · Any Workflow     │   │ · Frameworks   │   │ · Domain Tools │   │ · Gated Side-Fx│
+│ · OverMind Engine  │   │ · Vault Notes  │   │ · Model Adapts │   │ · Subagents    │
+│ · Twitter Pack     │   │ · Taste Graph  │   │ · Schema Check │   │ · Goal Aligner │
+│ · Ideas Incubator  │   │ · Stances      │   │ · Web Clipper  │   │ · Multi-model  │
+│ · Build Briefs     │   │ · Frameworks   │   │ · Link Verifier│   │ · Human Gates  │
 └────────────────────┘   └────────────────┘   └────────────────┘   └────────────────┘
             ▲                    ▲                    ▲                    ▲
             └────────────────────┴──────────┬─────────┴────────────────────┘
@@ -83,12 +82,11 @@ OverMind structures your work into **four modular, composable blocks** plus **ex
                     (Plug and play in whatever order you want)
 ```
 
-### The Composable Blocks
-1. **Projects:** Where your intent lives. Contains active goals, site-replication briefs, and architectural decisions (e.g. building the OverMind harness itself, or coding a new app).
+### The 4 Primitives
+1. **Projects:** Where intent lives. Contains active goals, site-replication briefs, the ideas incubator (`ideas/`), and modular project packs (e.g. `projects/twitter/`).
 2. **Knowledge Base:** Ground truth on disk. Your markdown second brain, taste graph (`interests.md`), stances (what you defend), negative filters (what you reject), and deconstructed thinking frameworks.
-3. **Tools:** Pure, stateless instruments. Model adapters (`claude`, `codex`, `agy`), prompt templates, strict JSON schema validators, web scrapers, and domain-specific validators that projects bring with them.
-4. **Actions:** Controlled side effects with built-in safety rails. Every output lands as `status: pending_review`, builds run on isolated git branches, and human approval is required before anything is final.
-5. **Add-on Modules:** Pluggable extensions (e.g. `overmind-clipper` with MongoDB Atlas hybrid search) that attach custom ingress, external stores, and tools configured securely via `.env`.
+3. **Tools:** Pure, stateless instruments. Model adapters (`claude`, `codex`, `agy`), prompt templates, strict JSON schema validators, link checkers, and the stateless Web Clipper (`tools/clipper.py`).
+4. **Agents:** Autonomous intelligences & pipelines. Multi-step pipelines (`compete`, `curate`, `research`, `ingest`, `replicate`) and specialized agents (e.g. `goal-aligner`) operating under human-in-the-loop review gates (`status: pending_review`).
 
 ---
 
@@ -133,12 +131,13 @@ OverMind operates as a continuous learning loop across the blocks:
 
 Run these directly inside your vault with Claude Code:
 
-| Command | What it does | Blocks Used |
+| Command | What it does | Primitives Used |
 |---|---|---|
 | `/ingest <source>` | Book / URL / notes → framework note: principles, **mental moves**, anti-patterns | Knowledge |
 | `/apply <framework> content\|code\|project [target]` | Framework → curation package, **build brief**, or proposed decision | Knowledge → Projects |
 | `/curate [topic]` | Mines vault for non-obvious ideas and records what was rejected | Knowledge |
 | `/research <topic>` | Taste-filtered web research → signal notes + curation package | Tools → Knowledge |
+| `/compete <idea-slug>` | Deep competitor intelligence & market exploration → research report | Tools → Knowledge → Projects |
 
 ### Example: Steal like an artist, for websites
 
@@ -195,6 +194,7 @@ python <engine>/scripts/pipeline.py doctor                   # verify installed 
 python <engine>/scripts/pipeline.py ingest "Make it stick.md"   # vault note, URL, or book title
 python <engine>/scripts/pipeline.py curate "agent memory"
 python <engine>/scripts/pipeline.py research "temporal knowledge graphs" --agent agy
+python <engine>/scripts/pipeline.py compete "autopay-recovery-agent"
 python <engine>/scripts/pipeline.py replicate steal-like-an-artist https://a.com https://b.com --goal "portfolio hero" --build ../my-site
 python <engine>/scripts/pipeline.py approve "<file>"          # human gate
 python <engine>/scripts/pipeline.py status | resume <run-id>
@@ -221,11 +221,12 @@ Because OverMind separates **Projects**, **Knowledge**, **Tools**, and **Actions
 
 The coding agent remains the builder; OverMind provides the taste, context, and boundaries.
 
-### Extensibility: Add-On Modules
+### Extensibility: Domain Tools & Project Packs
 
-OverMind is modular by design. You can attach domain-specific add-on modules without bloating the core engine:
-- **`overmind-clipper` (Web Clipper):** Ingests web DOM from the open-source Obsidian Clipper browser extension, stores articles and vector embeddings in MongoDB Atlas, and exposes `search_clips` as an MCP tool directly to coding agents.
-- **Environment & Secrets (`.env`):** Modules store connection strings and credentials (like `MONGODB_URI` and API tokens) in `.env`, which is strictly git-ignored and never committed to version control.
+OverMind is modular by design. You can attach domain-specific tools and project packs without bloating the core engine:
+- **Web Clipper Tool (`taste_engine/tools/clipper.py`):** Pure, stateless tool that ingests web DOM and articles, returning structured Markdown signal notes directly to your Knowledge Base (`02-signals/web/` or `/ingest`).
+- **Project Packs (`projects/<name>/`):** Self-contained applications (such as `projects/twitter/`) bringing their own commands, prompts, schemas, and pipelines that install cleanly into your vault.
+- **Environment & Secrets (`.env`):** Optional API keys and external endpoints live in `.env`, which is strictly git-ignored and never committed.
 
 ---
 

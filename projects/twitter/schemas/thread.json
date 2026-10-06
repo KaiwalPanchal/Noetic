@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "thread",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "hook_rationale": {
+      "type": "string"
+    },
+    "tweets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "credits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "harness_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Anything you could not do, or assumptions you were forced to make. Empty list if none."
+    }
+  },
+  "required": [
+    "title",
+    "slug",
+    "hook_rationale",
+    "tweets",
+    "credits",
+    "harness_notes"
+  ],
+  "additionalProperties": false
+}

@@ -4,6 +4,7 @@
 - prompts.py       owned prompts (12-factor #2): fill a template from engine/prompts/, load a schema
 - schema_check.py  validates agent JSON against engine/schemas/ (12-factor #4)
 - links.py         deterministic URL check (catches invented sources)
+- clipper.py       stateless web clipper (extracts DOM/articles into signals/notes)
 
 Thinking frameworks (notes in frameworks/) are tools too: pipelines load them
 as instructions for an agent (see pipelines/replicate.py).

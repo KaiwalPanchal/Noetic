@@ -118,6 +118,36 @@ def update_claude_md(vault: Path, cfg: dict) -> str:
   return "appended block"
 
 
+def install_project(project_name: str, vault: Path, cfg: dict) -> list[str]:
+  """Install an optional domain project pack (e.g. projects/twitter)."""
+  proj_dir = REPO / "projects" / project_name
+  if not proj_dir.is_dir():
+    return []
+  engine = vault / cfg["paths"]["engine"]
+  written = []
+  if (proj_dir / "commands").is_dir():
+    written += copy_owned(proj_dir / "commands", vault / ".claude" / "commands", cfg, "*.md", rendered=False)
+  if (proj_dir / "prompts").is_dir():
+    written += copy_owned(proj_dir / "prompts", engine / "prompts", cfg, "*.md", rendered=False)
+  if (proj_dir / "schemas").is_dir():
+    written += copy_owned(proj_dir / "schemas", engine / "schemas", cfg, "*.json", rendered=False)
+  if (proj_dir / "pipelines").is_dir():
+    written += copy_owned(proj_dir / "pipelines", engine / "scripts" / "taste_engine" / "pipelines", cfg, "*.py", rendered=False)
+  if (proj_dir / "tools").is_dir():
+    written += copy_owned(proj_dir / "tools", engine / "scripts" / "taste_engine" / "tools", cfg, "*.py", rendered=False)
+  if (proj_dir / "scripts").is_dir():
+    written += copy_owned(proj_dir / "scripts", engine / "scripts", cfg, "*.py", rendered=False)
+  target_folder = cfg["paths"].get(project_name)
+  if target_folder:
+    target_dir = vault / target_folder
+    for d in ("journey", "drafts", "ready"):
+      (target_dir / d).mkdir(parents=True, exist_ok=True)
+    if (proj_dir / "seed").is_dir():
+      for s in (proj_dir / "seed").glob("*.md"):
+        seed(s, target_dir / s.name, cfg)
+  return written
+
+
 def main():
   p = argparse.ArgumentParser(description="Install/update the Taste Engine into a vault")
   p.add_argument("--vault", required=True, help="Path to your vault root")
@@ -128,6 +158,7 @@ def main():
   p.add_argument("--twitter-dir", help="Build-in-public folder (default: Twitter)")
   p.add_argument("--overmind-dir", help="Optional Overmind folder (goals/quests/log integration)")
   p.add_argument("--x-char-limit", type=int, help="Per-tweet limit (default 280; raise for X Premium)")
+  p.add_argument("--projects", nargs="*", help="Project packs to install (default: all in projects/)")
   args = p.parse_args()
 
   vault = Path(args.vault).expanduser().resolve()
@@ -137,17 +168,15 @@ def main():
   cfg = build_config(args, vault)
   engine = vault / cfg["paths"]["engine"]
   frameworks = vault / cfg["paths"]["frameworks"]
-  twitter = vault / cfg["paths"]["twitter"]
 
   for d in ENGINE_DIRS:
     (engine / d).mkdir(parents=True, exist_ok=True)
   (frameworks / "briefs").mkdir(parents=True, exist_ok=True)
-  for d in ("journey", "drafts", "ready"):
-    (twitter / d).mkdir(parents=True, exist_ok=True)
 
   (vault / CONFIG_NAME).write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
   written = []
+  # 1. Install core engine harness
   written += copy_owned(REPO / "engine" / "commands", vault / ".claude" / "commands", cfg, "*.md", rendered=False)
   written += copy_owned(REPO / "engine" / "scripts", engine / "scripts", cfg, "*.py", rendered=False)
   written += copy_package(REPO / "engine" / "scripts" / "taste_engine", engine / "scripts" / "taste_engine")
@@ -158,10 +187,13 @@ def main():
   written += copy_owned(REPO / "engine" / "prompts", engine / "prompts", cfg, "*.md", rendered=False)
   written += copy_owned(REPO / "engine" / "schemas", engine / "schemas", cfg, "*.json", rendered=False)
 
+  # 2. Install modular project packs
+  proj_names = args.projects if args.projects is not None else [p.name for p in (REPO / "projects").iterdir() if p.is_dir()]
+  for pname in proj_names:
+    written += install_project(pname, vault, cfg)
+
   seeded = [s for s in (
     seed(REPO / "seed" / "interests.md", engine / "interests.md", cfg),
-    seed(REPO / "seed" / "twitter" / "README.md", twitter / "README.md", cfg),
-    seed(REPO / "seed" / "twitter" / "posted.md", twitter / "posted.md", cfg),
   ) if s]
 
   claude_md = update_claude_md(vault, cfg)

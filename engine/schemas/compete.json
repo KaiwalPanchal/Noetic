@@ -1,0 +1,307 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "compete",
+  "type": "object",
+  "properties": {
+    "target": {
+      "type": "string",
+      "description": "Name or topic of the business idea, product wedge, or company being researched"
+    },
+    "slug": {
+      "type": "string",
+      "description": "Normalized kebab-case slug for the research output"
+    },
+    "hypotheses": {
+      "type": "array",
+      "description": "Target hypotheses under test (pain point, willingness to pay, adoption friction)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "hypothesis": {
+            "type": "string"
+          },
+          "risk_level": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "fatal"
+            ]
+          },
+          "expected_signal": {
+            "type": "string"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "ambiguous",
+              "falsified"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "hypothesis",
+          "risk_level",
+          "expected_signal",
+          "verdict"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "competitors": {
+      "type": "array",
+      "description": "Direct rivals, incumbents, or adjacent players found during research",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "incumbent",
+              "direct_rival",
+              "open_source",
+              "adjacent"
+            ]
+          },
+          "value_prop": {
+            "type": "string"
+          },
+          "pricing_model": {
+            "type": "string"
+          },
+          "strengths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "weaknesses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "url",
+          "category",
+          "value_prop",
+          "pricing_model",
+          "strengths",
+          "weaknesses"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "graveyard": {
+      "type": "array",
+      "description": "Failed predecessors who tackled this problem and died",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "root_cause_of_death": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "root_cause_of_death"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "proven_patterns": {
+      "type": "object",
+      "description": "What works in this market according to ground-truth evidence",
+      "properties": {
+        "must_have_triggers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "willingness_to_pay": {
+          "type": "string"
+        },
+        "sticky_workflows": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "must_have_triggers",
+        "willingness_to_pay",
+        "sticky_workflows"
+      ],
+      "additionalProperties": false
+    },
+    "differentiation": {
+      "type": "object",
+      "description": "Strategic entry wedge and unfair advantage",
+      "properties": {
+        "counter_position": {
+          "type": "string"
+        },
+        "entry_wedge": {
+          "type": "string"
+        },
+        "novel_mechanism": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "counter_position",
+        "entry_wedge",
+        "novel_mechanism"
+      ],
+      "additionalProperties": false
+    },
+    "signals_kept": {
+      "type": "array",
+      "description": "Primary sources kept with verifiable links and mechanisms",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "forum",
+              "pricing_page",
+              "review",
+              "repo",
+              "postmortem",
+              "web"
+            ]
+          },
+          "mechanism": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "signal_to_noise": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "takeaway": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "url",
+          "kind",
+          "mechanism",
+          "signal_to_noise",
+          "takeaway"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "signals_rejected": {
+      "type": "array",
+      "description": "Sources rejected due to SEO fluff, lack of mechanism, or irrelevance",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "url",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "recommendation": {
+      "type": "object",
+      "properties": {
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "strong_signal",
+            "mixed_signal",
+            "negative_signal"
+          ]
+        },
+        "strategic_synthesis": {
+          "type": "string"
+        },
+        "next_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "verdict",
+        "strategic_synthesis",
+        "next_actions"
+      ],
+      "additionalProperties": false
+    },
+    "harness_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Assumptions or constraints encountered during research"
+    }
+  },
+  "required": [
+    "target",
+    "slug",
+    "hypotheses",
+    "competitors",
+    "graveyard",
+    "proven_patterns",
+    "differentiation",
+    "signals_kept",
+    "signals_rejected",
+    "recommendation",
+    "harness_notes"
+  ],
+  "additionalProperties": false
+}

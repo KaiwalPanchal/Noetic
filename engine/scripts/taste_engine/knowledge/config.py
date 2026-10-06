@@ -24,11 +24,9 @@ SCHEMAS_DIR = ENGINE_DIR / "schemas"
 DEFAULTS = {
   "owner": "Owner",
   "agent": "Claude Code",
-  "x_char_limit": 280,
   "paths": {
     "engine": "taste-engine",
     "frameworks": "frameworks",
-    "twitter": "Twitter",
     "overmind": None,
   },
   # Which agent CLI runs each pipeline step. Override per run with --agent.
@@ -36,8 +34,6 @@ DEFAULTS = {
     "ingest": "claude",
     "curate": "claude",
     "research": "agy",
-    "draft": "claude",
-    "journey": "claude",
     "deconstruct": "claude",
     "build": "codex",
     "fallback": ["claude", "agy", "codex"],
@@ -46,6 +42,7 @@ DEFAULTS = {
   "models": {"claude": "sonnet"},
   # Vault folders the pipeline never reads for context (curate/research/journey).
   "private_paths": [],
+  "projects": {},
 }
 
 
@@ -54,12 +51,14 @@ class Config:
     self.vault = vault
     self.owner: str = data.get("owner", DEFAULTS["owner"])
     self.agent: str = data.get("agent", DEFAULTS["agent"])
-    self.x_char_limit: int = int(data.get("x_char_limit", DEFAULTS["x_char_limit"]))
     paths = {**DEFAULTS["paths"], **data.get("paths", {})}
     self.engine = vault / paths["engine"]
     self.frameworks = vault / paths["frameworks"]
-    self.twitter = vault / paths["twitter"]
     self.overmind = vault / paths["overmind"] if paths.get("overmind") else None
+    # Backward compatible optional project paths
+    self.twitter = vault / paths["twitter"] if paths.get("twitter") else vault / "Twitter"
+    self.x_char_limit: int = int(data.get("x_char_limit", 280))
+    self.projects: dict = data.get("projects", {})
     self.agents: dict = {**DEFAULTS["agents"], **data.get("agents", {})}
     self.models: dict = {**DEFAULTS["models"], **data.get("models", {})}
     self.private_paths: list[str] = data.get("private_paths", DEFAULTS["private_paths"])

@@ -317,6 +317,87 @@ def append_application(framework_file: Path, mode: str, output: Path) -> None:
     text += f"\n{marker}\n{line}\n"
   framework_file.write_text(text, encoding="utf-8")
 
+def competitor_research(cfg: Config, d: dict, agent: str, run_id: str) -> Path:
+  slug = slugify(d.get("slug") or d.get("target", "competitor-research"))
+  idea_dir = cfg.vault / "ideas" / slug
+  if idea_dir.is_dir():
+    target_path = idea_dir / "research.md"
+  else:
+    target_path = cfg.engine / "03-pipeline" / "01-curation" / f"compete-{slug}.md"
+
+  fm = frontmatter(cfg, agent, run_id, "competitor-research", {
+    "target": f'"{d.get("target", "")}"',
+    "verdict": d.get("recommendation", {}).get("verdict", "unknown"),
+  })
+
+  hypo_rows = "\n".join(
+    f"| {h['id']} | {h['hypothesis']} | {h['risk_level'].title()} | {h['expected_signal']} | {h['verdict'].title()} |"
+    for h in d.get("hypotheses", [])
+  ) or "| - | - | - | - | - |"
+
+  comp_rows = "\n".join(
+    f"| {c['name']} | [{c['url']}]({c['url']}) | {c['category']} | {c['value_prop']} | {c['pricing_model']} | {', '.join(c['strengths'])} | {', '.join(c['weaknesses'])} |"
+    for c in d.get("competitors", [])
+  ) or "| - | - | - | - | - | - | - |"
+
+  grave_items = "\n".join(
+    f"- **{g['name']}**: {g['root_cause_of_death']}" for g in d.get("graveyard", [])
+  ) or "- _None identified_"
+
+  diff = d.get("differentiation", {})
+  patterns = d.get("proven_patterns", {})
+  rec = d.get("recommendation", {})
+
+  body = f"""# 🔍 Exploration & Competitor Intelligence: {d.get('target', slug)}
+
+> **Slug:** `{slug}` · **Verdict:** `{rec.get('verdict', 'N/A')}`
+
+---
+
+## 🎯 1. Target Hypotheses & Intent
+| # | Hypothesis Under Test | Risk Level | Expected Signal | Verdict |
+|---|---|---|---|---|
+{hypo_rows}
+
+---
+
+## 🏢 2. Direct Competitors & Market Incumbents
+| Competitor | URL | Category | Value Prop | Pricing | Strengths | Weaknesses |
+|---|---|---|---|---|---|---|
+{comp_rows}
+
+---
+
+## 🔴 3. The Graveyard (Failed Predecessors)
+{grave_items}
+
+---
+
+## 🟢 4. What Works (Proven Value & Demand)
+- **Must-Have Triggers:**
+{bullets(patterns.get('must_have_triggers', []))}
+- **Willingness to Pay:** {patterns.get('willingness_to_pay', 'N/A')}
+- **Sticky Workflows:**
+{bullets(patterns.get('sticky_workflows', []))}
+
+---
+
+## ⚡ 5. Differentiation & Entry Wedge
+- **Counter-Positioning:** {diff.get('counter_position', 'N/A')}
+- **Entry Wedge:** {diff.get('entry_wedge', 'N/A')}
+- **Novel Mechanism:** {diff.get('novel_mechanism', 'N/A')}
+
+---
+
+## ⚖️ 6. Strategic Verdict & Next Actions
+**Strategic Synthesis:**
+> {rec.get('strategic_synthesis', 'N/A')}
+
+**Next Actions:**
+{bullets(rec.get('next_actions', []))}
+"""
+  return write(target_path, fm + body)
+
 
 def set_status(path: Path, status: str, note: str = "") -> None:
   if status not in STATUS_FLOW:

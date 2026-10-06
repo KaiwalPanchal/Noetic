@@ -1,6 +1,6 @@
 # Architecture
 
-OverMind is an agent **framework**, not a fixed app. It structures work into composable blocks (**Projects · Knowledge Base · Tools · Actions**), orchestrated by agents and accessible as an **MCP server** to coding agents.
+OverMind is an agent **framework**, not a fixed app. It unifies work into four core primitives (**Projects · Knowledge Base · Tools · Agents**), orchestrated by agents and accessible as an **MCP server** to coding agents.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -8,7 +8,7 @@ OverMind is an agent **framework**, not a fixed app. It structures work into com
 │        Claude Code   ·   Cursor   ·   Antigravity   ·   Codex   ·   CLI      │
 └──────────────────────────────────────┬───────────────────────────────────────┘
                                        │
-                              MCP Protocol / CLI
+                               MCP Protocol / CLI
                                        │
 ┌──────────────────────────────────────▼───────────────────────────────────────┐
 │                              AGENT ORCHESTRATOR                              │
@@ -16,12 +16,12 @@ OverMind is an agent **framework**, not a fixed app. It structures work into com
 └───────────┬────────────────────┬────────────────────┬────────────────────┬───┘
             │                    │                    │                    │
 ┌───────────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐
-│     PROJECTS       │   │ KNOWLEDGE BASE │   │     TOOLS      │   │    ACTIONS     │
+│     PROJECTS       │   │ KNOWLEDGE BASE │   │     TOOLS      │   │     AGENTS     │
 ├────────────────────┤   ├────────────────┤   ├────────────────┤   ├────────────────┤
-│ · OverMind Engine  │   │ · Vault Notes  │   │ · Model Adapts │   │ · Human Gate   │
-│ · Your Project     │   │ · Taste Graph  │   │ · Schema Check │   │ · Git Sandbox  │
-│ · Site Replication │   │ · Stances      │   │ · Web Scrapers │   │ · Note Writer  │
-│ · Any Workflow     │   │ · Frameworks   │   │ · Domain Tools │   │ · Gated Side-Fx│
+│ · OverMind Engine  │   │ · Vault Notes  │   │ · Model Adapts │   │ · Subagents    │
+│ · Twitter Pack     │   │ · Taste Graph  │   │ · Schema Check │   │ · Goal Aligner │
+│ · Ideas Incubator  │   │ · Stances      │   │ · Web Clipper  │   │ · Multi-model  │
+│ · Build Briefs     │   │ · Frameworks   │   │ · Link Verifier│   │ · Human Gates  │
 └────────────────────┘   └────────────────┘   └────────────────┘   └────────────────┘
             ▲                    ▲                    ▲                    ▲
             └────────────────────┴──────────┬─────────┴────────────────────┘
@@ -34,11 +34,10 @@ Code lives in `engine/scripts/taste_engine/`:
 
 | Layer | Folder | What it owns | Rule |
 |---|---|---|---|
-| **Orchestration** | `orchestration/` | `registry.py` (pipelines register here), `run.py` (run state, pause/resume), `steps.py` (the agent step), `cli.py` | Control flow is plain Python. LLM calls are isolated steps, never an open-ended loop. |
+| **Projects** | `projects/` | Modular project packs (`projects/twitter/`, `ideas/`, build briefs) | Domain logic stays in project packs, never polluting the core harness. |
 | **Knowledge** | `knowledge/` | `config.py` (paths), `context.py` (what a model may see), `notes.py` (writing results as notes) | Markdown is the source of truth. Any index or cache must be rebuildable from the `.md` files. Private folders are never read. |
-| **Tools** | `tools/` | `agents.py` (claude · codex · agy · gemini), `prompts.py`, `schema_check.py`, `links.py` | Tools are plain functions with no control flow. Swappable. |
-| **Actions** | `actions/` | `gate.py` (approve/reject), `git.py` (branch in a target repo) | Anything public or irreversible needs `status: approved` first. Prefer the reversible version (a branch, not a commit). Posting stays manual. |
-| **Pipelines** | `pipelines/` | One file each: `ingest`, `curate`, `research`, `replicate` | A pipeline composes the four layers and registers with `@pipeline(...)`. |
+| **Tools** | `tools/` | `agents.py` (claude · codex · agy · gemini), `clipper.py` (stateless web clipper), `prompts.py`, `schema_check.py`, `links.py` | Tools are plain functions with no control flow. Swappable and stateless. |
+| **Agents & Pipelines** | `orchestration/`, `pipelines/` | Pipelines (`compete`, `curate`, `ingest`, `replicate`, `research`), `actions/gate.py`, subagents (`goal-aligner`) | Control flow is plain Python. LLM calls are isolated steps, never an open-ended loop. Side-effects require human gate approval (`status: pending_review`). |
 
 Dependency direction: **pipelines → orchestration → tools / actions → knowledge**. Lower layers never import higher ones.
 
@@ -142,20 +141,11 @@ It shows up in `pipeline.py list` and `--help` automatically. If it uses an LLM,
 
 **A new agent CLI:** in `tools/agents.py`, write `fn(prompt, schema, cwd, web, write, timeout, model) -> AgentResult` and decorate it with `@adapter("name")`.
 
-**A new tool:** add a module to `tools/` with plain functions (e.g. a DOM scraper, an embedding index client).
-
+**A new tool:** add a module to `tools/` with plain functions (e.g. `clipper.py` for stateless web clipping, `links.py` for URL verification). Tools take inputs and return outputs, free of control flow.
+ 
 **A new action:** add a module to `actions/`. Call `gate.require_approved(note)` before doing anything public.
-
-**An add-on module:** bundle ingress listeners, external database adapters, and tools into a standalone module (e.g. `modules/clipper/`):
-```text
-modules/clipper/
-├── manifest.py      # module metadata, exposed MCP tools & pipeline hooks
-├── ingress.py       # webhook/API receiver for browser extensions
-├── store.py         # external database adapter (e.g. MongoDB Atlas)
-├── tools.py         # stateless tools callable in Python and over FastMCP
-└── pipelines/       # module-specific @pipeline workflows
-```
-Sensitive configuration (such as `MONGODB_URI` and API tokens) is loaded from `.env` using `.env.example` as a template, keeping credentials strictly out of version control and separate from user settings.
+ 
+**A project pack:** bundle domain-specific commands, prompts, schemas, pipelines, and tools into `projects/<name>/` (e.g. `projects/twitter/`). Project packs extend the core harness cleanly without polluting the engine.
 
 ## Configuration (`<vault>/taste-engine.config.json`)
 
