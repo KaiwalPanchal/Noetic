@@ -53,6 +53,7 @@ def agent_step(
         info["validated"] = True
         run.log_attempt(step, info)
         run.set_agent(step, name)
+        run.add_notes(step, name, res.data.get("harness_notes") or [])
         cost = f", ${res.cost_usd:.3f}" if res.cost_usd else ""
         print(f"    ✓ {name} ({res.seconds}s{cost})")
         return res.data

@@ -7,7 +7,7 @@ the owner reviews the diff (the human gate).
 
 from pathlib import Path
 
-from taste_engine.actions.git import GitError, new_work_branch
+from taste_engine.actions.git import GitError, changed_files, current_branch, head, new_work_branch
 from taste_engine.knowledge import context, notes
 from taste_engine.orchestration.registry import arg, pipeline
 from taste_engine.orchestration.run import PipelineError
@@ -52,14 +52,32 @@ def replicate(run, a):
 
   def prepare():
     try:
-      return new_work_branch(repo, f"taste-engine/{spec['slug'] or 'build'}-{run.id[-4:]}")
+      branch = new_work_branch(repo, f"taste-engine/{spec['slug'] or 'build'}-{run.id[-4:]}")
+      return {"branch": branch, "head": head(repo)}
     except GitError as exc:
       raise PipelineError(exc.code, exc.detail) from exc
-  branch = run.step("prepare-repo", prepare)
+  base = run.step("prepare-repo", prepare)
+  branch = base["branch"]
+
+  def enforce_contract(d: dict) -> list[str]:
+    """Check the agent's work against git, not against its own report."""
+    if current_branch(repo) != branch:
+      raise PipelineError("CONTRACT_VIOLATION", f"agent switched branch to '{current_branch(repo)}' (expected {branch})")
+    if head(repo) != base["head"]:
+      raise PipelineError("CONTRACT_VIOLATION", "agent committed; HEAD moved. Inspect the repo before continuing")
+    actual = changed_files(repo)
+    reported = {f.replace("\\", "/").removeprefix("./") for f in d["files_changed"]}
+    if reported != actual:
+      d["harness_notes"] = d.get("harness_notes", []) + [
+        f"HARNESS: files_changed corrected to git's list. Unreported: {sorted(actual - reported) or '-'}; "
+        f"reported but unchanged: {sorted(reported - actual) or '-'}"]
+      d["files_changed"] = sorted(actual)
+    return []
 
   build_prompt = prompts.render_raw("build", {"brief": (cfg.vault / brief_rel).read_text(encoding="utf-8")})
   report = run.step("build", lambda: agent_step(run, "build", "build", build_prompt, "build_report",
-                                               agent=a.get("build_agent"), write=True, cwd=repo, timeout=3600))
+                                               agent=a.get("build_agent"), write=True, cwd=repo, timeout=3600,
+                                               extra_check=enforce_contract))
 
   def finish():
     brief = cfg.vault / brief_rel

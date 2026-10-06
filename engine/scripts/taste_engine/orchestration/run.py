@@ -74,6 +74,18 @@ class Run:
     self.state["steps"].setdefault(step, {})["agent"] = agent
     self.save()
 
+  def add_notes(self, step: str, agent: str, notes: list[str]):
+    """Gaps or assumptions an agent reported instead of improvising (contract rule 5)."""
+    if notes:
+      self.state.setdefault("harness_notes", []).extend(f"[{step} · {agent}] {n}" for n in notes)
+      self.save()
+      for n in notes:
+        print(f"    ⚑ {agent} flagged: {n[:160]}")
+
+  @property
+  def notes(self) -> list[str]:
+    return self.state.get("harness_notes", [])
+
   def agent_for(self, step: str) -> str:
     return self.state["steps"].get(step, {}).get("agent", "agent")
 

@@ -27,3 +27,17 @@ def new_work_branch(repo: Path, name: str) -> str:
     raise GitError("DIRTY_WORKTREE", "commit or stash the target repo's changes first")
   git(repo, "checkout", "-b", name)
   return name
+
+
+def head(repo: Path) -> str:
+  return git(repo, "rev-parse", "HEAD")
+
+
+def current_branch(repo: Path) -> str:
+  return git(repo, "branch", "--show-current")
+
+
+def changed_files(repo: Path) -> set[str]:
+  """Files modified or created since the last commit, per git (not per the agent)."""
+  out = git(repo, "status", "--porcelain", "--untracked-files=all")
+  return {line[3:].strip().strip('"').replace("\\", "/") for line in out.splitlines() if line.strip()}

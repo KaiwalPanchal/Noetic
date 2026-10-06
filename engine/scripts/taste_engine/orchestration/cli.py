@@ -23,10 +23,23 @@ def execute(cfg: Config, command: str, args: dict, run_id: str | None = None):
     print(f"\n✗ FAILED: {exc}\n  Fix the cause, then: python pipeline.py resume {run.id}")
     sys.exit(1)
   run.finish()
+  if run.notes:
+    attach_agent_notes(cfg, outputs or [], run.notes)
+    print("\n⚑ Agents flagged things they couldn't do or had to assume (also added to the notes):")
+    for n in run.notes:
+      print(f"  - {n}")
   print("\n✓ Done. Waiting for your review (status: pending_review):")
   for o in outputs or []:
     print(f"  • {o}")
   print("  Approve with: python pipeline.py approve \"<file>\"  ·  nothing is ever posted automatically.")
+
+
+def attach_agent_notes(cfg: Config, outputs: list[str], notes: list[str]):
+  section = "\n\n## ⚑ Agent notes (reported, not improvised)\n" + "\n".join(f"- {n}" for n in notes) + "\n"
+  for rel in outputs:
+    path = cfg.vault / rel
+    if path.suffix == ".md" and path.is_file() and "## ⚑ Agent notes" not in path.read_text(encoding="utf-8"):
+      path.write_text(path.read_text(encoding="utf-8").rstrip() + section, encoding="utf-8")
 
 
 def show_status(cfg: Config, run_id: str | None):

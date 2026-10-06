@@ -1,8 +1,10 @@
 """Tools layer: owned prompts (12-factor #2).
 
-Prompts are plain markdown in engine/prompts/ with {{placeholders}}. Every
-prompt except raw ones starts with _preamble.md (ground rules + the owner's
-interests and taste).
+Prompts are plain markdown in engine/prompts/ with {{placeholders}}.
+Every prompt starts with _contract.md, the strict agent contract: follow only
+harness instructions, use only the given tools and context, add no logic of
+your own, and report gaps in `harness_notes`. Non-raw prompts then include
+_preamble.md (step rules + the owner's interests and taste).
 """
 
 from __future__ import annotations
@@ -20,6 +22,10 @@ def fill(template: str, values: dict) -> str:
   return _PLACEHOLDER.sub(lambda m: str(values.get(m.group(1), "")), template)
 
 
+def contract() -> str:
+  return (PROMPTS_DIR / "_contract.md").read_text(encoding="utf-8")
+
+
 def render(cfg: Config, name: str, values: dict | None = None) -> str:
   base = {
     "owner": cfg.owner, "interests": context.interests(cfg), "taste": context.taste(cfg),
@@ -27,12 +33,12 @@ def render(cfg: Config, name: str, values: dict | None = None) -> str:
   }
   merged = {**base, **(values or {})}
   merged["preamble"] = fill((PROMPTS_DIR / "_preamble.md").read_text(encoding="utf-8"), merged)
-  return fill((PROMPTS_DIR / f"{name}.md").read_text(encoding="utf-8"), merged)
+  return contract() + "\n" + fill((PROMPTS_DIR / f"{name}.md").read_text(encoding="utf-8"), merged)
 
 
 def render_raw(name: str, values: dict) -> str:
-  """A prompt without the preamble (e.g. build.md, which runs inside another repo)."""
-  return fill((PROMPTS_DIR / f"{name}.md").read_text(encoding="utf-8"), values)
+  """A prompt with the contract but without the preamble (e.g. build.md, which runs inside another repo)."""
+  return contract() + "\n" + fill((PROMPTS_DIR / f"{name}.md").read_text(encoding="utf-8"), values)
 
 
 def schema(name: str) -> dict:

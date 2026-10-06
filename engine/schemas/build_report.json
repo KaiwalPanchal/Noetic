@@ -39,6 +39,13 @@
     },
     "how_to_preview": {
       "type": "string"
+    },
+    "harness_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Anything you could not do, or assumptions you were forced to make. Empty list if none."
     }
   },
   "required": [
@@ -46,7 +53,8 @@
     "files_changed",
     "elements_done",
     "elements_skipped",
-    "how_to_preview"
+    "how_to_preview",
+    "harness_notes"
   ],
   "additionalProperties": false
 }

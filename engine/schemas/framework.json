@@ -111,6 +111,13 @@
     },
     "provenance_note": {
       "type": "string"
+    },
+    "harness_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Anything you could not do, or assumptions you were forced to make. Empty list if none."
     }
   },
   "required": [
@@ -124,7 +131,8 @@
     "genealogy",
     "linked_interests",
     "source",
-    "provenance_note"
+    "provenance_note",
+    "harness_notes"
   ],
   "additionalProperties": false
 }
