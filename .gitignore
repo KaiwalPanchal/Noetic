@@ -1,0 +1,12 @@
+# Local deny-list of private strings (never commit this)
+.private-strings
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.obsidian/

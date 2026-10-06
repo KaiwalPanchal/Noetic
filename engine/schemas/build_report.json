@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "build_report",
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "files_changed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "elements_done": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "elements_skipped": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "how_to_preview": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "summary",
+    "files_changed",
+    "elements_done",
+    "elements_skipped",
+    "how_to_preview"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,172 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "research",
+  "type": "object",
+  "properties": {
+    "kept": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "paper",
+              "repo",
+              "postmortem",
+              "web"
+            ]
+          },
+          "mechanism": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "signal_to_noise": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "genealogy": {
+            "type": "string"
+          },
+          "interest": {
+            "type": "string"
+          },
+          "tweet_angle": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "url",
+          "kind",
+          "mechanism",
+          "signal_to_noise",
+          "genealogy",
+          "interest",
+          "tweet_angle"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "rejected": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "url",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "package": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "interest": {
+          "type": "string"
+        },
+        "thesis": {
+          "type": "string"
+        },
+        "why_non_obvious": {
+          "type": "string"
+        },
+        "hooks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "style": {
+                "type": "string",
+                "enum": [
+                  "contrarian",
+                  "story",
+                  "practitioner",
+                  "question",
+                  "list"
+                ]
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "style",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 2
+        },
+        "talking_points": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 3
+        },
+        "source_notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "title",
+        "slug",
+        "interest",
+        "thesis",
+        "why_non_obvious",
+        "hooks",
+        "talking_points",
+        "source_notes"
+      ],
+      "additionalProperties": false
+    },
+    "contradictions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "kept",
+    "rejected",
+    "package",
+    "contradictions"
+  ],
+  "additionalProperties": false
+}

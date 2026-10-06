@@ -1,0 +1,3 @@
+#!/bin/sh
+# Blocks private strings (see tools/check_private.py and .private-strings).
+python tools/check_private.py || exit 1
