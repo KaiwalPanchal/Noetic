@@ -146,6 +146,17 @@ It shows up in `pipeline.py list` and `--help` automatically. If it uses an LLM,
 
 **A new action:** add a module to `actions/`. Call `gate.require_approved(note)` before doing anything public.
 
+**An add-on module:** bundle ingress listeners, external database adapters, and tools into a standalone module (e.g. `modules/clipper/`):
+```text
+modules/clipper/
+├── manifest.py      # module metadata, exposed MCP tools & pipeline hooks
+├── ingress.py       # webhook/API receiver for browser extensions
+├── store.py         # external database adapter (e.g. MongoDB Atlas)
+├── tools.py         # stateless tools callable in Python and over FastMCP
+└── pipelines/       # module-specific @pipeline workflows
+```
+Sensitive configuration (such as `MONGODB_URI` and API tokens) is loaded from `.env` using `.env.example` as a template, keeping credentials strictly out of version control and separate from user settings.
+
 ## Configuration (`<vault>/taste-engine.config.json`)
 
 ```json

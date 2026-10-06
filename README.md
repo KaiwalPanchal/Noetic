@@ -6,19 +6,54 @@
 
 An open-source agent harness and taste engine for your second brain (Obsidian or any markdown vault).
 
-OverMind structures your work into **four modular, composable blocks**:
+---
+
+## Philosophy: You Are the Filter
+
+> *"Thinking in frameworks is the most underrated skill of the AI age."*
+
+### 1. AI Moved the Bottleneck to Taste
+Learning from a book used to mean reading it twice, highlighting passages, and hoping some insight showed up when you needed it. Mostly it didn't.
+
+Now, an agent can read any source, extract arguments, and summarize in seconds. Consuming, summarizing, and understanding content is basically solved.
+
+**What's left is Taste:** knowing what to keep, what to reject, and what you are actually trying to build. That part is yours, and it is the only part that matters. What you reject (your negative filters) defines you more than what you hoard.
+
+### 2. Evolutionary Loops: You Are the Selection Pressure
+The more iterations a system runs, the faster it compounds toward excellence:
+- **Nature:** variation → selection → repeat.
+- **Machine Learning:** guess → measure loss → adjust → repeat.
+- **Craft & Engineering:** draft → critique → revise → repeat.
+
+OverMind optimizes for **cycle time and fast iteration loops**, not first-try perfection:
+- **The machine generates the variations.** It drafts frameworks, outlines briefs, and proposes code replications.
+- **You are the selection pressure.** Your taste, stances, and real-world judgment decide what survives into the next round.
+- **Taste cannot be outsourced.** The machine drafts, you decide.
+
+### 3. The Core Stances
+- **Frameworks over summaries:** A summary sits passively on disk. A framework is executable — if you cannot apply it to a codebase, design, or decision, you didn't learn it.
+- **Taste is subtraction:** What you reject defines your work. Negative filters protect your attention from noise and web sludge.
+- **The machine drafts, you decide:** OverMind enforces zero automatic publishing. Human approval gates are mandatory before anything is permanent.
+- **Iteration count beats first-draft quality:** Reps with rapid feedback beat endless planning.
+- **Ship over structure:** Organizing your second brain is not output. Shipped code, published ideas, and completed briefs are.
+- **Steal from many, credit all:** Every build brief traces its lineage and credits original creators.
+
+Read the full philosophical grounding in [`PHILOSOPHY.md`](PHILOSOPHY.md) and the essay [*You Are the Filter*](essays/overmind-essay-my-voice-v2.md).
+
+---
+
+## Architecture: Composable Blocks, Modules & MCP
+
+OverMind structures your work into **four modular, composable blocks** plus **extensible add-on modules**:
 - **Projects:** Active goals, build briefs, roadmaps, and decisions (e.g., building OverMind itself, or engineering a product).
 - **Knowledge Base:** Your markdown vault, taste graph, stances, negative filters, and frameworks.
 - **Tools:** Model adapters, scrapers, schema checkers, link verifiers, and domain-specific utilities.
 - **Actions:** Human-approval gates, sandboxed git branches, and execution stagers.
+- **Add-on Modules:** External ingress and specialized stores (e.g., Web Clipper with MongoDB Atlas, browser extensions, vector search) configured securely via `.env`.
 
-> **The Inception Loop:** OverMind is a self-bootstrapping meta-harness — **we use OverMind to design, test, and build OverMind itself.** Specific workflows (like content creation or site replication) are not part of the core harness; they are simply **projects** that run on top of it, bringing their own domain tools and goals.
+> **The Inception Loop:** OverMind is a self-bootstrapping meta-harness — **we use OverMind to design, test, and build OverMind itself.** Specific workflows (like content creation, web clipping, or site replication) are not part of the core harness; they are simply **projects and modules** that run on top of it, bringing their own domain tools and goals.
 >
 > **The Agent's Role:** The AI agent does not own business logic or hoard data. It is strictly an **orchestrator** that wires these blocks together in whatever sequence your project requires. OverMind can also be supplied as an **MCP (Model Context Protocol)** server to any coding agent (Claude Code, Cursor, Antigravity, Codex).
-
----
-
-## Architecture: Composable Blocks & MCP
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -48,11 +83,12 @@ OverMind structures your work into **four modular, composable blocks**:
                     (Plug and play in whatever order you want)
 ```
 
-### The Four Blocks
+### The Composable Blocks
 1. **Projects:** Where your intent lives. Contains active goals, site-replication briefs, and architectural decisions (e.g. building the OverMind harness itself, or coding a new app).
 2. **Knowledge Base:** Ground truth on disk. Your markdown second brain, taste graph (`interests.md`), stances (what you defend), negative filters (what you reject), and deconstructed thinking frameworks.
 3. **Tools:** Pure, stateless instruments. Model adapters (`claude`, `codex`, `agy`), prompt templates, strict JSON schema validators, web scrapers, and domain-specific validators that projects bring with them.
 4. **Actions:** Controlled side effects with built-in safety rails. Every output lands as `status: pending_review`, builds run on isolated git branches, and human approval is required before anything is final.
+5. **Add-on Modules:** Pluggable extensions (e.g. `overmind-clipper` with MongoDB Atlas hybrid search) that attach custom ingress, external stores, and tools configured securely via `.env`.
 
 ---
 
@@ -185,6 +221,12 @@ Because OverMind separates **Projects**, **Knowledge**, **Tools**, and **Actions
 
 The coding agent remains the builder; OverMind provides the taste, context, and boundaries.
 
+### Extensibility: Add-On Modules
+
+OverMind is modular by design. You can attach domain-specific add-on modules without bloating the core engine:
+- **`overmind-clipper` (Web Clipper):** Ingests web DOM from the open-source Obsidian Clipper browser extension, stores articles and vector embeddings in MongoDB Atlas, and exposes `search_clips` as an MCP tool directly to coding agents.
+- **Environment & Secrets (`.env`):** Modules store connection strings and credentials (like `MONGODB_URI` and API tokens) in `.env`, which is strictly git-ignored and never committed to version control.
+
 ---
 
 ## Installation (5 Minutes)
@@ -200,6 +242,7 @@ python install.py --vault "/path/to/your/vault" --owner "Your Name"
 1. Edit `<vault>/taste-engine/interests.md` with 3–7 topics you want to explore and be known for.
 2. Seed initial stances and negative filters (`python new_curation.py stance "..."`), or allow `/ingest` and `/research` to propose them.
 3. Open your vault in Claude Code and run `/ingest` on any book, paper, or article.
+4. *(Optional)* If using external modules (such as the MongoDB Web Clipper), copy `.env.example` to `.env` and configure your credentials.
 
 Re-running `install.py` updates commands, scripts, prompts, schemas, and templates. It **never modifies your existing notes** or configuration settings.
 
@@ -218,6 +261,7 @@ Re-running `install.py` updates commands, scripts, prompts, schemas, and templat
 <vault>/
 ├── CLAUDE.md                       # Marked instructions configuring Claude Code
 ├── taste-engine.config.json        # Path mappings and agent model routing
+├── .env.example                    # Template for module secrets (e.g. MONGODB_URI)
 ├── .claude/commands/*.md           # The vault slash commands
 ├── .taste-engine/runs/             # Resumable pipeline run logs
 ├── frameworks/                     # Extracted thinking frameworks & build briefs
@@ -235,16 +279,11 @@ Re-running `install.py` updates commands, scripts, prompts, schemas, and templat
 
 ---
 
-## Core Principles
+## Further Reading & Examples
 
-- **The machine drafts, you decide:** OverMind does not auto-post. Taste and judgment cannot be outsourced.
-- **Frameworks must be executable:** Summaries are passive. Frameworks require concrete mental moves and application rules.
-- **Steal from many, credit all:** Every build brief and post traces its genealogy and credits original creators.
-- **Ship over structure:** Organizing your second brain is not output. Concrete drafts, briefs, and shipped work are.
-
-The thinking behind all of this, in long form: [`PHILOSOPHY.md`](PHILOSOPHY.md).
-
-See [`examples/`](examples/) for an end-to-end framework example (*Steal Like an Artist* by Austin Kleon).
+- **The Philosophy in Full:** [`PHILOSOPHY.md`](PHILOSOPHY.md) covers why thinking in frameworks is the defining skill of the AI age, and why AI moved the bottleneck to taste.
+- **The Long Essay:** [*You Are the Filter*](essays/overmind-essay-my-voice-v2.md) dives deep into evolutionary loops and selection pressure.
+- **End-to-End Walkthrough:** See [`examples/`](examples/) for a complete framework extraction and application from Austin Kleon's *Steal Like an Artist*.
 
 ---
 
