@@ -137,7 +137,6 @@ Run these directly inside your vault with Claude Code:
 | `/apply <framework> content\|code\|project [target]` | Framework → curation package, **build brief**, or proposed decision | Knowledge → Projects |
 | `/curate [topic]` | Mines vault for non-obvious ideas and records what was rejected | Knowledge |
 | `/research <topic>` | Taste-filtered web research → signal notes + curation package | Tools → Knowledge |
-| `/compete <idea-slug>` | Deep competitor intelligence & market exploration → research report | Tools → Knowledge → Projects |
 
 ### Example: Steal like an artist, for websites
 
@@ -194,7 +193,6 @@ python <engine>/scripts/pipeline.py doctor                   # verify installed 
 python <engine>/scripts/pipeline.py ingest "Make it stick.md"   # vault note, URL, or book title
 python <engine>/scripts/pipeline.py curate "agent memory"
 python <engine>/scripts/pipeline.py research "temporal knowledge graphs" --agent agy
-python <engine>/scripts/pipeline.py compete "autopay-recovery-agent"
 python <engine>/scripts/pipeline.py replicate steal-like-an-artist https://a.com https://b.com --goal "portfolio hero" --build ../my-site
 python <engine>/scripts/pipeline.py approve "<file>"          # human gate
 python <engine>/scripts/pipeline.py status | resume <run-id>

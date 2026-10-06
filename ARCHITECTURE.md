@@ -37,7 +37,7 @@ Code lives in `engine/scripts/taste_engine/`:
 | **Projects** | `projects/` | Modular project packs (`projects/twitter/`, `ideas/`, build briefs) | Domain logic stays in project packs, never polluting the core harness. |
 | **Knowledge** | `knowledge/` | `config.py` (paths), `context.py` (what a model may see), `notes.py` (writing results as notes) | Markdown is the source of truth. Any index or cache must be rebuildable from the `.md` files. Private folders are never read. |
 | **Tools** | `tools/` | `agents.py` (claude · codex · agy · gemini), `clipper.py` (stateless web clipper), `prompts.py`, `schema_check.py`, `links.py` | Tools are plain functions with no control flow. Swappable and stateless. |
-| **Agents & Pipelines** | `orchestration/`, `pipelines/` | Pipelines (`compete`, `curate`, `ingest`, `replicate`, `research`), `actions/gate.py`, subagents (`goal-aligner`) | Control flow is plain Python. LLM calls are isolated steps, never an open-ended loop. Side-effects require human gate approval (`status: pending_review`). |
+| **Agents & Pipelines** | `orchestration/`, `pipelines/` | Pipelines (`curate`, `ingest`, `replicate`, `research`), `actions/gate.py`, subagents (`goal-aligner`) | Control flow is plain Python. LLM calls are isolated steps, never an open-ended loop. Side-effects require human gate approval (`status: pending_review`). |
 
 Dependency direction: **pipelines → orchestration → tools / actions → knowledge**. Lower layers never import higher ones.
 
