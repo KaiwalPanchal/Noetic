@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 340" width="100%" height="100%">
+  <defs>
+    <linearGradient id="pipeBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B0F17"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+
+    <pattern id="dotPattern3" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#334155" fill-opacity="0.35"/>
+    </pattern>
+
+    <filter id="pipeShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+
+    <marker id="pipeArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#64748B"/>
+    </marker>
+    <marker id="pipeArrowSky" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#38BDF8"/>
+    </marker>
+    <marker id="pipeArrowEmerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#34D399"/>
+    </marker>
+  </defs>
+
+  <style>
+    .mono { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+    .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif; }
+  </style>
+
+  <rect width="1080" height="340" rx="16" fill="url(#pipeBg)" stroke="#1E293B" stroke-width="1.5"/>
+  <rect width="1080" height="340" rx="16" fill="url(#dotPattern3)" opacity="0.65"/>
+
+  <!-- Header -->
+  <g transform="translate(48, 32)">
+    <rect width="168" height="22" rx="6" fill="#1E1B4B" stroke="#4338CA" stroke-width="1"/>
+    <text x="84" y="15" class="mono" font-size="10.5" font-weight="600" fill="#A5B4FC" text-anchor="middle" letter-spacing="1">AGENT HARNESS FLOW</text>
+    <text x="182" y="16" class="sans" font-size="16" font-weight="600" fill="#F8FAFC">How Each Step Executes: Multi-Agent &amp; Fault-Tolerant</text>
+    <text x="0" y="38" class="sans" font-size="11.5" fill="#64748B">Strict contracts, schema enforcement, link resolution, and seamless fallback between Claude, Codex, and Antigravity.</text>
+  </g>
+
+  <!-- 5 STAGES HORIZONTAL -->
+  <!-- STAGE 1: TRIGGER -->
+  <g transform="translate(48, 95)" filter="url(#pipeShadow)">
+    <rect width="164" height="190" rx="10" fill="#111827" stroke="#1E293B" stroke-width="1.2"/>
+    <rect x="0" y="0" width="164" height="3" rx="1.5" fill="#38BDF8"/>
+    <text x="16" y="26" class="sans" font-size="12" font-weight="700" fill="#F8FAFC">1. INITIATION</text>
+    <text x="16" y="42" class="mono" font-size="10" fill="#38BDF8">pipeline.py</text>
+    
+    <g transform="translate(16, 60)">
+      <text x="0" y="14" class="sans" font-size="11" fill="#94A3B8">• Pipeline selected</text>
+      <text x="0" y="34" class="sans" font-size="11" fill="#94A3B8">• Run ID generated</text>
+      <rect x="0" y="44" width="132" height="20" rx="4" fill="#1E293B"/>
+      <text x="66" y="58" class="mono" font-size="9" fill="#A5B4FC" text-anchor="middle">.taste-engine/runs/</text>
+      <text x="0" y="80" class="sans" font-size="11" fill="#94A3B8">• State persisted</text>
+      <text x="0" y="100" class="sans" font-size="11" fill="#94A3B8">• Resumes if broken</text>
+    </g>
+  </g>
+
+  <path d="M 212 190 L 238 190" stroke="#38BDF8" stroke-width="1.5" marker-end="url(#pipeArrowSky)"/>
+
+  <!-- STAGE 2: CONTEXT -->
+  <g transform="translate(244, 95)" filter="url(#pipeShadow)">
+    <rect width="170" height="190" rx="10" fill="#111827" stroke="#1E293B" stroke-width="1.2"/>
+    <rect x="0" y="0" width="170" height="3" rx="1.5" fill="#818CF8"/>
+    <text x="16" y="26" class="sans" font-size="12" font-weight="700" fill="#F8FAFC">2. CONTEXT &amp; SPEC</text>
+    <text x="16" y="42" class="mono" font-size="10" fill="#818CF8">knowledge/ + contract</text>
+    
+    <g transform="translate(16, 60)">
+      <text x="0" y="14" class="sans" font-size="11" fill="#94A3B8">• Token budgeting</text>
+      <text x="0" y="34" class="sans" font-size="11" fill="#94A3B8">• Privacy filter denies</text>
+      <text x="12" y="50" class="sans" font-size="10.5" fill="#F43F5E">private folders</text>
+      <text x="0" y="74" class="sans" font-size="11" fill="#94A3B8">• Prompt template</text>
+      <text x="0" y="94" class="sans" font-size="11" fill="#94A3B8">• Strict agent contract</text>
+    </g>
+  </g>
+
+  <path d="M 414 190 L 440 190" stroke="#818CF8" stroke-width="1.5" marker-end="url(#pipeArrow)"/>
+
+  <!-- STAGE 3: AGENT EXECUTION -->
+  <g transform="translate(446, 95)" filter="url(#pipeShadow)">
+    <rect width="186" height="190" rx="10" fill="#111827" stroke="#4338CA" stroke-width="1.2"/>
+    <rect x="0" y="0" width="186" height="3" rx="1.5" fill="#A855F7"/>
+    <text x="16" y="26" class="sans" font-size="12" font-weight="700" fill="#F8FAFC">3. AGENT STEP</text>
+    <text x="16" y="42" class="mono" font-size="10" fill="#A855F7">tools/agents.py</text>
+    
+    <g transform="translate(16, 56)">
+      <rect width="154" height="24" rx="4" fill="#1E293B"/>
+      <text x="8" y="16" class="sans" font-size="10" font-weight="600" fill="#38BDF8">claude</text>
+      <text x="54" y="16" class="sans" font-size="10" fill="#94A3B8">| sonnet via CLI</text>
+
+      <g transform="translate(0, 30)">
+        <rect width="154" height="24" rx="4" fill="#1E293B"/>
+        <text x="8" y="16" class="sans" font-size="10" font-weight="600" fill="#818CF8">codex</text>
+        <text x="48" y="16" class="sans" font-size="10" fill="#94A3B8">| exec w/ schema</text>
+      </g>
+
+      <g transform="translate(0, 60)">
+        <rect width="154" height="24" rx="4" fill="#1E293B"/>
+        <text x="8" y="16" class="sans" font-size="10" font-weight="600" fill="#34D399">agy</text>
+        <text x="36" y="16" class="sans" font-size="10" fill="#94A3B8">| antigravity CLI</text>
+      </g>
+
+      <text x="0" y="106" class="sans" font-size="10.5" fill="#F59E0B">↳ Automatic failover</text>
+      <text x="14" y="120" class="sans" font-size="10" fill="#64748B">if down, timeout or quota</text>
+    </g>
+  </g>
+
+  <path d="M 632 190 L 658 190" stroke="#818CF8" stroke-width="1.5" marker-end="url(#pipeArrow)"/>
+
+  <!-- STAGE 4: VALIDATION -->
+  <g transform="translate(664, 95)" filter="url(#pipeShadow)">
+    <rect width="170" height="190" rx="10" fill="#111827" stroke="#1E293B" stroke-width="1.2"/>
+    <rect x="0" y="0" width="170" height="3" rx="1.5" fill="#F59E0B"/>
+    <text x="16" y="26" class="sans" font-size="12" font-weight="700" fill="#F8FAFC">4. VALIDATION</text>
+    <text x="16" y="42" class="mono" font-size="10" fill="#F59E0B">tools/schema_check</text>
+    
+    <g transform="translate(16, 60)">
+      <text x="0" y="14" class="sans" font-size="11" fill="#94A3B8">• Strict JSON Schema</text>
+      <text x="0" y="34" class="sans" font-size="11" fill="#94A3B8">• Real URL resolution</text>
+      <text x="0" y="54" class="sans" font-size="11" fill="#94A3B8">• X character limits</text>
+      <path d="M 0 68 L 138 68" stroke="#1E293B" stroke-width="1"/>
+      <text x="0" y="86" class="sans" font-size="10.5" font-weight="600" fill="#F59E0B">✗ Invalid output?</text>
+      <text x="0" y="102" class="sans" font-size="10" fill="#64748B">Retries 1x with exact error</text>
+      <text x="0" y="116" class="sans" font-size="10" fill="#64748B">or triggers CLI fallback.</text>
+    </g>
+  </g>
+
+  <path d="M 834 190 L 860 190" stroke="#34D399" stroke-width="1.5" marker-end="url(#pipeArrowEmerald)"/>
+
+  <!-- STAGE 5: RESULT & HUMAN GATE -->
+  <g transform="translate(866, 95)" filter="url(#pipeShadow)">
+    <rect width="166" height="190" rx="10" fill="#111827" stroke="#059669" stroke-width="1.2"/>
+    <rect x="0" y="0" width="166" height="3" rx="1.5" fill="#34D399"/>
+    <text x="16" y="26" class="sans" font-size="12" font-weight="700" fill="#F8FAFC">5. HUMAN GATE</text>
+    <text x="16" y="42" class="mono" font-size="10" fill="#34D399">actions/gate.py</text>
+    
+    <g transform="translate(16, 60)">
+      <text x="0" y="14" class="sans" font-size="11" fill="#94A3B8">• Note written with</text>
+      <rect x="0" y="22" width="134" height="20" rx="4" fill="#1E293B"/>
+      <text x="67" y="36" class="mono" font-size="9" fill="#F59E0B" text-anchor="middle">status: pending_review</text>
+      
+      <text x="0" y="60" class="sans" font-size="11" fill="#94A3B8">• Human approval:</text>
+      <rect x="0" y="68" width="134" height="20" rx="4" fill="#064E3B"/>
+      <text x="67" y="82" class="mono" font-size="9" fill="#34D399" text-anchor="middle">pipeline.py approve</text>
+      
+      <text x="0" y="106" class="sans" font-size="10.5" fill="#10B981">✓ Zero auto-posts</text>
+      <text x="0" y="120" class="sans" font-size="10.5" fill="#10B981">✓ Clean git branches</text>
+    </g>
+  </g>
+</svg>

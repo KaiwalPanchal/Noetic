@@ -1,0 +1,214 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 640" width="100%" height="100%">
+  <defs>
+    <linearGradient id="archBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B0F17"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+
+    <linearGradient id="cardGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#161F30"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+
+    <pattern id="dotPattern2" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#334155" fill-opacity="0.35"/>
+    </pattern>
+
+    <filter id="archShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+
+    <marker id="archArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#64748B"/>
+    </marker>
+    <marker id="archArrowIndigo" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#818CF8"/>
+    </marker>
+  </defs>
+
+  <style>
+    .mono { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+    .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif; }
+    .layer-title { font-size: 15px; font-weight: 700; letter-spacing: 0.5px; fill: #F8FAFC; }
+    .card-title { font-weight: 600; font-size: 13px; fill: #F1F5F9; }
+    .card-body { font-size: 11.5px; fill: #94A3B8; }
+  </style>
+
+  <rect width="1080" height="640" rx="16" fill="url(#archBg)" stroke="#1E293B" stroke-width="1.5"/>
+  <rect width="1080" height="640" rx="16" fill="url(#dotPattern2)" opacity="0.65"/>
+
+  <!-- Header -->
+  <g transform="translate(48, 38)">
+    <rect width="186" height="24" rx="6" fill="#1E1B4B" stroke="#4338CA" stroke-width="1"/>
+    <text x="93" y="16" class="mono" font-size="11" font-weight="600" fill="#A5B4FC" text-anchor="middle" letter-spacing="1">MODULAR ARCHITECTURE</text>
+    <text x="202" y="18" class="sans" font-size="18" font-weight="600" fill="#F8FAFC">The Four-Layer Engine Framework</text>
+    <text x="0" y="44" class="sans" font-size="12" fill="#64748B">A modular Python architecture decoupling orchestration, persistent markdown knowledge, multi-agent tools, and human actions.</text>
+  </g>
+
+  <!-- DRIVERS / INTERFACES (TOP ROW) -->
+  <g transform="translate(48, 105)">
+    <!-- Claude Code Driver -->
+    <g filter="url(#archShadow)">
+      <rect width="474" height="54" rx="10" fill="#131B2E" stroke="#1E293B" stroke-width="1.2"/>
+      <rect x="16" y="14" width="100" height="24" rx="6" fill="#1E293B" stroke="#0284C7" stroke-width="1"/>
+      <text x="66" y="30" class="sans" font-size="11" font-weight="600" fill="#38BDF8" text-anchor="middle">Claude Code</text>
+      <text x="128" y="27" class="sans" font-size="12" font-weight="600" fill="#F1F5F9">Interactive Vault Commands</text>
+      <text x="128" y="42" class="mono" font-size="10.5" fill="#64748B">/ingest · /apply · /curate · /draft · /ship · /journey</text>
+    </g>
+
+    <!-- Python Pipeline Driver -->
+    <g transform="translate(510, 0)" filter="url(#archShadow)">
+      <rect width="474" height="54" rx="10" fill="#131B2E" stroke="#1E293B" stroke-width="1.2"/>
+      <rect x="16" y="14" width="112" height="24" rx="6" fill="#1E293B" stroke="#6366F1" stroke-width="1"/>
+      <text x="72" y="30" class="mono" font-size="11" font-weight="600" fill="#A5B4FC" text-anchor="middle">pipeline.py</text>
+      <text x="140" y="27" class="sans" font-size="12" font-weight="600" fill="#F1F5F9">Multi-Agent Automated CLI</text>
+      <text x="140" y="42" class="mono" font-size="10.5" fill="#64748B">python pipeline.py &lt;pipeline&gt; [--agent agy|codex|claude]</text>
+    </g>
+  </g>
+
+  <!-- CONNECTOR TO ORCHESTRATION -->
+  <path d="M 285 160 L 285 186" stroke="#475569" stroke-width="1.5" marker-end="url(#archArrow)"/>
+  <path d="M 747 160 L 747 186" stroke="#475569" stroke-width="1.5" marker-end="url(#archArrow)"/>
+
+  <!-- ================= LAYER 1: ORCHESTRATION ================= -->
+  <g transform="translate(48, 190)" filter="url(#archShadow)">
+    <rect width="984" height="114" rx="12" fill="#111827" stroke="#4338CA" stroke-width="1.5"/>
+    <rect x="0" y="0" width="984" height="3" rx="1.5" fill="#818CF8"/>
+    
+    <g transform="translate(24, 20)">
+      <text x="0" y="16" class="sans layer-title">1. ORCHESTRATION LAYER</text>
+      <rect x="226" y="3" width="130" height="18" rx="4" fill="#1E1B4B"/>
+      <text x="291" y="16" class="mono" font-size="10" fill="#A5B4FC" text-anchor="middle">taste_engine/orchestration/</text>
+      <text x="0" y="36" class="sans" font-size="12" fill="#94A3B8">Control flow is deterministic Python. Steps are isolated agent calls, never open-ended runaway loops.</text>
+    </g>
+
+    <!-- Grid of Orchestration features -->
+    <g transform="translate(24, 68)">
+      <rect width="216" height="32" rx="6" fill="#161F30" stroke="#1E293B" stroke-width="1"/>
+      <text x="12" y="20" class="mono" font-size="11" fill="#38BDF8">registry.py</text>
+      <text x="96" y="20" class="sans" font-size="11" fill="#94A3B8">Pipeline discovery</text>
+
+      <g transform="translate(232, 0)">
+        <rect width="216" height="32" rx="6" fill="#161F30" stroke="#1E293B" stroke-width="1"/>
+        <text x="12" y="20" class="mono" font-size="11" fill="#A5B4FC">run.py</text>
+        <text x="64" y="20" class="sans" font-size="11" fill="#94A3B8">State &amp; pause/resume</text>
+      </g>
+
+      <g transform="translate(464, 0)">
+        <rect width="236" height="32" rx="6" fill="#161F30" stroke="#1E293B" stroke-width="1"/>
+        <text x="12" y="20" class="mono" font-size="11" fill="#34D399">steps.py</text>
+        <text x="76" y="20" class="sans" font-size="11" fill="#94A3B8">Route · validate · retry</text>
+      </g>
+
+      <g transform="translate(716, 0)">
+        <rect width="220" height="32" rx="6" fill="#161F30" stroke="#1E293B" stroke-width="1"/>
+        <text x="12" y="20" class="mono" font-size="11" fill="#FBBF24">fallback</text>
+        <text x="74" y="20" class="sans" font-size="11" fill="#94A3B8">Cross-CLI failover</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- THREE DOWNWARD CONNECTORS -->
+  <path d="M 212 305 L 212 342" stroke="#475569" stroke-width="1.5" marker-end="url(#archArrow)"/>
+  <path d="M 540 305 L 540 342" stroke="#475569" stroke-width="1.5" marker-end="url(#archArrow)"/>
+  <path d="M 868 305 L 868 342" stroke="#475569" stroke-width="1.5" marker-end="url(#archArrow)"/>
+
+  <!-- ================= THREE SUPPORTING LAYERS (BOTTOM ROW) ================= -->
+  
+  <!-- LAYER 2: KNOWLEDGE -->
+  <g transform="translate(48, 348)" filter="url(#archShadow)">
+    <rect width="312" height="200" rx="12" fill="#111827" stroke="#1E293B" stroke-width="1.2"/>
+    <rect x="0" y="0" width="312" height="3" rx="1.5" fill="#38BDF8"/>
+    
+    <text x="18" y="28" class="sans card-title">2. KNOWLEDGE LAYER</text>
+    <text x="18" y="44" class="mono" font-size="10" fill="#38BDF8">knowledge/</text>
+    <text x="18" y="62" class="sans" font-size="11" fill="#64748B">The vault is the database</text>
+
+    <g transform="translate(18, 78)">
+      <circle cx="4" cy="7" r="2.5" fill="#38BDF8"/>
+      <text x="14" y="11" class="mono" font-size="11" fill="#F1F5F9">config.py</text>
+      <text x="76" y="11" class="sans card-body">— Vault &amp; engine paths</text>
+
+      <circle cx="4" cy="31" r="2.5" fill="#38BDF8"/>
+      <text x="14" y="35" class="mono" font-size="11" fill="#F1F5F9">context.py</text>
+      <text x="82" y="35" class="sans card-body">— Budgeted context</text>
+
+      <circle cx="4" cy="55" r="2.5" fill="#38BDF8"/>
+      <text x="14" y="59" class="mono" font-size="11" fill="#F1F5F9">notes.py</text>
+      <text x="72" y="59" class="sans card-body">— Note serialization</text>
+
+      <path d="M 0 74 L 276 74" stroke="#1E293B" stroke-width="1"/>
+      <text x="0" y="92" class="sans" font-size="11" font-weight="600" fill="#F43F5E">Strict Privacy Protection</text>
+      <text x="0" y="106" class="sans" font-size="10.5" fill="#64748B">Private folders are never indexed or fed</text>
+      <text x="0" y="119" class="sans" font-size="10.5" fill="#64748B">to any agent context.</text>
+    </g>
+  </g>
+
+  <!-- LAYER 3: TOOLS -->
+  <g transform="translate(384, 348)" filter="url(#archShadow)">
+    <rect width="312" height="200" rx="12" fill="#111827" stroke="#1E293B" stroke-width="1.2"/>
+    <rect x="0" y="0" width="312" height="3" rx="1.5" fill="#818CF8"/>
+    
+    <text x="18" y="28" class="sans card-title">3. TOOLS LAYER</text>
+    <text x="18" y="44" class="mono" font-size="10" fill="#818CF8">tools/</text>
+    <text x="18" y="62" class="sans" font-size="11" fill="#64748B">Stateless instruments &amp; adapters</text>
+
+    <g transform="translate(18, 78)">
+      <circle cx="4" cy="7" r="2.5" fill="#818CF8"/>
+      <text x="14" y="11" class="mono" font-size="11" fill="#F1F5F9">agents.py</text>
+      <text x="76" y="11" class="sans card-body">— Claude · Codex · Agy</text>
+
+      <circle cx="4" cy="31" r="2.5" fill="#818CF8"/>
+      <text x="14" y="35" class="mono" font-size="11" fill="#F1F5F9">prompts.py</text>
+      <text x="84" y="35" class="sans card-body">— Versioned .md prompts</text>
+
+      <circle cx="4" cy="55" r="2.5" fill="#818CF8"/>
+      <text x="14" y="59" class="mono" font-size="11" fill="#F1F5F9">schema_check</text>
+      <text x="100" y="59" class="sans card-body">— Strict JSON validation</text>
+
+      <circle cx="4" cy="79" r="2.5" fill="#818CF8"/>
+      <text x="14" y="83" class="mono" font-size="11" fill="#F1F5F9">links.py</text>
+      <text x="68" y="83" class="sans card-body">— Real HTTP link verifier</text>
+
+      <circle cx="4" cy="103" r="2.5" fill="#818CF8"/>
+      <text x="14" y="107" class="mono" font-size="11" fill="#F1F5F9">tweets.py</text>
+      <text x="78" y="107" class="sans card-body">— Character count validator</text>
+    </g>
+  </g>
+
+  <!-- LAYER 4: ACTIONS -->
+  <g transform="translate(720, 348)" filter="url(#archShadow)">
+    <rect width="312" height="200" rx="12" fill="#111827" stroke="#1E293B" stroke-width="1.2"/>
+    <rect x="0" y="0" width="312" height="3" rx="1.5" fill="#34D399"/>
+    
+    <text x="18" y="28" class="sans card-title">4. ACTIONS LAYER</text>
+    <text x="18" y="44" class="mono" font-size="10" fill="#34D399">actions/</text>
+    <text x="18" y="62" class="sans" font-size="11" fill="#64748B">Controlled side effects</text>
+
+    <g transform="translate(18, 78)">
+      <circle cx="4" cy="7" r="2.5" fill="#34D399"/>
+      <text x="14" y="11" class="mono" font-size="11" fill="#F1F5F9">gate.py</text>
+      <text x="66" y="11" class="sans card-body">— Human approval gate</text>
+
+      <circle cx="4" cy="31" r="2.5" fill="#34D399"/>
+      <text x="14" y="35" class="mono" font-size="11" fill="#F1F5F9">git.py</text>
+      <text x="56" y="35" class="sans card-body">— Sandboxed branches</text>
+
+      <path d="M 0 54 L 276 54" stroke="#1E293B" stroke-width="1"/>
+      <text x="0" y="72" class="sans" font-size="11" font-weight="600" fill="#34D399">Zero Auto-Publishing</text>
+      <text x="0" y="88" class="sans" font-size="10.5" fill="#64748B">All agent notes land as</text>
+      <rect x="122" y="77" width="94" height="16" rx="3" fill="#1E293B"/>
+      <text x="169" y="89" class="mono" font-size="9" fill="#F59E0B" text-anchor="middle">pending_review</text>
+      <text x="0" y="104" class="sans" font-size="10.5" fill="#64748B">Code is built on clean git branches,</text>
+      <text x="0" y="118" class="sans" font-size="10.5" fill="#64748B">never directly committed.</text>
+    </g>
+  </g>
+
+  <!-- FOOTER PRINCIPLE BADGE -->
+  <g transform="translate(48, 574)">
+    <rect width="984" height="34" rx="8" fill="#0C1322" stroke="#1E293B" stroke-width="1"/>
+    <text x="492" y="21" class="sans" font-size="11" font-weight="500" fill="#64748B" text-anchor="middle">
+      <tspan fill="#818CF8" font-weight="600">Dependency Direction:</tspan> Pipelines → Orchestration → Tools / Actions → Knowledge. Lower layers never import higher ones.
+    </text>
+  </g>
+</svg>

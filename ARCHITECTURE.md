@@ -1,22 +1,9 @@
 # Architecture
 
-The Taste Engine is a **framework**, not a fixed app. It has four layers, and every future feature (a new pipeline, tool, agent or action) has a clear home in one of them.
+OverMind is an agent **framework**, not a fixed app. It has four layers, and every future feature (a new pipeline, tool, agent or action) has a clear home in one of them.
 
-```
-                      ┌──────────────────────────────────────────┐
-  you / Claude Code ─▶│  ORCHESTRATION  (the planner)            │
-  python pipeline.py  │  registry · runs on disk · agent steps   │
-                      │  route → call → validate → retry → fall back
-                      └───────┬──────────────┬──────────────┬────┘
-                              │              │              │
-                 ┌────────────▼───┐  ┌───────▼───────┐  ┌───▼────────────┐
-                 │   KNOWLEDGE    │  │     TOOLS     │  │    ACTIONS     │
-                 │  the vault     │  │  instruments  │  │  side effects  │
-                 │  config        │  │  agent CLIs   │  │  human gate    │
-                 │  context       │  │  prompts      │  │  git branches  │
-                 │  notes         │  │  validators   │  │  (future: more)│
-                 └────────────────┘  └───────────────┘  └────────────────┘
-```
+![Overmind Four-Layer Architecture](assets/overmind-architecture.svg)
+
 
 Code lives in `engine/scripts/taste_engine/`:
 
@@ -52,6 +39,8 @@ Enforced in code, not just requested:
 The Claude Code commands follow the same rule: the command file is the harness (see the vault's `CLAUDE.md` block).
 
 ## How a pipeline runs
+
+![Multi-Agent Pipeline Harness](assets/overmind-pipeline.svg)
 
 ```
 python pipeline.py draft "curation-004-….md"
