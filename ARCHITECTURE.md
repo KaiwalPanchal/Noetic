@@ -19,7 +19,7 @@ OverMind is an agent **framework**, not a fixed app. It structures work into com
 │     PROJECTS       │   │ KNOWLEDGE BASE │   │     TOOLS      │   │    ACTIONS     │
 ├────────────────────┤   ├────────────────┤   ├────────────────┤   ├────────────────┤
 │ · OverMind Engine  │   │ · Vault Notes  │   │ · Model Adapts │   │ · Human Gate   │
-│ · Twitter Growth   │   │ · Taste Graph  │   │ · Schema Check │   │ · Git Sandbox  │
+│ · Your Project     │   │ · Taste Graph  │   │ · Schema Check │   │ · Git Sandbox  │
 │ · Site Replication │   │ · Stances      │   │ · Web Scrapers │   │ · Note Writer  │
 │ · Any Workflow     │   │ · Frameworks   │   │ · Domain Tools │   │ · Gated Side-Fx│
 └────────────────────┘   └────────────────┘   └────────────────┘   └────────────────┘
@@ -36,9 +36,9 @@ Code lives in `engine/scripts/taste_engine/`:
 |---|---|---|---|
 | **Orchestration** | `orchestration/` | `registry.py` (pipelines register here), `run.py` (run state, pause/resume), `steps.py` (the agent step), `cli.py` | Control flow is plain Python. LLM calls are isolated steps, never an open-ended loop. |
 | **Knowledge** | `knowledge/` | `config.py` (paths), `context.py` (what a model may see), `notes.py` (writing results as notes) | Markdown is the source of truth. Any index or cache must be rebuildable from the `.md` files. Private folders are never read. |
-| **Tools** | `tools/` | `agents.py` (claude · codex · agy · gemini), `prompts.py`, `schema_check.py`, `tweets.py`, `links.py` | Tools are plain functions with no control flow. Swappable. |
+| **Tools** | `tools/` | `agents.py` (claude · codex · agy · gemini), `prompts.py`, `schema_check.py`, `links.py` | Tools are plain functions with no control flow. Swappable. |
 | **Actions** | `actions/` | `gate.py` (approve/reject), `git.py` (branch in a target repo) | Anything public or irreversible needs `status: approved` first. Prefer the reversible version (a branch, not a commit). Posting stays manual. |
-| **Pipelines** | `pipelines/` | One file each: `ingest`, `curate`, `research`, `draft`, `journey`, `replicate` | A pipeline composes the four layers and registers with `@pipeline(...)`. |
+| **Pipelines** | `pipelines/` | One file each: `ingest`, `curate`, `research`, `replicate` | A pipeline composes the four layers and registers with `@pipeline(...)`. |
 
 Dependency direction: **pipelines → orchestration → tools / actions → knowledge**. Lower layers never import higher ones.
 
@@ -97,14 +97,14 @@ The Claude Code commands follow the same rule: the command file is the harness (
 ```
 
 ```
-python pipeline.py draft "curation-004-….md"
+python pipeline.py curate "agent memory"
 
- run 20261006-0539-draft-…           ← run state: <vault>/.taste-engine/runs/<id>.json
-   ▸ draft                            ← agent step
+ run 20261006-0539-curate-…          ← run state: <vault>/.taste-engine/runs/<id>.json
+   ▸ curate                           ← agent step
        build context (knowledge)      ← budgeted, privacy-filtered
-       render prompt (tools)          ← engine/prompts/draft.md
-       call agent per routing         ← config: agents.draft = claude
-       validate: schema + extra       ← schema_check + tweet length (code, not vibes)
+       render prompt (tools)          ← engine/prompts/curate.md
+       call agent per routing         ← config: agents.curate = claude
+       validate: schema + extra       ← schema_check + project checks (code, not vibes)
        ✗ invalid → retry once with the exact errors
        ✗ agent down / quota / auth → next agent in agents.fallback
    ▸ write                            ← Python writes the note, status: pending_review
@@ -115,7 +115,7 @@ If any step fails, the run stops with a compact error (e.g. `{"code": "DIRTY_WOR
 
 ## Two ways to drive it
 
-| | Claude Code commands (`/ingest`, `/draft`, …) | Python pipeline (`pipeline.py ingest …`) |
+| | Claude Code commands (`/ingest`, `/apply`, …) | Python pipeline (`pipeline.py ingest …`) |
 |---|---|---|
 | Who's in charge | Claude, following the command's prompt | Python, following fixed steps |
 | Best for | interactive work, conversation, judgment calls | repeatable runs, mixing agents, scheduling later |
@@ -153,7 +153,7 @@ It shows up in `pipeline.py list` and `--help` automatically. If it uses an LLM,
   "owner": "Ada",
   "agent": "Claude Code",
   "x_char_limit": 280,
-  "paths": { "engine": "taste-engine", "frameworks": "frameworks", "twitter": "Twitter", "overmind": null },
+  "paths": { "engine": "taste-engine", "frameworks": "frameworks", "overmind": null },
   "agents": { "ingest": "claude", "research": "agy", "draft": "claude", "deconstruct": "claude", "build": "codex",
               "fallback": ["claude", "agy", "codex"] },
   "models": { "claude": "sonnet" },

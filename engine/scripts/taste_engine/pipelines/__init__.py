@@ -14,6 +14,6 @@ To add one:
 
 Current pipelines
   knowledge: ingest
-  content:   curate, research, draft, journey
+  content:   curate, research
   code:      replicate
 """

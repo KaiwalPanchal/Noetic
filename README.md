@@ -2,17 +2,17 @@
 
 **Turn what you read into how you work.**
 
-**In plain words:** You give it a book, a website, a research paper, or a thread. It extracts *how that author thinks* and stores it as a reusable, executable framework. Later, you ask it to apply that framework to write high-signal content, produce a site-replication build brief for your coding agent ("build it like that site, but mine"), or think through a complex architectural decision. It lives inside your notes app, never posts anything automatically, and keeps your data strictly on your local machine.
+**In plain words:** You give it a book, a website, or a research paper. It extracts *how that author thinks* and stores it as a reusable, executable framework. Later, you ask it to apply that framework to produce a site-replication build brief for your coding agent ("build it like that site, but mine"), or think through a complex architectural decision. It lives inside your notes app, never posts anything automatically, and keeps your data strictly on your local machine.
 
 An open-source agent harness and taste engine for your second brain (Obsidian or any markdown vault).
 
 OverMind structures your work into **four modular, composable blocks**:
-- **Projects:** Active goals, build briefs, roadmaps, and journey ledgers (e.g., building OverMind itself, growing an audience, engineering a product).
+- **Projects:** Active goals, build briefs, roadmaps, and decisions (e.g., building OverMind itself, or engineering a product).
 - **Knowledge Base:** Your markdown vault, taste graph, stances, negative filters, and frameworks.
 - **Tools:** Model adapters, scrapers, schema checkers, link verifiers, and domain-specific utilities.
 - **Actions:** Human-approval gates, sandboxed git branches, and execution stagers.
 
-> **The Inception Loop:** OverMind is a self-bootstrapping meta-harness — **we use OverMind to design, test, and build OverMind itself.** Specific workflows (like Twitter audience growth or site replication) are not part of the core harness; they are simply **projects** that run on top of it, bringing their own domain tools and goals.
+> **The Inception Loop:** OverMind is a self-bootstrapping meta-harness — **we use OverMind to design, test, and build OverMind itself.** Specific workflows (like content creation or site replication) are not part of the core harness; they are simply **projects** that run on top of it, bringing their own domain tools and goals.
 >
 > **The Agent's Role:** The AI agent does not own business logic or hoard data. It is strictly an **orchestrator** that wires these blocks together in whatever sequence your project requires. OverMind can also be supplied as an **MCP (Model Context Protocol)** server to any coding agent (Claude Code, Cursor, Antigravity, Codex).
 
@@ -37,7 +37,7 @@ OverMind structures your work into **four modular, composable blocks**:
 │     PROJECTS       │   │ KNOWLEDGE BASE │   │     TOOLS      │   │    ACTIONS     │
 ├────────────────────┤   ├────────────────┤   ├────────────────┤   ├────────────────┤
 │ · OverMind Engine  │   │ · Vault Notes  │   │ · Model Adapts │   │ · Human Gate   │
-│ · Twitter Growth   │   │ · Taste Graph  │   │ · Schema Check │   │ · Git Sandbox  │
+│ · Your Project     │   │ · Taste Graph  │   │ · Schema Check │   │ · Git Sandbox  │
 │ · Site Replication │   │ · Stances      │   │ · Web Scrapers │   │ · Note Writer  │
 │ · Any Workflow     │   │ · Frameworks   │   │ · Domain Tools │   │ · Gated Side-Fx│
 └────────────────────┘   └────────────────┘   └────────────────┘   └────────────────┘
@@ -49,9 +49,9 @@ OverMind structures your work into **four modular, composable blocks**:
 ```
 
 ### The Four Blocks
-1. **Projects:** Where your intent lives. Contains active goals, site-replication briefs, architectural decisions, and build-in-public logs (e.g. building the OverMind harness itself, growing a Twitter audience, or coding a new app).
+1. **Projects:** Where your intent lives. Contains active goals, site-replication briefs, and architectural decisions (e.g. building the OverMind harness itself, or coding a new app).
 2. **Knowledge Base:** Ground truth on disk. Your markdown second brain, taste graph (`interests.md`), stances (what you defend), negative filters (what you reject), and deconstructed thinking frameworks.
-3. **Tools:** Pure, stateless instruments. Model adapters (`claude`, `codex`, `agy`), prompt templates, strict JSON schema validators, web scrapers, and domain-specific validators (e.g. tweet length calculators).
+3. **Tools:** Pure, stateless instruments. Model adapters (`claude`, `codex`, `agy`), prompt templates, strict JSON schema validators, web scrapers, and domain-specific validators that projects bring with them.
 4. **Actions:** Controlled side effects with built-in safety rails. Every output lands as `status: pending_review`, builds run on isolated git branches, and human approval is required before anything is final.
 
 ---
@@ -70,7 +70,7 @@ OverMind structures your work into **four modular, composable blocks**:
                  │                       │                       │
                  ▼                       ▼                       ▼
           [ CODE BRIEFS ]       [ PROJECT DECISIONS ]     [ CONTENT / POSTS ]
-        (Site Replication)       (OverMind Meta-Build)     (Twitter Growth)
+        (Site Replication)       (OverMind Meta-Build)     (Your Project)  
                  │                       │                       │
                  ▼                       ▼                       ▼
           [ Coding Agent ]        [ Project Wiki ]        [ Review Stager ]
@@ -81,15 +81,15 @@ OverMind structures your work into **four modular, composable blocks**:
 
  ─────────────────────────────────────────────────────────────────────────────
   STEERING FOUNDATION (Taste Graph): interests.md · Stances · Negative Filters
-  FEEDBACK LOOP: /journey records real execution ──▶ compounds back into Taste
+  FEEDBACK LOOP: real execution results ──▶ compound back into Taste
 ```
 
 OverMind operates as a continuous learning loop across the blocks:
 1. **Ingest (`/ingest`):** Pulls from **Sources** into the **Knowledge Base**, extracting mental moves and core principles.
 2. **Steer (Taste Graph):** The **Knowledge Base** guides what is worth keeping, what gets mined (`/curate`), and what web noise gets rejected (`/research`).
 3. **Apply (`/apply`):** Translates frameworks into target **Projects** (content packages, code build briefs, or decisions).
-4. **Execute & Gate:** The **Agent Orchestrator** triggers **Tools** and **Actions** (coding agents build on git branches; threads are drafted for manual review).
-5. **Feedback (`/journey`):** Real-world build results feed back into the **Knowledge Base**, updating your stances and taste.
+4. **Execute & Gate:** The **Agent Orchestrator** triggers **Tools** and **Actions** (coding agents build on git branches; content is drafted for manual review).
+5. **Feedback:** Real-world build results feed back into the **Knowledge Base**, updating your stances and taste.
 
 ---
 
@@ -103,9 +103,6 @@ Run these directly inside your vault with Claude Code:
 | `/apply <framework> content\|code\|project [target]` | Framework → curation package, **build brief**, or proposed decision | Knowledge → Projects |
 | `/curate [topic]` | Mines vault for non-obvious ideas and records what was rejected | Knowledge |
 | `/research <topic>` | Taste-filtered web research → signal notes + curation package | Tools → Knowledge |
-| `/draft <note>` | Curation package or journey entry → thread draft (character-checked) | Projects → Tools |
-| `/ship <draft> [posted <url>]` | Stages copy-paste text, logs post metrics. **Never posts for you.** | Actions |
-| `/journey [what happened]` | Build-in-public entry with tweet candidates and privacy filtering | Projects → Actions |
 
 ### Example: Steal like an artist, for websites
 
@@ -162,8 +159,6 @@ python <engine>/scripts/pipeline.py doctor                   # verify installed 
 python <engine>/scripts/pipeline.py ingest "Make it stick.md"   # vault note, URL, or book title
 python <engine>/scripts/pipeline.py curate "agent memory"
 python <engine>/scripts/pipeline.py research "temporal knowledge graphs" --agent agy
-python <engine>/scripts/pipeline.py draft "<curation note>"
-python <engine>/scripts/pipeline.py journey "what I shipped today"
 python <engine>/scripts/pipeline.py replicate steal-like-an-artist https://a.com https://b.com --goal "portfolio hero" --build ../my-site
 python <engine>/scripts/pipeline.py approve "<file>"          # human gate
 python <engine>/scripts/pipeline.py status | resume <run-id>
@@ -171,7 +166,7 @@ python <engine>/scripts/pipeline.py status | resume <run-id>
 
 ### Pipeline Guarantees
 - **Python owns the flow:** Agent CLIs are isolated workers receiving structured prompts and returning strict JSON schemas.
-- **Code-level validation:** Schemas, character limits, and web citations are verified programmatically. If invalid, the harness retries once with exact error diagnostics.
+- **Code-level validation:** Schemas and web citations are verified programmatically. If invalid, the harness retries once with exact error diagnostics.
 - **Cross-model failover:** If your primary agent is rate-limited, down, or unauthorized, the harness automatically falls back to your configured secondary agents (e.g., Claude → Antigravity → Codex).
 - **Human-in-the-loop gate:** All generated notes land as `status: pending_review`. Nothing is published, committed, or posted automatically.
 - **Resumable runs:** Run state is persisted to `.taste-engine/runs/`. Interrupted runs resume from the last successful step without redundant API costs.
@@ -213,9 +208,7 @@ Re-running `install.py` updates commands, scripts, prompts, schemas, and templat
 |---|---|---|
 | `--engine-dir` | `taste-engine` | Folder name for the taste graph, pipeline, and scripts |
 | `--frameworks-dir` | `frameworks` | Vault-wide frameworks folder (shared across all projects) |
-| `--twitter-dir` | `Twitter` | Build-in-public journey & tweet drafts folder |
-| `--overmind-dir` | none | Optional: personal wiki / goals folder (`/ship` and `/journey` log here) |
-| `--x-char-limit` | `280` | Character limit for social posts (e.g. increase for X Premium) |
+| `--overmind-dir` | none | Optional: personal wiki / goals folder |
 
 ---
 
@@ -225,24 +218,19 @@ Re-running `install.py` updates commands, scripts, prompts, schemas, and templat
 <vault>/
 ├── CLAUDE.md                       # Marked instructions configuring Claude Code
 ├── taste-engine.config.json        # Path mappings and agent model routing
-├── .claude/commands/*.md           # The 7 vault slash commands
+├── .claude/commands/*.md           # The vault slash commands
 ├── .taste-engine/runs/             # Resumable pipeline run logs
 ├── frameworks/                     # Extracted thinking frameworks & build briefs
 │   ├── briefs/
 │   └── sources/
-├── Twitter/                        # Build-in-public logs & drafts
-│   ├── journey/
-│   ├── drafts/
-│   ├── ready/
-│   └── posted.md
 └── taste-engine/                   # The taste engine core
     ├── interests.md                # Topics you care about
     ├── 01-taste-graph/             # Stances · Negative-filters · Exemplars
     ├── 02-signals/                 # Papers · Repos · Postmortems · Web notes
     ├── 03-pipeline/                # Inbox → Curation → Drafts → Ready → Archive
-    ├── playbooks/                  # Editorial lenses, thread templates, hooks
+    ├── playbooks/                  # Editorial lenses and reusable playbooks
     ├── templates/                  # Framework & build-brief templates
-    └── scripts/                    # pipeline.py, new_curation.py, thread_validator.py
+    └── scripts/                    # pipeline.py, new_curation.py
 ```
 
 ---

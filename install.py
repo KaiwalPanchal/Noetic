@@ -97,7 +97,7 @@ def copy_package(src: Path, dst: Path) -> list[str]:
 
 
 def seed(src: Path, dst: Path, cfg: dict) -> str | None:
-  if dst.exists():
+  if dst.exists() or not src.exists():  # project seeds (e.g. seed/twitter) are optional
     return None
   dst.parent.mkdir(parents=True, exist_ok=True)
   dst.write_text(render(src.read_text(encoding="utf-8"), cfg), encoding="utf-8")
