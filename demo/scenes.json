@@ -1,0 +1,52 @@
+{
+  "01-tests-and-doctor": {
+    "title": "OverMind - tests + system check",
+    "steps": [
+      {
+        "cmd": "python -m pytest -q",
+        "max_lines": 10,
+        "pause": 2
+      },
+      {
+        "cmd": "overmind doctor",
+        "max_lines": 20,
+        "pause": 2.5
+      }
+    ]
+  },
+  "02-eval-harness": {
+    "title": "OverMind - eval harness (in-sample vs held-out)",
+    "steps": [
+      {
+        "cmd": "overmind eval",
+        "max_lines": 20,
+        "pause": 2
+      },
+      {
+        "cmd": "overmind eval --dataset heldout",
+        "max_lines": 20,
+        "allow_fail": true,
+        "pause": 3
+      }
+    ]
+  },
+  "03-install-and-thread-gate": {
+    "title": "OverMind - install into a vault + thread length gate",
+    "steps": [
+      {
+        "cmd": "mkdir -p $DEMO_TMP/vault && python install.py --vault $DEMO_TMP/vault --owner Demo | tail -6 | sed 's#C:.*vault#<vault>#'",
+        "max_lines": 10,
+        "pause": 2
+      },
+      {
+        "cmd": "cp \"$DEMO_ROOT/demo/sample_thread.md\" $DEMO_TMP/vault/draft.md && overmind validate-thread $DEMO_TMP/vault/draft.md",
+        "max_lines": 40,
+        "allow_fail": true,
+        "pause": 3
+      }
+    ],
+    "env": {
+      "TASTE_ENGINE_VAULT": "{tmp}/vault"
+    }
+  }
+}

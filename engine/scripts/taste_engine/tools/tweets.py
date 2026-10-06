@@ -29,5 +29,8 @@ def weighted_length(text: str) -> int:
 
 def too_long(texts: list[str], limit: int) -> list[str]:
   """Validation messages for tweets over the limit (fed back to the agent on retry)."""
-  return [f"tweet {i} is {weighted_length(t)} chars (max {limit}); shorten it"
-          for i, t in enumerate(texts, 1) if weighted_length(t) > limit]
+  return [
+      f"tweet {i} is {weighted_length(t)} chars (max {limit}); shorten it"
+      for i, t in enumerate(texts, 1)
+      if weighted_length(t) > limit
+  ]

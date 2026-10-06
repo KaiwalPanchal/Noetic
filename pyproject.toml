@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "overmind-engine"
+version = "0.2.0"
+description = "Harness, MCP native protocol server, and taste engine for personal knowledge vaults"
+readme = "README.md"
+authors = [{ name = "Kaiwal Panchal" }]
+license = { text = "MIT" }
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "mcp>=2.0.0",
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "pydantic>=2.0.0",
+    "jsonschema>=4.20.0",
+    "opentelemetry-api>=1.20.0",
+    "opentelemetry-sdk>=1.20.0",
+    "pyyaml>=6.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[project.scripts]
+overmind = "taste_engine.cli:app"
+overmind-mcp = "taste_engine.mcp.server:main"
+
+[tool.setuptools.package-dir]
+"" = "engine/scripts"
+
+[tool.setuptools.packages.find]
+where = ["engine/scripts"]
+
+[tool.setuptools.package-data]
+"taste_engine.evals" = ["*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "--basetemp=./.pytest_temp"

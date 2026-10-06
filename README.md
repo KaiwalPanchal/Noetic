@@ -1,10 +1,71 @@
 # OverMind
 
+[![CI Status](https://github.com/KaiwalPanchal/OverMind/actions/workflows/ci.yml/badge.svg)](https://github.com/KaiwalPanchal/OverMind/actions)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![MCP SDK 2.x](https://img.shields.io/badge/built%20on-MCP%20SDK%202.x-blue.svg)](https://modelcontextprotocol.io)
+[![Security](https://img.shields.io/badge/security-AST%20denylist%20(not%20a%20sandbox)-orange.svg)](docs/threat-model.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **Turn what you read into how you work.**
 
 **In plain words:** You give it a book, a website, or a research paper. It extracts *how that author thinks* and stores it as a reusable, executable framework. Later, you ask it to apply that framework to produce a site-replication build brief for your coding agent ("build it like that site, but mine"), or think through a complex architectural decision. It lives inside your notes app, never posts anything automatically, and keeps your data strictly on your local machine.
 
 An open-source agent harness and taste engine for your second brain (Obsidian or any markdown vault).
+
+
+> **Names, to avoid confusion.** The repo and project are **OverMind** (https://github.com/KaiwalPanchal/OverMind; locally the folder may be called `overmind-taste-engine`). The installable Python package is **`overmind-engine`** (it provides the `overmind` and `overmind-mcp` commands). The importable module is **`taste_engine`** (`engine/scripts/taste_engine/`). "Taste Engine" is the name of the vault-side system the package installs.
+
+## Quickstart
+
+```bash
+git clone https://github.com/KaiwalPanchal/OverMind.git && cd OverMind
+pip install -e ".[test]"
+pytest -q          # run the test suite
+overmind doctor    # check agent CLIs, MCP server construction, policy gate
+overmind eval      # run the eval harness (see "Eval Harness" below for what it does and does not measure)
+```
+
+Output captured from a real run (Windows, Python 3.14; the agent table in `doctor` depends on which CLIs you have installed):
+
+```text
+$ pytest -q
+166 passed in 3.0s
+
+$ overmind doctor        # excerpt
+[OK] Model Context Protocol (MCP) Server: Ready (OverMind Taste Engine v0.2.0)
+[OK] Security Policy Gate: Active (AST validation operational)
+
+$ overmind eval
+Extractor: rule-based-baseline
+Dataset: golden_dataset.json  (30 cases)
+TP: 23 | FP: 0 | TN: 7 | FN: 0
+F1 Score                  | 1.000
+GATE PASSED: F1 1.000 >= 0.8
+
+$ overmind eval --dataset heldout
+Dataset: heldout_dataset.json  (12 cases)
+TP: 6 | FP: 4 | TN: 2 | FN: 0
+F1 Score                  | 0.750
+GATE FAILED: F1 0.750 < 0.8
+```
+
+The second result is expected and is the point: the baseline's rules were written while looking at the 30-case golden set (in-sample), and it drops to F1 0.750 on 12 cases written afterwards.
+
+## Demos
+
+Terminal recordings of the real CLI (each command is executed and its captured output replayed; regenerate with `python demo/record.py`, scenes in [`demo/scenes.json`](demo/scenes.json)). MP4 versions sit next to the GIFs.
+
+**Tests and system check**: `pytest`, `overmind doctor` ([mp4](demo/01-tests-and-doctor.mp4))
+
+![tests and doctor](demo/01-tests-and-doctor.gif)
+
+**Eval harness**: in-sample vs held-out. The baseline passes the 30 cases it was tuned on and fails the gate on 12 unseen ones, on purpose ([mp4](demo/02-eval-harness.mp4))
+
+![eval harness](demo/02-eval-harness.gif)
+
+**Install into a vault + thread length gate**: `install.py`, then `overmind validate-thread` rejecting an over-limit tweet ([mp4](demo/03-install-and-thread-gate.mp4))
+
+![install and thread gate](demo/03-install-and-thread-gate.gif)
 
 ---
 
@@ -45,7 +106,7 @@ Read the full philosophical grounding in [`PHILOSOPHY.md`](PHILOSOPHY.md) and th
 ### Architecture: The 4 Primitives
 
 OverMind unifies your work into **four core primitives**:
-- **Projects:** Active goals, build briefs, ideas incubator, roadmaps, and domain applications (e.g. `projects/twitter/`, `ideas/`, site replication).
+- **Projects:** Active goals, build briefs, ideas incubator, roadmaps, and domain applications (e.g. the Twitter pack in `engine/scripts/taste_engine/projects/twitter/`, `ideas/`, site replication).
 - **Knowledge Base:** Ground truth on disk — your local markdown vault, taste graph, stances, negative filters, and extracted thinking frameworks.
 - **Tools:** Pure, stateless instruments — model adapters, scrapers, schema checkers, link verifiers, and the Web Clipper (`tools/clipper.py`).
 - **Agents:** Autonomous intelligences and pipeline orchestrators (`compete`, `curate`, `research`, `ingest`, `goal-aligner`) bound by strict human-approval gates.
@@ -83,7 +144,7 @@ OverMind unifies your work into **four core primitives**:
 ```
 
 ### The 4 Primitives
-1. **Projects:** Where intent lives. Contains active goals, site-replication briefs, the ideas incubator (`ideas/`), and modular project packs (e.g. `projects/twitter/`).
+1. **Projects:** Where intent lives. Contains active goals, site-replication briefs, the ideas incubator (`ideas/`), and modular project packs (e.g. `engine/scripts/taste_engine/projects/twitter/`).
 2. **Knowledge Base:** Ground truth on disk. Your markdown second brain, taste graph (`interests.md`), stances (what you defend), negative filters (what you reject), and deconstructed thinking frameworks.
 3. **Tools:** Pure, stateless instruments. Model adapters (`claude`, `codex`, `agy`), prompt templates, strict JSON schema validators, link checkers, and the stateless Web Clipper (`tools/clipper.py`).
 4. **Agents:** Autonomous intelligences & pipelines. Multi-step pipelines (`compete`, `curate`, `research`, `ingest`, `replicate`) and specialized agents (e.g. `goal-aligner`) operating under human-in-the-loop review gates (`status: pending_review`).
@@ -209,41 +270,88 @@ Agent CLIs supported: [Claude Code](https://claude.com/claude-code), [Codex CLI]
 
 ---
 
-## Supplying OverMind as MCP to Coding Agents
+## Model Context Protocol (MCP) Server
 
-Because OverMind separates **Projects**, **Knowledge**, **Tools**, and **Actions** into clean modular interfaces, it can act as a **Model Context Protocol (MCP)** server:
-- **Cursor / Windsurf / Claude Code / Antigravity** can connect to OverMind.
-- Agents can query the **Knowledge Base** (stances, negative filters, frameworks) to guide design choices.
-- Agents can read active **Projects** (build briefs, architectural decisions) to know what to build.
-- Agents can trigger **Tools** (schema checkers, web research) and propose gated **Actions** (revising notes, sandboxed branches).
+OverMind exposes its resources and tools through an MCP server built on the official [`mcp` Python SDK](https://pypi.org/project/mcp/) (2.x, `mcp.server.mcpserver.MCPServer`; the import was checked against the installed SDK). Transports `stdio`, `sse` and `streamable-http` are passed through to the SDK. The repo's tests call the registered tools and construct the server; they do not run a client-side protocol conformance suite, so "compliant" is not claimed.
 
-The coding agent remains the builder; OverMind provides the taste, context, and boundaries.
+### 1. Claude Desktop Configuration
+Add to your `claude_desktop_config.json`:
 
-### Extensibility: Domain Tools & Project Packs
+```json
+{
+  "mcpServers": {
+    "overmind": {
+      "command": "overmind-mcp",
+      "args": ["--transport", "stdio", "--vault", "C:/path/to/your/vault"]
+    }
+  }
+}
+```
 
-OverMind is modular by design. You can attach domain-specific tools and project packs without bloating the core engine:
-- **Web Clipper Tool (`taste_engine/tools/clipper.py`):** Pure, stateless tool that ingests web DOM and articles, returning structured Markdown signal notes directly to your Knowledge Base (`02-signals/web/` or `/ingest`).
-- **Project Packs (`projects/<name>/`):** Self-contained applications (such as `projects/twitter/`) bringing their own commands, prompts, schemas, and pipelines that install cleanly into your vault.
-- **Environment & Secrets (`.env`):** Optional API keys and external endpoints live in `.env`, which is strictly git-ignored and never committed.
+### 2. Capabilities Exposed via MCP:
+- **Resources:**
+  - `overmind://stances`: Real-time personal taste stances and negative filters from `interests.md`.
+  - `overmind://frameworks`: Catalog of extracted mental models and architectural frameworks.
+  - `overmind://status`: Active projects, run logs, and pipeline health.
+- **Tools:**
+  - `validate_thread`: Validates Twitter/X thread drafts with official weighting rules.
+  - `inspect_code_safety`: Pre-execution AST static analysis blocking unsafe system calls.
+  - `check_json_schema`: Validates agent responses against strict JSON schemas.
 
 ---
 
-## Installation (5 Minutes)
+## 1-Click Installation & Modern CLI
 
-**Prerequisites:** [Claude Code](https://claude.com/claude-code) and Python 3.10+.
+OverMind is packaged as a standard Python tool:
 
 ```bash
-git clone https://github.com/KaiwalPanchal/OverMind.git overmind && cd overmind
-python install.py --vault "/path/to/your/vault" --owner "Your Name"
+# 1-Click Installation (Development Mode)
+git clone https://github.com/KaiwalPanchal/OverMind.git && cd OverMind
+pip install -e .[test]
+
+# System Diagnostic & Health Check
+overmind doctor
+
+# Run MCP Server
+overmind mcp --transport stdio
+
+# Run the eval harness (rule-based baseline extractor by default)
+overmind eval
 ```
 
-### Setup Steps:
-1. Edit `<vault>/taste-engine/interests.md` with 3–7 topics you want to explore and be known for.
-2. Seed initial stances and negative filters (`python new_curation.py stance "..."`), or allow `/ingest` and `/research` to propose them.
-3. Open your vault in Claude Code and run `/ingest` on any book, paper, or article.
-4. *(Optional)* If using external modules (such as the MongoDB Web Clipper), copy `.env.example` to `.env` and configure your credentials.
+---
 
-Re-running `install.py` updates commands, scripts, prompts, schemas, and templates. It **never modifies your existing notes** or configuration settings.
+## Eval Harness (grader + pluggable extractor)
+
+**What it is.** A labelled-dataset grading harness in `engine/scripts/taste_engine/evals/`: deterministic graders (schema, required-entity recall, forbidden-buzzword penalty, injection-marker leak) feed an approve/reject decision, scored with accuracy / precision / recall / F1 / Cohen's kappa. It grades *any* extractor `(source_text) -> dict` (see `evals/extractors.py`), which receives only the source text, never the label or category.
+
+**What it is not.** It does not evaluate the LLM extraction pipeline. No LLM is called. An earlier version graded a hard-coded stub and reported F1 = 1.0; that was circular and has been removed.
+
+**What ships.**
+- `RuleBasedExtractor`: a deterministic, zero-cost extractive baseline. Its rules were written after reading the 30-case `golden_dataset.json`, so its score there (F1 1.000) is in-sample.
+- `heldout_dataset.json`: 12 cases written after the rules were frozen. Measured result: TP 6, FP 4, TN 2, FN 0, F1 0.750, kappa 0.333. The baseline over-accepts subtle injections and marketing copy it has no rule for.
+- Harness tests (`tests/test_eval_harness.py`) use synthetic extractors with known outcomes (oracle, always-reject, echo-everything) to check the grading and metric plumbing.
+- The datasets are small. Treat the numbers as a smoke signal and a regression floor, not a benchmark.
+
+**Plug in a real extractor.**
+
+```bash
+overmind eval --extractor my_pkg.my_module:my_extractor --dataset heldout --output results.json
+```
+
+`my_extractor` is any callable (or zero-arg class) returning `{"title", "core_principles", "mental_moves", "anti_patterns", "rejected"}`. No real-LLM result is reported here because none has been run.
+
+CI runs the baseline on both datasets: golden with the default 0.80 F1 floor, held-out with a 0.5 floor (`.github/workflows/ci.yml`).
+
+---
+
+## Security & Architectural Threat Model
+
+- **Static policy gate (`security/policy_gate.py`).** A best-effort denylist, **not a sandbox**. `validate_python_ast` blocks dangerous builtins (`eval`, `exec`, `compile`, `__import__`, `getattr`, `open`, ...), forbidden imports (`subprocess`, `importlib`, `ctypes`, `builtins`, `socket`, `pty`), `os.system`/`os.popen`/`shutil.rmtree` including through import aliases, and dunder-based escape chains (`__class__`, `__subclasses__`, `__globals__`, ...). Python can still be obfuscated past a denylist, and the project runs no process sandbox. Do not execute untrusted code on the strength of this check.
+- **Path confinement.** `validate_vault_path` rejects any `..` segment, anything resolving outside the vault, and protected names (`.env`, `.git`, `.private-strings`, keys).
+- **Input sanitizing.** `sanitize_input` enforces a length budget, strips NULs and rejects reserved `taste-engine` block markers. It is a library function: the pipelines do not call it yet.
+- **Human approval gate.** Generated notes land as `status: pending_review`; nothing is published or committed automatically.
+- Details, test counts and residual risk are in [`docs/threat-model.md`](docs/threat-model.md).
 
 ### Installation Options
 | Flag | Default | Description |

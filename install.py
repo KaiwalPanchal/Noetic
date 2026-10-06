@@ -20,6 +20,8 @@ if sys.stdout and hasattr(sys.stdout, "reconfigure"):
   sys.stdout.reconfigure(encoding="utf-8")
 
 REPO = Path(__file__).resolve().parent
+# Canonical home of optional project packs (also importable as taste_engine.projects.*).
+PROJECTS_DIR = REPO / "engine" / "scripts" / "taste_engine" / "projects"
 CONFIG_NAME = "taste-engine.config.json"
 BLOCK_RE = re.compile(r"<!-- taste-engine:start -->.*?<!-- taste-engine:end -->\n?", re.S)
 
@@ -76,6 +78,8 @@ def copy_owned(src_dir: Path, dst_dir: Path, cfg: dict, pattern: str, rendered: 
   dst_dir.mkdir(parents=True, exist_ok=True)
   written = []
   for src in sorted(src_dir.glob(pattern)):
+    if src.name == "__init__.py":  # package markers stay with the package copy
+      continue
     dst = dst_dir / src.name
     if rendered:
       dst.write_text(render(src.read_text(encoding="utf-8"), cfg), encoding="utf-8")
@@ -119,8 +123,8 @@ def update_claude_md(vault: Path, cfg: dict) -> str:
 
 
 def install_project(project_name: str, vault: Path, cfg: dict) -> list[str]:
-  """Install an optional domain project pack (e.g. projects/twitter)."""
-  proj_dir = REPO / "projects" / project_name
+  """Install an optional domain project pack (e.g. taste_engine/projects/twitter)."""
+  proj_dir = PROJECTS_DIR / project_name
   if not proj_dir.is_dir():
     return []
   engine = vault / cfg["paths"]["engine"]
@@ -158,7 +162,7 @@ def main():
   p.add_argument("--twitter-dir", help="Build-in-public folder (default: Twitter)")
   p.add_argument("--overmind-dir", help="Optional Overmind folder (goals/quests/log integration)")
   p.add_argument("--x-char-limit", type=int, help="Per-tweet limit (default 280; raise for X Premium)")
-  p.add_argument("--projects", nargs="*", help="Project packs to install (default: all in projects/)")
+  p.add_argument("--projects", nargs="*", help="Project packs to install (default: all packs in engine/scripts/taste_engine/projects/)")
   args = p.parse_args()
 
   vault = Path(args.vault).expanduser().resolve()
@@ -188,7 +192,7 @@ def main():
   written += copy_owned(REPO / "engine" / "schemas", engine / "schemas", cfg, "*.json", rendered=False)
 
   # 2. Install modular project packs
-  proj_names = args.projects if args.projects is not None else [p.name for p in (REPO / "projects").iterdir() if p.is_dir()]
+  proj_names = args.projects if args.projects is not None else [p.name for p in sorted(PROJECTS_DIR.iterdir()) if p.is_dir() and not p.name.startswith("__")]
   for pname in proj_names:
     written += install_project(pname, vault, cfg)
 

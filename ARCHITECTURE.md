@@ -34,7 +34,7 @@ Code lives in `engine/scripts/taste_engine/`:
 
 | Layer | Folder | What it owns | Rule |
 |---|---|---|---|
-| **Projects** | `projects/` | Modular project packs (`projects/twitter/`, `ideas/`, build briefs) | Domain logic stays in project packs, never polluting the core harness. |
+| **Projects** | `engine/scripts/taste_engine/projects/` | Modular project packs (`projects/twitter/`, `ideas/`, build briefs) | Domain logic stays in project packs, never polluting the core harness. |
 | **Knowledge** | `knowledge/` | `config.py` (paths), `context.py` (what a model may see), `notes.py` (writing results as notes) | Markdown is the source of truth. Any index or cache must be rebuildable from the `.md` files. Private folders are never read. |
 | **Tools** | `tools/` | `agents.py` (claude · codex · agy · gemini), `clipper.py` (stateless web clipper), `prompts.py`, `schema_check.py`, `links.py` | Tools are plain functions with no control flow. Swappable and stateless. |
 | **Agents & Pipelines** | `orchestration/`, `pipelines/` | Pipelines (`curate`, `ingest`, `replicate`, `research`), `actions/gate.py`, subagents (`goal-aligner`) | Control flow is plain Python. LLM calls are isolated steps, never an open-ended loop. Side-effects require human gate approval (`status: pending_review`). |
@@ -145,7 +145,7 @@ It shows up in `pipeline.py list` and `--help` automatically. If it uses an LLM,
  
 **A new action:** add a module to `actions/`. Call `gate.require_approved(note)` before doing anything public.
  
-**A project pack:** bundle domain-specific commands, prompts, schemas, pipelines, and tools into `projects/<name>/` (e.g. `projects/twitter/`). Project packs extend the core harness cleanly without polluting the engine.
+**A project pack:** bundle domain-specific commands, prompts, schemas, pipelines, and tools into `engine/scripts/taste_engine/projects/<name>/` (e.g. `projects/twitter/`; `install.py` copies a pack into a vault). Project packs extend the core harness cleanly without polluting the engine.
 
 ## Configuration (`<vault>/taste-engine.config.json`)
 

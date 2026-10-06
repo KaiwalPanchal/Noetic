@@ -2,7 +2,7 @@
 """
 from pathlib import Path
 
-ASSETS_DIR = Path(r"C:\External Apps\overmind-taste-engine\assets")
+ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
 ASSETS_DIR.mkdir(parents=True, exist_ok=True)
 
 def generate_loop_svg():

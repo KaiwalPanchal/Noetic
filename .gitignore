@@ -18,3 +18,13 @@ Thumbs.db
 .obsidian/
 .private-allow
 
+# Build & Test
+*.egg-info/
+.pytest_cache/
+.pytest_temp/
+dist/
+build/
+
+
+# Generated eval output (use `overmind eval --output <path>`)
+eval_results.json
