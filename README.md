@@ -75,7 +75,7 @@ Agent CLIs (install whichever you have): [Claude Code](https://claude.com/claude
 Requirements: [Claude Code](https://claude.com/claude-code) and Python 3.10+.
 
 ```bash
-git clone <this repo> taste-engine && cd taste-engine
+git clone https://github.com/KaiwalPanchal/OverMind.git taste-engine && cd taste-engine
 python install.py --vault "/path/to/your/vault" --owner "Your Name"
 ```
 

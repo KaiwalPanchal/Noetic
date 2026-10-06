@@ -1,7 +1,8 @@
 """Pre-commit guard: block private strings from entering the public repo.
 
 Reads a deny-list from `.private-strings` (gitignored, one string per line,
-case-insensitive) and scans the staged files. Exits 1 if any appear.
+case-insensitive) and scans the staged files. Exact strings in `.private-allow`
+(also gitignored), such as the repo URL, are exempt. Exits 1 if any appear.
 Also blocks absolute home-directory paths.
 """
 
@@ -24,11 +25,16 @@ def staged_files() -> list[Path]:
   return [REPO / line for line in out.splitlines() if line.strip()]
 
 
+def _lines(path: Path) -> list[str]:
+  if not path.exists():
+    return []
+  return [s.strip() for s in path.read_text(encoding="utf-8").splitlines() if s.strip() and not s.startswith("#")]
+
+
 def main() -> int:
-  deny_file = REPO / ".private-strings"
-  deny = []
-  if deny_file.exists():
-    deny = [s.strip() for s in deny_file.read_text(encoding="utf-8").splitlines() if s.strip() and not s.startswith("#")]
+  deny = _lines(REPO / ".private-strings")
+  # Exact strings that are fine to publish (e.g. the repo URL), removed before scanning.
+  allow = [re.compile(re.escape(s), re.I) for s in _lines(REPO / ".private-allow")]
   patterns = ALWAYS + [re.compile(re.escape(s), re.I) for s in deny]
 
   files = sys.argv[1:] and [Path(a).resolve() for a in sys.argv[1:]] or staged_files()
@@ -41,6 +47,8 @@ def main() -> int:
     except UnicodeDecodeError:
       continue
     for n, line in enumerate(text.splitlines(), 1):
+      for ok in allow:
+        line = ok.sub("", line)
       for pat in patterns:
         if pat.search(line):
           hits.append(f"{f.relative_to(REPO)}:{n}: matches '{pat.pattern}'")
