@@ -6,13 +6,15 @@
 
 An open-source agent harness and taste engine for your second brain (Obsidian or any markdown vault).
 
-OverMind structures your work into **modular, composable blocks**:
-- **Projects:** Active goals, build briefs, roadmaps, and journey logs.
+OverMind structures your work into **four modular, composable blocks**:
+- **Projects:** Active goals, build briefs, roadmaps, and journey ledgers (e.g., building OverMind itself, growing an audience, engineering a product).
 - **Knowledge Base:** Your markdown vault, taste graph, stances, negative filters, and frameworks.
-- **Tools:** Model adapters, scrapers, schema checkers, link verifiers, and validators.
-- **Actions:** Human-approval gates, sandboxed git branches, and manual post stagers.
+- **Tools:** Model adapters, scrapers, schema checkers, link verifiers, and domain-specific utilities.
+- **Actions:** Human-approval gates, sandboxed git branches, and execution stagers.
 
-> **The Agent's Role:** The AI agent is not a rigid black box that traps your data — it is strictly an **orchestrator** that wires these blocks together in whatever sequence you need. OverMind can also be exposed as an **MCP (Model Context Protocol)** server to any coding agent (Claude Code, Cursor, Antigravity, Codex).
+> **The Inception Loop:** OverMind is a self-bootstrapping meta-harness — **we use OverMind to design, test, and build OverMind itself.** Specific workflows (like Twitter audience growth or site replication) are not part of the core harness; they are simply **projects** that run on top of it, bringing their own domain tools and goals.
+>
+> **The Agent's Role:** The AI agent does not own business logic or hoard data. It is strictly an **orchestrator** that wires these blocks together in whatever sequence your project requires. OverMind can also be supplied as an **MCP (Model Context Protocol)** server to any coding agent (Claude Code, Cursor, Antigravity, Codex).
 
 ---
 
@@ -34,10 +36,10 @@ OverMind structures your work into **modular, composable blocks**:
 ┌───────────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐
 │     PROJECTS       │   │ KNOWLEDGE BASE │   │     TOOLS      │   │    ACTIONS     │
 ├────────────────────┤   ├────────────────┤   ├────────────────┤   ├────────────────┤
-│ · Active Goals     │   │ · Vault Notes  │   │ · Web Scrapers │   │ · Human Gate   │
-│ · Build Briefs     │   │ · Taste Graph  │   │ · Schema Check │   │ · Git Sandbox  │
-│ · Decisions        │   │ · Stances      │   │ · Link Verifier│   │ · Note Writer  │
-│ · Journey Ledger   │   │ · Frameworks   │   │ · Model Adapts │   │ · Staged Posts │
+│ · OverMind Engine  │   │ · Vault Notes  │   │ · Model Adapts │   │ · Human Gate   │
+│ · Twitter Growth   │   │ · Taste Graph  │   │ · Schema Check │   │ · Git Sandbox  │
+│ · Site Replication │   │ · Stances      │   │ · Web Scrapers │   │ · Note Writer  │
+│ · Any Workflow     │   │ · Frameworks   │   │ · Domain Tools │   │ · Gated Side-Fx│
 └────────────────────┘   └────────────────┘   └────────────────┘   └────────────────┘
             ▲                    ▲                    ▲                    ▲
             └────────────────────┴──────────┬─────────┴────────────────────┘
@@ -47,9 +49,9 @@ OverMind structures your work into **modular, composable blocks**:
 ```
 
 ### The Four Blocks
-1. **Projects:** Where your intent lives. Contains active goals, site-replication briefs, architectural decisions, and build-in-public logs.
+1. **Projects:** Where your intent lives. Contains active goals, site-replication briefs, architectural decisions, and build-in-public logs (e.g. building the OverMind harness itself, growing a Twitter audience, or coding a new app).
 2. **Knowledge Base:** Ground truth on disk. Your markdown second brain, taste graph (`interests.md`), stances (what you defend), negative filters (what you reject), and deconstructed thinking frameworks.
-3. **Tools:** Pure, stateless instruments. Model adapters (`claude`, `codex`, `agy`), prompt templates, strict JSON schema validators, tweet length calculators, and URL link checkers.
+3. **Tools:** Pure, stateless instruments. Model adapters (`claude`, `codex`, `agy`), prompt templates, strict JSON schema validators, web scrapers, and domain-specific validators (e.g. tweet length calculators).
 4. **Actions:** Controlled side effects with built-in safety rails. Every output lands as `status: pending_review`, builds run on isolated git branches, and human approval is required before anything is final.
 
 ---
@@ -67,14 +69,15 @@ OverMind structures your work into **modular, composable blocks**:
                  ┌───────────────────────┼───────────────────────┐
                  │                       │                       │
                  ▼                       ▼                       ▼
-          [ CODE BRIEFS ]       [ CONTENT PACKAGES ]     [ DECISIONS ]
+          [ CODE BRIEFS ]       [ PROJECT DECISIONS ]     [ CONTENT / POSTS ]
+        (Site Replication)       (OverMind Meta-Build)     (Twitter Growth)
                  │                       │                       │
                  ▼                       ▼                       ▼
-          [ Coding Agent ]        [ Draft & Ship ]       [ Project Wiki ]
+          [ Coding Agent ]        [ Project Wiki ]        [ Review Stager ]
                  │                       │                       │
                  ▼                       ▼                       ▼
-           Git Branch              Human Approval          Permanent Note
-          (Sandboxed)              (Zero Auto-Post)          (Ground Truth)
+           Git Branch              Permanent Note          Human Approval
+          (Sandboxed)              (Ground Truth)          (Zero Auto-Post)
 
  ─────────────────────────────────────────────────────────────────────────────
   STEERING FOUNDATION (Taste Graph): interests.md · Stances · Negative Filters

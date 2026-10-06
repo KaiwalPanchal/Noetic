@@ -18,10 +18,10 @@ OverMind is an agent **framework**, not a fixed app. It structures work into com
 ┌───────────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐
 │     PROJECTS       │   │ KNOWLEDGE BASE │   │     TOOLS      │   │    ACTIONS     │
 ├────────────────────┤   ├────────────────┤   ├────────────────┤   ├────────────────┤
-│ · Active Goals     │   │ · Vault Notes  │   │ · Web Scrapers │   │ · Human Gate   │
-│ · Build Briefs     │   │ · Taste Graph  │   │ · Schema Check │   │ · Git Sandbox  │
-│ · Decisions        │   │ · Stances      │   │ · Link Verifier│   │ · Note Writer  │
-│ · Journey Ledger   │   │ · Frameworks   │   │ · Model Adapts │   │ · Staged Posts │
+│ · OverMind Engine  │   │ · Vault Notes  │   │ · Model Adapts │   │ · Human Gate   │
+│ · Twitter Growth   │   │ · Taste Graph  │   │ · Schema Check │   │ · Git Sandbox  │
+│ · Site Replication │   │ · Stances      │   │ · Web Scrapers │   │ · Note Writer  │
+│ · Any Workflow     │   │ · Frameworks   │   │ · Domain Tools │   │ · Gated Side-Fx│
 └────────────────────┘   └────────────────┘   └────────────────┘   └────────────────┘
             ▲                    ▲                    ▲                    ▲
             └────────────────────┴──────────┬─────────┴────────────────────┘
