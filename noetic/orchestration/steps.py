@@ -12,6 +12,7 @@ from typing import Callable
 from noetic.orchestration.run import PipelineError, Run
 from noetic.tools import prompts
 from noetic.agents.runners import INFRA_ERRORS, available, known_agents, run_agent
+from noetic.gates import taste as taste_gate
 from noetic.tools.schema_check import check
 
 
@@ -19,6 +20,7 @@ def agent_step(
   run: Run, step: str, node: str, prompt: str, schema_name: str, *,
   agent: str | None = None, web: bool = False, write: bool = False, cwd: Path | None = None,
   extra_check: Callable[[dict], list[str]] | None = None, timeout: int = 900,
+  taste: bool = True,
 ) -> dict:
   """Run one agent node and return JSON that has passed validation.
 
@@ -29,6 +31,9 @@ def agent_step(
   """
   cfg = run.cfg
   schema = prompts.schema(schema_name)
+  rules = taste_gate.load(cfg) if taste else None
+  if rules:
+    prompt = prompt + taste_gate.prompt_block(rules)
   if agent:
     order = [agent]
   else:
@@ -55,7 +60,7 @@ def agent_step(
           break  # infrastructure problem → next agent
         fix = "\n\nYour previous reply contained no usable JSON. Return ONLY the JSON object."
         continue
-      problems = check(res.data, schema) + (extra_check(res.data) if extra_check else [])
+      problems = check(res.data, schema) + (extra_check(res.data) if extra_check else []) + (taste_gate.violations(rules, res.data) if rules else [])
       if not problems:
         info["validated"] = True
         run.log_attempt(step, info)

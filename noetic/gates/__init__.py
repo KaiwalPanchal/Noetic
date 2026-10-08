@@ -3,6 +3,7 @@
 - gate.py         the human gate: approve / reject a generated note (status in frontmatter)
 - git.py          work in other repos: clean-tree check, new branch. Never commits or pushes.
 - policy_gate.py  static defense: vault path confinement, AST check of generated code, input sanitising
+- taste.py        taste gate: rejects low-signal phrases and patterns before persistence
 
 Rules for anything added here:
 1. Every public or irreversible action requires the note to be `status: approved` first
@@ -18,5 +19,13 @@ from noetic.gates.policy_gate import (
     validate_python_ast,
     validate_vault_path,
 )
+from noetic.gates import taste
 
-__all__ = ["SecurityViolation", "validate_vault_path", "validate_python_ast", "sanitize_input", "is_safe_command"]
+__all__ = [
+    "SecurityViolation",
+    "validate_vault_path",
+    "validate_python_ast",
+    "sanitize_input",
+    "is_safe_command",
+    "taste",
+]

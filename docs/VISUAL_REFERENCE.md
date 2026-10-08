@@ -133,7 +133,7 @@ Legend: ✔ works and was checked   ◐ works, with a caveat
    Windsurf (merge, no clobber)
   MCP resources (6)                  briefing projects stances frameworks      ✔
                                      status quests
-  MCP tools (6)                      get_briefing list_projects                ✔
+  MCP tools (7)                      get_briefing list_projects check_taste    ✔
                                      get_active_stances inspect_code_safety
                                      validate_thread check_json_schema
 
@@ -171,6 +171,8 @@ Legend: ✔ works and was checked   ◐ works, with a caveat
  QUALITY & SAFETY
   grade an extractor                 noetic eval                             ◐ baseline is rule-based
   code safety pre-check              inspect_code_safety (AST denylist)        ◐ not a sandbox
+  taste check file                   noetic taste-check <file> · noetic taste check ✔ deterministic bans
+  show taste rules                   noetic taste-show · noetic taste show        ✔ dogmas, bans, required
   human approval on all output       approve / reject                          ✔
   health check                       noetic doctor                           ✔
 ```

@@ -39,7 +39,7 @@ def _workflows_dir() -> Path:
 
 
 PROJECTS_DIR = _workflows_dir()
-from noetic.knowledge.config import CONFIG_NAME, config_file  # noqa: E402
+from noetic.knowledge.config import CONFIG_NAME, config_file, state_dir_for  # noqa: E402
 WIKI_SEED = SEED / "overmind-wiki"
 DEFAULT_OVERMIND_DIR = "OverMind"
 
@@ -221,6 +221,16 @@ def main(argv: list[str] | None = None):
   config_file(vault).write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
   written = []
+  state_dir = state_dir_for(vault)
+  taste_dir = state_dir / "taste"
+  taste_dir.mkdir(parents=True, exist_ok=True)
+  seed_taste = PKG / "seed" / "taste"
+  if seed_taste.is_dir():
+    for f in seed_taste.glob("*.md"):
+      target = taste_dir / f.name
+      if not target.exists():
+        target.write_text(f.read_text(encoding="utf-8"), encoding="utf-8")
+        written.append(str(target.relative_to(vault)))
   proj_names = args.projects if args.projects is not None else [p.name for p in sorted(PROJECTS_DIR.iterdir()) if p.is_dir() and not p.name.startswith(("__", "."))]
   # 1. Install the core package and the selected workflows as importable packages.
   scripts = engine / "scripts"

@@ -37,7 +37,7 @@ def think_pipeline(run, a) -> list[str]:
       return ["park_title is empty for a tangent"]
     return []
 
-  data = run.step("judge", lambda: agent_step(run, "judge", "think", prompt, "think_verdict", extra_check=_check))
+  data = run.step("judge", lambda: agent_step(run, "judge", "think", prompt, "think_verdict", extra_check=_check, taste=False))
 
   brief = data.get("brief", "")
   if brief:

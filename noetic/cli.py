@@ -329,6 +329,80 @@ def fire(
     orch_cli.execute(cfg, s.pipeline, args_dict)
 
 
+taste_app = typer.Typer(help="Inspect and verify content against active taste rules.", no_args_is_help=True)
+app.add_typer(taste_app, name="taste")
+
+
+def _run_taste_check(file_path: Path):
+  cfg = load_config()
+  from noetic.gates import taste
+  rules = taste.load(cfg)
+  if not rules:
+    console.print("[yellow]No active taste rules found in .noetic/taste/[/yellow]")
+    return
+  if not file_path.is_file():
+    console.print(f"[red]File not found:[/red] {file_path}")
+    raise typer.Exit(code=1)
+  text = file_path.read_text(encoding="utf-8")
+  viols = taste.violations(rules, text)
+  if viols:
+    console.print(f"[red]Taste violations found ({len(viols)}):[/red]")
+    for v in viols:
+      console.print(f"  ✗ {v}")
+    raise typer.Exit(code=1)
+  console.print(f"[green]✓ Taste check passed:[/green] {file_path.name}")
+
+
+def _run_taste_show():
+  cfg = load_config()
+  from noetic.gates import taste
+  rules = taste.load(cfg)
+  if not rules:
+    console.print("[yellow]No active taste rules found in .noetic/taste/[/yellow]")
+    return
+  console.print(f"[bold cyan]Active Taste Rules for {cfg.owner}:[/bold cyan]")
+  if rules.dogmas:
+    console.print("\n[bold]Dogmas:[/bold]")
+    console.print(rules.dogmas)
+  if rules.phrases:
+    console.print(f"\n[bold]Banned phrases ({len(rules.phrases)}):[/bold]")
+    for p in rules.phrases:
+      console.print(f"  - {p}")
+  if rules.patterns:
+    console.print(f"\n[bold]Banned patterns ({len(rules.patterns)}):[/bold]")
+    for pat in rules.patterns:
+      console.print(f"  - `{pat.pattern}`")
+  if rules.required:
+    console.print(f"\n[bold]Required ({len(rules.required)}):[/bold]")
+    for r in rules.required:
+      console.print(f"  - {r}")
+
+
+@taste_app.command("check")
+def taste_check_sub(file_path: Path = typer.Argument(..., help="Path to file to check")):
+  """Check a file against taste rules."""
+  _run_taste_check(file_path)
+
+
+@taste_app.command("show")
+def taste_show_sub():
+  """Show active taste rules."""
+  _run_taste_show()
+
+
+@app.command("taste-check")
+def taste_check_cmd(file_path: Path = typer.Argument(..., help="Path to file to check")):
+  """Check a file against taste rules."""
+  _run_taste_check(file_path)
+
+
+@app.command("taste-show")
+def taste_show_cmd():
+  """Show active taste rules."""
+  _run_taste_show()
+
+
+
 
 
 # Workflows (briefing, projects, validate-thread, ...) add their own commands through the loader.

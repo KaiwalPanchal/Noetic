@@ -206,6 +206,19 @@ def create_mcp_server(vault_override: Path | None = None) -> MCPServer:
     """Returns the deterministic Noetic briefing (what is next, what is blocked, what is stale)."""
     return _briefing(_get_cfg())
 
+  @server.tool()
+  def check_taste(text: str) -> dict:
+    """Checks text against active taste rules (dogmas, banned phrases, banned patterns, required elements)."""
+    cfg = _get_cfg()
+    if not cfg:
+      return {"ok": False, "violations": ["Vault not loaded"]}
+    from noetic.gates import taste
+    rules = taste.load(cfg)
+    if not rules:
+      return {"ok": True, "violations": []}
+    viols = taste.violations(rules, text)
+    return {"ok": len(viols) == 0, "violations": viols}
+
   return server
 
 
