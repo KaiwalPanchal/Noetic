@@ -192,6 +192,6 @@ It shows up in `noetic run list` and `--help` automatically. If it uses an LLM, 
 | MCP client config | `noetic/mcp/clients.py` (`noetic mcp-config`) | Merges one `noetic` entry into Claude Desktop, Claude Code, Cursor and Windsurf configs. Never overwrites other servers or malformed files. |
 | Repo telemetry | `noetic/knowledge/repos.py` (`noetic repos`, `noetic status`) | Read-only git status for each project that declares `repo:`. |
 | Fleet workflow | `workflows/fleet/` | `librarian` (deterministic inbox digest, once per 24h, never deletes), `delegate` (worker agent on a new branch, loops on tests, never commits), `repos`. |
-| Pipeline CLI | `noetic run <pipeline>` | Same as `tools/pipeline.py`; works from an installed package. |
+| Pipeline CLI | `noetic run <pipeline>` | Runs any registered pipeline; works from an installed package. |
 
 User guide: [`docs/HOW_TO_USE.md`](docs/HOW_TO_USE.md).

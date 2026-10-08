@@ -33,7 +33,7 @@ def require_approved(path: Path) -> None:
   """Call before any public or irreversible action."""
   status = status_of(path)
   if status != "approved":
-    raise GateClosed(f"{path.name} is '{status}'; approve it first (pipeline.py approve \"{path}\")")
+    raise GateClosed(f"{path.name} is '{status}'; approve it first (noetic approve \"{path}\")")
 
 
 __all__ = ["STATUS_FLOW", "GateClosed", "approve", "reject", "require_approved", "status_of"]

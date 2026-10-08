@@ -20,7 +20,7 @@ def execute(cfg: Config, command: str, args: dict, run_id: str | None = None):
   try:
     outputs = PIPELINES[command].fn(run, args)
   except PipelineError as exc:
-    print(f"\n✗ FAILED: {exc}\n  Fix the cause, then: python pipeline.py resume {run.id}")
+    print(f"\n✗ FAILED: {exc}\n  Fix the cause, then: noetic run resume {run.id}")
     sys.exit(1)
   run.finish()
   if run.notes:
@@ -31,7 +31,7 @@ def execute(cfg: Config, command: str, args: dict, run_id: str | None = None):
   print("\n✓ Done. Waiting for your review (status: pending_review):")
   for o in outputs or []:
     print(f"  • {o}")
-  print("  Approve with: python pipeline.py approve \"<file>\"  ·  nothing is ever posted automatically.")
+  print("  Approve with: python noetic approve \"<file>\"  ·  nothing is ever posted automatically.")
 
 
 def attach_agent_notes(cfg: Config, outputs: list[str], notes: list[str]):

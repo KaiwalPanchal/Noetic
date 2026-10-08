@@ -9,7 +9,7 @@
 
 | Phase | Milestone | Focus | Status |
 |---|---|---|---|
-| **Phase 1** | **Personal State Anchor & 2-Door OS** | Local CLI, Zen Web view, Door 1 clipper, Door 2 focus defense | **COMPLETED** |
+| **Phase 1** | **Personal State Anchor & 2-Door OS** | Local CLI, Zen Web view, Door 1 clipper, Door 2 focus defense | **BUILT IN VAULT, NOT YET PACKAGED** |
 | **Phase 2** | **Universal MCP Protocol Server** | Native MCP server connecting Claude Desktop, Cursor, and CLI tools | **COMPLETED** |
 | **Phase 3** | **Single-Command Vault Installer** | `uvx` / curl / powershell 1-step installer into any Markdown vault | **COMPLETED** |
 | **Phase 4** | **Public Packaging & PyPI Release** | Publish `noetic-cli` to PyPI (wheel + CI + release workflow done; the upload itself is the one manual step) | **READY TO PUBLISH** |
@@ -19,26 +19,27 @@
 
 ## Detailed Phases
 
-### Phase 1: Local State Anchor & 2-Door OS (Completed)
+### Phase 1: Local State Anchor & 2-Door OS (Built in the vault harness; packaging pending)
+> `clip`, `think`, `focus`, `web` currently live in the vault's `OverMind/harness`, not in the `noetic` package. Moving them in is on the Noetic plan.
 *Objective: Lower the cost of starting and the cost of coming back to zero.*
 
 - [x] **Lightweight Subscription Harness:** Zero-token-cost local execution wrapping `agy` (Gemini 3.8) and `claude` CLI subscriptions with automatic fallback (`harness/`).
 - [x] **Door 1 Quick Capture:**
   - Direct drop into vault [`inbox/`](inbox/).
-  - CLI Web Clipper & Thought Capture: `overmind clip <url|text> [context]` with stateless HTML-to-Markdown cleaning, metadata extraction, and Obsidian YAML frontmatter.
+  - CLI Web Clipper & Thought Capture: `noetic clip <url|text> [context]` with stateless HTML-to-Markdown cleaning, metadata extraction, and Obsidian YAML frontmatter.
 - [x] **Door 2 Thinking Partner:**
-  - `overmind think "<thought>"`: Stream-of-consciousness compressor returning Core Signal, Applied Framework, and bounded Next Action.
+  - `noetic think "<thought>"`: Stream-of-consciousness compressor returning Core Signal, Applied Framework, and bounded Next Action.
   - Sensei focus defense: intercepts off-focus tangents, safely parks them in [`ideas/PARKED.md`](ideas/PARKED.md), and redirects to the active commitment.
-- [x] **Commitment Anchor (`overmind focus`):** Single verifiable commitment in [`wiki/focus.md`](wiki/focus.md); anti-drift guard alerts on 3+ switches in 7 days.
-- [x] **Zen Web View (`overmind web`):** Localhost single-page dashboard at `http://127.0.0.1:8787` showing focus, stalest-first projects, parked tangents, live think box, and help recap.
-- [x] **Onboarding & Recap:** `overmind help [topic]` and `overmind recap` showing recent log history and immediate next actions.
+- [x] **Commitment Anchor (`noetic focus`):** Single verifiable commitment in [`wiki/focus.md`](wiki/focus.md); anti-drift guard alerts on 3+ switches in 7 days.
+- [x] **Zen Web View (`noetic web`):** Localhost single-page dashboard at `http://127.0.0.1:8787` showing focus, stalest-first projects, parked tangents, live think box, and help recap.
+- [x] **Onboarding & Recap:** `noetic help [topic]` and `noetic recap` showing recent log history and immediate next actions.
 
 ---
 
 ### Phase 2: Universal Model Context Protocol (MCP) Server (Completed)
 *Objective: Allow any AI client (Claude Desktop, Claude Code, Cursor, Windsurf, Antigravity) to natively read and navigate Noetic.*
 
-- [x] **Native MCP 2.x Server:** Implemented in [`noetic/mcp/server.py`](file:///C:/External%20Apps/noetic/noetic/mcp/server.py), executable via `noetic-mcp`.
+- [x] **Native MCP 2.x Server:** Implemented in [`noetic/mcp/server.py`](noetic/mcp/server.py), executable via `noetic-mcp`.
 - [x] **MCP Resources:**
   - `noetic://briefing`: Deterministic briefing of current focus, active projects, staleness, and gates.
   - `noetic://projects`: Active projects registry and metadata.
