@@ -35,6 +35,7 @@ def register(app, registry):
       vault: str = typer.Option(None, "--vault", help="Vault root (default: auto-detected)"),
       force: bool = typer.Option(False, "--force", help="Run even if it already ran in the last 24 hours"),
       schedule: bool = typer.Option(False, "--schedule", help="Print the scheduler command for a daily run (installs nothing)"),
+      liminal: bool = typer.Option(False, "--liminal", help="Push eligible notes to Liminal sidecar"),
   ):
     """Daily inbox triage: flags empties/duplicates and suggests links. Never moves or deletes notes."""
     cfg = _config(vault)
@@ -42,7 +43,7 @@ def register(app, registry):
       for name, cmd in lib.schedule_hint(cfg.vault).items():
         typer.echo(f"{name}: {cmd}")
       return
-    path = lib.run_librarian(cfg, force)
+    path = lib.run_librarian(cfg, force, liminal=liminal)
     typer.echo("Already ran in the last 24h (use --force)." if path is None
                else f"Digest written: {path.relative_to(cfg.vault)} (pending_review)")
 

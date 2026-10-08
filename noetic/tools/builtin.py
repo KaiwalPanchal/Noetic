@@ -33,3 +33,10 @@ def check_schema(data: Any, schema_name: str) -> list[str]:
 def tweet_length(text: str) -> int:
   from noetic.tools import tweets
   return tweets.weighted_length(text)
+
+
+@tool("recall", help="grounded memory recall via Liminal sidecar or vault grep", needs_cfg=True)
+def tool_recall(cfg: Any, question: str) -> dict[str, Any]:
+  from noetic.knowledge import recall as recall_mod
+  return recall_mod.recall(cfg, question)
+

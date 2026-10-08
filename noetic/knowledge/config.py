@@ -67,6 +67,8 @@ DEFAULTS = {
   "projects": {},
   # Optional persona file (vault-relative) that sets the orchestrator's tone. Absent by default.
   "persona": None,
+  # Optional Liminal sidecar service: {"url": "http://localhost:8000", "timeout": 10}
+  "liminal": None,
 }
 
 
@@ -93,6 +95,19 @@ class Config:
     self.persona: Path | None = (vault / persona) if persona else None
     self.private_paths: list[str] = data.get("private_paths", DEFAULTS["private_paths"])
     self.state_dir = state_dir_for(vault)
+
+    import os
+    env_url = os.environ.get("NOETIC_LIMINAL_URL")
+    lim_cfg = data.get("liminal", DEFAULTS["liminal"])
+    if isinstance(lim_cfg, dict):
+      self.liminal_url: str | None = env_url or lim_cfg.get("url")
+      self.liminal_timeout: int = int(lim_cfg.get("timeout", 10))
+    elif isinstance(lim_cfg, str):
+      self.liminal_url: str | None = env_url or lim_cfg
+      self.liminal_timeout: int = 10
+    else:
+      self.liminal_url: str | None = env_url or None
+      self.liminal_timeout: int = 10
 
   def agent_order(self, step: str) -> list[str]:
     """Agents to try for `step`: its override first, then the global ordered list. Deduplicated."""

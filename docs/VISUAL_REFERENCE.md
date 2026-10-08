@@ -133,9 +133,10 @@ Legend: ✔ works and was checked   ◐ works, with a caveat
    Windsurf (merge, no clobber)
   MCP resources (6)                  briefing projects stances frameworks      ✔
                                      status quests
-  MCP tools (7)                      get_briefing list_projects check_taste    ✔
-                                     get_active_stances inspect_code_safety
-                                     validate_thread check_json_schema
+  MCP tools (8)                      get_briefing list_projects check_taste    ✔
+                                     recall get_active_stances
+                                     inspect_code_safety validate_thread
+                                     check_json_schema
 
  KNOWLEDGE WORK
   source ──▶ framework               /ingest   · noetic run ingest           ✔
@@ -145,6 +146,10 @@ Legend: ✔ works and was checked   ◐ works, with a caveat
   site brief ──▶ code on a branch    replicate --build <repo>                  ◐ agent CLI needed
   thread draft / journey / ship      /draft /journey /ship                     ✔ you post by hand
   thread length/link check           noetic validate-thread <file>           ✔
+
+ SIDECAR & MEMORY
+  grounded memory recall             noetic recall "<question>" [--json]     ✔ Liminal or vault-grep
+  check Liminal sidecar health       noetic liminal                          ✔ optional sidecar
 
  PROJECT AWARENESS
   what is next / blocked / stale     noetic briefing [--narrate]             ✔ no LLM unless --narrate

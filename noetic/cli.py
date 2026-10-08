@@ -402,6 +402,45 @@ def taste_show_cmd():
   _run_taste_show()
 
 
+@app.command()
+def recall(
+    question: str = typer.Argument(..., help="Question to recall grounded memory for"),
+    as_json: bool = typer.Option(False, "--json", help="Print raw JSON response"),
+):
+  """Recall grounded memory using Liminal sidecar or vault grep fallback."""
+  cfg = load_config()
+  from noetic.knowledge.recall import recall as run_recall
+  res = run_recall(cfg, question)
+  if as_json:
+    typer.echo(json.dumps(res, indent=2, ensure_ascii=False))
+    return
+  typer.echo(f"Source: {res['source']} ({res['status']})")
+  if res.get("citations"):
+    typer.echo("Citations: " + ", ".join(res["citations"]))
+  if res.get("note"):
+    typer.echo(f"Note: {res['note']}")
+  typer.echo("\n" + res.get("answer", ""))
+
+
+@app.command()
+def liminal():
+  """Check Liminal sidecar service status and health."""
+  cfg = load_config()
+  from noetic.knowledge.liminal import LiminalError, client_for
+  client = client_for(cfg)
+  if not client:
+    typer.echo("Liminal is not configured in noetic.config.json or NOETIC_LIMINAL_URL.")
+    return
+  try:
+    h = client.health()
+    typer.echo(f"Liminal at {client.base_url}: OK")
+    typer.echo(f"Status: {h.get('status', 'unknown')}, Neo4j connected: {h.get('neo4j_connected', 'unknown')}")
+  except LiminalError as exc:
+    typer.echo(f"Liminal at {client.base_url} is unreachable or unhealthy: {exc}", err=True)
+    raise typer.Exit(code=1)
+
+
+
 
 
 

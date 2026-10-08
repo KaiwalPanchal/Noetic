@@ -219,6 +219,15 @@ def create_mcp_server(vault_override: Path | None = None) -> MCPServer:
     viols = taste.violations(rules, text)
     return {"ok": len(viols) == 0, "violations": viols}
 
+  @server.tool()
+  def recall(question: str) -> dict:
+    """Recalls grounded context from Liminal graph-RAG or vault grep fallback."""
+    cfg = _get_cfg()
+    if not cfg:
+      return {"source": "vault-grep", "status": "UNGROUNDED", "answer": "", "citations": [], "note": "Vault not loaded"}
+    from noetic.knowledge.recall import recall as run_recall
+    return run_recall(cfg, question)
+
   return server
 
 

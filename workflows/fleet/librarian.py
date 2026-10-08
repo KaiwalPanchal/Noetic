@@ -14,7 +14,8 @@ from pathlib import Path
 import re
 
 from noetic.knowledge.config import Config
-from noetic.knowledge.context import iter_notes
+from noetic.knowledge.context import is_private, iter_notes
+from noetic.knowledge.liminal import LiminalClient, LiminalError, client_for
 from noetic.orchestration.registry import arg, pipeline
 from noetic.tools.registry import tool
 
@@ -68,9 +69,50 @@ def scan(cfg: Config) -> dict:
   return {"generated": datetime.now().isoformat(timespec="seconds"), "inbox": str(inbox), "items": items}
 
 
+def push_to_liminal(cfg: Config, client: LiminalClient) -> dict[str, int]:
+  """Push eligible non-private inbox notes to Liminal. Idempotent by content SHA-1."""
+  inbox = inbox_dir(cfg)
+  state_path = cfg.state_dir / "liminal.json"
+  seen: dict[str, str] = {}
+  if state_path.is_file():
+    try:
+      seen = json.loads(state_path.read_text(encoding="utf-8"))
+    except Exception:
+      seen = {}
+
+  pushed, skipped, failed = 0, 0, 0
+  for f in sorted(inbox.glob("*.md")) if inbox.is_dir() else []:
+    if is_private(cfg, f):
+      continue
+    if cfg.overmind and (cfg.overmind / "wiki" / "profile") in f.parents:
+      continue
+    text = f.read_text(encoding="utf-8", errors="replace")
+    body = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.S).strip()
+    if not body:
+      continue
+    digest = hashlib.sha1(body.encode("utf-8")).hexdigest()
+    if digest in seen:
+      skipped += 1
+      continue
+    try:
+      res = client.ingest(title=f.stem, content=body, source_type="obsidian")
+      seen[digest] = res.get("document_id") or "ok"
+      pushed += 1
+    except LiminalError:
+      failed += 1
+
+  cfg.state_dir.mkdir(parents=True, exist_ok=True)
+  state_path.write_text(json.dumps(seen, indent=2), encoding="utf-8")
+  return {"pushed": pushed, "skipped": skipped, "failed": failed}
+
+
 def render(report: dict) -> str:
   lines = [f"# Librarian digest — {report['generated'][:10]}", "",
            f"{len(report['items'])} item(s) in inbox. Nothing was moved, edited or deleted.", ""]
+  if report.get("liminal"):
+    s = report["liminal"]
+    lines.append(f"Liminal: {s['pushed']} pushed, {s['skipped']} skipped, {s['failed']} failed")
+    lines.append("")
   for it in report["items"]:
     flags = f"  **[{', '.join(it['flags'])}]**" if it["flags"] else ""
     lines.append(f"## {it['file']}{flags}")
@@ -81,11 +123,16 @@ def render(report: dict) -> str:
   return "\n".join(lines).rstrip() + "\n"
 
 
-def run_librarian(cfg: Config, force: bool = False) -> Path | None:
+def run_librarian(cfg: Config, force: bool = False, liminal: bool = False) -> Path | None:
   """Write the digest if due (or forced). Returns the note path, or None when skipped."""
   if not force and not due(cfg):
     return None
   report = scan(cfg)
+  if liminal:
+    client = client_for(cfg)
+    if client:
+      report["liminal"] = push_to_liminal(cfg, client)
+
   out_dir = (cfg.overmind / "wiki" / "librarian") if cfg.overmind else (cfg.engine / "librarian")
   out_dir.mkdir(parents=True, exist_ok=True)
   path = out_dir / f"digest-{datetime.now():%Y-%m-%d}.md"
@@ -110,10 +157,11 @@ def tool_scan_inbox(cfg: Config) -> dict:
 
 
 @pipeline("librarian", kind="knowledge", help="daily inbox digest (deterministic, no LLM, never moves notes)",
-          args=[arg("--force", action="store_true")], agent_flag=False)
+          args=[arg("--force", action="store_true"), arg("--liminal", action="store_true")], agent_flag=False)
 def librarian_pipeline(run, a) -> list[str]:
-  path = run.step("scan", lambda: run_librarian(run.cfg, bool(a.get("force"))))
+  path = run.step("scan", lambda: run_librarian(run.cfg, bool(a.get("force")), bool(a.get("liminal"))))
   if not path:
     return []
   return [run.output(Path(path))]
+
 
