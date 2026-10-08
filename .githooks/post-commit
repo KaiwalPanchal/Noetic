@@ -1,4 +1,4 @@
 #!/bin/sh
 # Optional: refresh the maintainer's local build-notes knowledge base after each commit. Silent no-op if absent.
-S="$HOME/.claude/skills/overmind-builder/scripts/update_knowledge.py"
+S="$HOME/.claude/skills/noetic-builder/scripts/update_knowledge.py"
 [ -f "$S" ] && python "$S" --quiet || true

@@ -12,8 +12,8 @@ from pathlib import Path
 
 import typer
 
-from overmind.knowledge import repos as repo_telemetry
-from overmind.knowledge.config import CONFIG_NAME, Config, load_config
+from noetic.knowledge import repos as repo_telemetry
+from noetic.knowledge.config import CONFIG_NAME, Config, load_config
 from workflows.fleet import delegate as _delegate  # noqa: F401 (registers the `delegate` pipeline)
 from workflows.fleet import librarian as lib
 
@@ -63,8 +63,8 @@ def register(app, registry):
       agent: str = typer.Option(None, "--agent", help="Force one agent (no fallback)"),
   ):
     """Spawns a worker agent in the project's repo on a fresh branch; loops on tests; logs the result."""
-    from overmind.orchestration import registry as reg
-    from overmind.orchestration.cli import execute
+    from noetic.orchestration import registry as reg
+    from noetic.orchestration.cli import execute
 
     reg.discover()
     execute(load_config(), "delegate", {"project": project, "task": task, "test": test,

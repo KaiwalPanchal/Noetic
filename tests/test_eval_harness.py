@@ -10,8 +10,8 @@ from pathlib import Path
 
 import pytest
 
-from overmind.evals import run_evals
-from overmind.evals.extractors import (
+from noetic.evals import run_evals
+from noetic.evals.extractors import (
     RuleBasedExtractor,
     load_extractor,
 )
@@ -81,7 +81,7 @@ def test_results_only_written_when_output_requested(tmp_path: Path):
 
 
 def test_load_extractor_resolves_dotted_path():
-  fn = load_extractor("overmind.evals.extractors:RuleBasedExtractor")
+  fn = load_extractor("noetic.evals.extractors:RuleBasedExtractor")
   assert callable(fn)
   assert fn("Kafka divides topics into partitions.")["title"]
 

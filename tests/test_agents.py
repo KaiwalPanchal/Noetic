@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from overmind.agents import runners as agents
-from overmind.agents.runners import AgentResult, run_agent
+from noetic.agents import runners as agents
+from noetic.agents.runners import AgentResult, run_agent
 
 SCHEMA = {"type": "object", "properties": {"ok": {"type": "boolean"}}, "required": ["ok"]}
 

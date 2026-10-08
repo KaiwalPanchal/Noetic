@@ -1,9 +1,9 @@
 """ingest: source (vault note, URL, or book title) → framework note + source note."""
 
-from overmind.knowledge import context, notes
-from overmind.orchestration.registry import arg, pipeline
-from overmind.orchestration.steps import agent_step
-from overmind.tools import prompts
+from noetic.knowledge import context, notes
+from noetic.orchestration.registry import arg, pipeline
+from noetic.orchestration.steps import agent_step
+from noetic.tools import prompts
 
 
 @pipeline("ingest", kind="knowledge", help="source → thinking framework (+ source note)",

@@ -4,13 +4,13 @@ import json
 
 import pytest
 
-from overmind.gates import gate
-from overmind.knowledge import notes
-from overmind.orchestration import registry
-from overmind.orchestration import steps as steps_mod
-from overmind.orchestration.cli import attach_agent_notes, show_status
-from overmind.orchestration.run import PipelineError, Run
-from overmind.agents.runners import AgentResult
+from noetic.gates import gate
+from noetic.knowledge import notes
+from noetic.orchestration import registry
+from noetic.orchestration import steps as steps_mod
+from noetic.orchestration.cli import attach_agent_notes, show_status
+from noetic.orchestration.run import PipelineError, Run
+from noetic.agents.runners import AgentResult
 
 from .conftest import sample_curation
 

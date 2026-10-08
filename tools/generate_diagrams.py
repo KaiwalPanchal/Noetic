@@ -74,7 +74,7 @@ def generate_loop_svg():
   <!-- Top Header -->
   <g transform="translate(48, 38)">
     <rect width="132" height="24" rx="6" fill="#1E1B4B" stroke="#4338CA" stroke-width="1"/>
-    <text x="66" y="16" class="mono badge-text" fill="#A5B4FC" text-anchor="middle" letter-spacing="1">OVERMIND LOOP</text>
+    <text x="66" y="16" class="mono badge-text" fill="#A5B4FC" text-anchor="middle" letter-spacing="1">NOETIC LOOP</text>
     <text x="146" y="18" class="sans" font-size="18" font-weight="600" fill="#F8FAFC">From High-Signal Intake to Validated Execution</text>
     <text x="0" y="44" class="sans" font-size="12" fill="#64748B">Continuous ingestion, mental-model extraction, and taste-filtered application across content, code, and decisions.</text>
   </g>
@@ -371,7 +371,7 @@ def generate_architecture_svg():
     <g transform="translate(24, 20)">
       <text x="0" y="16" class="sans layer-title">1. ORCHESTRATION LAYER</text>
       <rect x="226" y="3" width="130" height="18" rx="4" fill="#1E1B4B"/>
-      <text x="291" y="16" class="mono" font-size="10" fill="#A5B4FC" text-anchor="middle">overmind/orchestration/</text>
+      <text x="291" y="16" class="mono" font-size="10" fill="#A5B4FC" text-anchor="middle">noetic/orchestration/</text>
       <text x="0" y="36" class="sans" font-size="12" fill="#94A3B8">Control flow is deterministic Python. Steps are isolated agent calls, never open-ended runaway loops.</text>
     </g>
 

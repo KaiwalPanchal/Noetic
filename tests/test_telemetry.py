@@ -1,6 +1,6 @@
 """Tests for OpenTelemetry GenAI tracing instrumentation."""
 
-from overmind.telemetry.tracer import trace_agent_call
+from noetic.telemetry.tracer import trace_agent_call
 
 
 def test_telemetry_trace_successful_call():

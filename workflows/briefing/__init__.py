@@ -1,1 +1,1 @@
-"""Briefing workflow: the orchestrator briefing over the OverMind wiki."""
+"""Briefing workflow: the orchestrator briefing over the Noetic wiki."""

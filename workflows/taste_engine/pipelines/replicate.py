@@ -7,12 +7,12 @@ the owner reviews the diff (the human gate).
 
 from pathlib import Path
 
-from overmind.gates.git import GitError, changed_files, current_branch, head, new_work_branch
-from overmind.knowledge import context, notes
-from overmind.orchestration.registry import arg, pipeline
-from overmind.orchestration.run import PipelineError
-from overmind.orchestration.steps import agent_step
-from overmind.tools import prompts
+from noetic.gates.git import GitError, changed_files, current_branch, head, new_work_branch
+from noetic.knowledge import context, notes
+from noetic.orchestration.registry import arg, pipeline
+from noetic.orchestration.run import PipelineError
+from noetic.orchestration.steps import agent_step
+from noetic.tools import prompts
 
 
 @pipeline("replicate", kind="code", help="reference sites → build brief (→ code with --build)", args=[

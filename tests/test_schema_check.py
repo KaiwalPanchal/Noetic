@@ -1,6 +1,6 @@
 """Tests for schema_check validator."""
 
-from overmind.tools.schema_check import check
+from noetic.tools.schema_check import check
 
 
 def test_schema_valid_object():

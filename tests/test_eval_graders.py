@@ -1,5 +1,5 @@
 import pytest
-from overmind.evals.graders import DeterministicGrader, SemanticGrader, JudgeEvaluator
+from noetic.evals.graders import DeterministicGrader, SemanticGrader, JudgeEvaluator
 
 
 def test_deterministic_grade_schema_valid():

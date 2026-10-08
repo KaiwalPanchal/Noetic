@@ -20,9 +20,9 @@ What's left is **taste**: knowing what to keep, what to reject, and what you're 
 
 So here's my stance: **everyone who builds anything should be running a harness like this.** I don't mean a chatbot you ask questions. I mean a system that holds your frameworks and your taste, and puts them to work on what you're making.
 
-## OverMind is that harness.
+## Noetic is that harness.
 
-I'm presenting OverMind as a framework in its own right. It's four blocks: projects, knowledge, tools, actions. You wire them in whatever order your work needs. It's modular on purpose, because creative work never runs in a straight line.
+I'm presenting Noetic as a framework in its own right. It's four blocks: projects, knowledge, tools, actions. You wire them in whatever order your work needs. It's modular on purpose, because creative work never runs in a straight line.
 
 Three things it's built for:
 
@@ -40,7 +40,7 @@ The more you iterate on something, the faster you get to good. This isn't a prod
 
 Same shape every time: try, get feedback, keep what works, go again. The quality of your first attempt barely matters. The number of iterations and the speed of feedback decide everything.
 
-So OverMind optimises for cycle time, not for first-try perfection. The machine generates the variations. **You are the selection pressure.** Your taste is what decides which version survives into the next round.
+So Noetic optimises for cycle time, not for first-try perfection. The machine generates the variations. **You are the selection pressure.** Your taste is what decides which version survives into the next round.
 
 ## What I believe
 

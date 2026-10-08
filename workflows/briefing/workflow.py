@@ -1,4 +1,4 @@
-"""Briefing workflow: `overmind briefing`, `overmind projects`, and the narrated briefing pipeline."""
+"""Briefing workflow: `noetic briefing`, `noetic projects`, and the narrated briefing pipeline."""
 
 from __future__ import annotations
 
@@ -6,8 +6,8 @@ import json
 
 import typer
 
-from overmind.knowledge import registry as wiki
-from overmind.knowledge.config import load_config
+from noetic.knowledge import registry as wiki
+from noetic.knowledge.config import load_config
 from workflows.briefing import pipeline as _pipeline  # noqa: F401 (registers the `briefing` pipeline)
 from workflows.briefing.pipeline import build_briefing, render_briefing_text
 
@@ -47,7 +47,7 @@ def register(app, registry):
       raise typer.Exit(code=2)
     cfg = load_config()
     if narrate:
-      from overmind.orchestration.cli import execute
+      from noetic.orchestration.cli import execute
 
       registry.discover()
       execute(cfg, "briefing", {"agent": agent})

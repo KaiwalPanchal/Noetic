@@ -1,10 +1,10 @@
 """research: web → taste-filtered signals + one curation package. Links are verified in code."""
 
-from overmind.knowledge import context, notes
-from overmind.orchestration.registry import arg, pipeline
-from overmind.orchestration.steps import agent_step
-from overmind.tools import prompts
-from overmind.tools.links import url_ok
+from noetic.knowledge import context, notes
+from noetic.orchestration.registry import arg, pipeline
+from noetic.orchestration.steps import agent_step
+from noetic.tools import prompts
+from noetic.tools.links import url_ok
 
 
 def dead_links(d: dict) -> list[str]:

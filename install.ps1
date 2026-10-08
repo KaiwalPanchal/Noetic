@@ -1,22 +1,22 @@
 <#
-One-command OverMind installer for Windows.
-  irm https://raw.githubusercontent.com/KaiwalPanchal/OverMind/main/install.ps1 | iex
+One-command Noetic installer for Windows.
+  irm https://raw.githubusercontent.com/KaiwalPanchal/Noetic/main/install.ps1 | iex
 or, with options:
-  & ([scriptblock]::Create((irm https://raw.githubusercontent.com/KaiwalPanchal/OverMind/main/install.ps1))) -Vault C:\vault -Owner Ada
+  & ([scriptblock]::Create((irm https://raw.githubusercontent.com/KaiwalPanchal/Noetic/main/install.ps1))) -Vault C:\vault -Owner Ada
 #>
 param(
   [string]$Vault = (Get-Location).Path,
   [string]$Owner,
   [string]$Agents,
   [switch]$WithWiki,
-  [string]$Package = $(if ($env:OVERMIND_PACKAGE) { $env:OVERMIND_PACKAGE } else { 'overmind-engine' })
+  [string]$Package = $(if ($env:NOETIC_PACKAGE) { $env:NOETIC_PACKAGE } else { 'noetic-engine' })
 )
 $ErrorActionPreference = 'Stop'
 
-if (Get-Command uvx -ErrorAction SilentlyContinue) { $run = @('uvx', '--from', $Package, 'overmind') }
-elseif (Get-Command pipx -ErrorAction SilentlyContinue) { $run = @('pipx', 'run', '--spec', $Package, 'overmind') }
+if (Get-Command uvx -ErrorAction SilentlyContinue) { $run = @('uvx', '--from', $Package, 'noetic') }
+elseif (Get-Command pipx -ErrorAction SilentlyContinue) { $run = @('pipx', 'run', '--spec', $Package, 'noetic') }
 else {
-  Write-Error "OverMind needs uv (https://docs.astral.sh/uv/) or pipx. Install uv with: powershell -c `"irm https://astral.sh/uv/install.ps1 | iex`""
+  Write-Error "Noetic needs uv (https://docs.astral.sh/uv/) or pipx. Install uv with: powershell -c `"irm https://astral.sh/uv/install.ps1 | iex`""
   exit 1
 }
 

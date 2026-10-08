@@ -1,4 +1,4 @@
-# OverMind Multi-Harness & Multi-Model Benchmark Matrix
+# Noetic Multi-Harness & Multi-Model Benchmark Matrix
 
 *Measured: 2026-10-07 04:30 IST on Windows x86_64*  
 *Harnesses Tested:* `agy` (Antigravity v1.3.0) and `claude` (Claude Code v2.1.292)  

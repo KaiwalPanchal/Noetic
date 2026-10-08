@@ -8,11 +8,11 @@ from pathlib import Path
 
 import pytest
 
-from overmind.agents.runners import AgentResult
-from overmind.knowledge import repos
-from overmind.knowledge.config import CONFIG_NAME, Config
-from overmind.orchestration import steps as steps_mod
-from overmind.orchestration.run import PipelineError, Run
+from noetic.agents.runners import AgentResult
+from noetic.knowledge import repos
+from noetic.knowledge.config import CONFIG_NAME, Config
+from noetic.orchestration import steps as steps_mod
+from noetic.orchestration.run import PipelineError, Run
 from workflows.fleet import librarian as lib
 from workflows.fleet.delegate import delegate
 
@@ -99,7 +99,7 @@ def test_delegate_loops_on_failing_tests_then_passes(fvault, repo, monkeypatch):
   run = Run(fvault, "delegate", {"project": "Proj", "task": "fix a"})
   out = delegate(run, {"project": "Proj", "task": "fix a", "test": test, "max_iterations": 3, "agent": "claude"})
   assert len(calls) == 2 and "FAILED" in calls[1]
-  assert git(repo, "branch", "--show-current").startswith("overmind/proj-fix-a")
+  assert git(repo, "branch", "--show-current").startswith("noetic/proj-fix-a")
   assert git(repo, "log", "--oneline").count("\n") == 0  # nothing committed
   log = (fvault.vault / "OverMind" / "wiki" / "log").glob("*.md")
   assert "complete" in next(log).read_text(encoding="utf-8") and out

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "briefing",
-  "description": "Deterministic OverMind briefing built from wiki frontmatter. focus is an object or null; due is a string (empty when unknown).",
+  "description": "Deterministic Noetic briefing built from wiki frontmatter. focus is an object or null; due is a string (empty when unknown).",
   "type": "object",
   "properties": {
     "generated": {"type": "string"},

@@ -14,7 +14,7 @@ import re
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from overmind.tools.tweets import weighted_length  # noqa: E402,F401
+from noetic.tools.tweets import weighted_length  # noqa: E402,F401
 
 if sys.stdout and hasattr(sys.stdout, "reconfigure"):
   sys.stdout.reconfigure(encoding="utf-8")

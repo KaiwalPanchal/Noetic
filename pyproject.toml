@@ -3,7 +3,7 @@ requires = ["setuptools>=77.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "overmind-engine"
+name = "noetic-engine"
 version = "0.2.0"
 description = "Harness, MCP native protocol server, and taste engine for personal knowledge vaults"
 readme = "README.md"
@@ -41,11 +41,11 @@ test = [
 ]
 
 [project.scripts]
-overmind = "overmind.cli:app"
-overmind-mcp = "overmind.mcp.server:main"
+noetic = "noetic.cli:app"
+noetic-mcp = "noetic.mcp.server:main"
 
 [tool.setuptools.packages.find]
-include = ["overmind*", "workflows*"]
+include = ["noetic*", "workflows*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.md", "*.json", "*.toml"]

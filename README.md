@@ -1,6 +1,6 @@
-# OverMind
+# Noetic
 
-[![CI Status](https://github.com/KaiwalPanchal/OverMind/actions/workflows/ci.yml/badge.svg)](https://github.com/KaiwalPanchal/OverMind/actions)
+[![CI Status](https://github.com/KaiwalPanchal/Noetic/actions/workflows/ci.yml/badge.svg)](https://github.com/KaiwalPanchal/Noetic/actions)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![MCP SDK 2.x](https://img.shields.io/badge/built%20on-MCP%20SDK%202.x-blue.svg)](https://modelcontextprotocol.io)
 [![Security](https://img.shields.io/badge/security-AST%20denylist%20(not%20a%20sandbox)-orange.svg)](docs/threat-model.md)
@@ -13,7 +13,7 @@
 An open-source agent harness and taste engine for your second brain (Obsidian or any markdown vault).
 
 
-> **Names, to avoid confusion.** The repo and project are **OverMind** (https://github.com/KaiwalPanchal/OverMind; locally the folder may be called `overmind-taste-engine`). The installable Python package is **`overmind-engine`** (it provides the `overmind` and `overmind-mcp` commands). The importable modules are **`overmind`** (the core) and **`workflows`** (self-contained products such as `taste_engine` and `twitter`). "Taste Engine" is the name of the vault-side system the package installs.
+> **Names, to avoid confusion.** The repo and project are **Noetic** (https://github.com/KaiwalPanchal/Noetic; locally the folder may be called `noetic`). The installable Python package is **`noetic-engine`** (it provides the `noetic` and `noetic-mcp` commands). The importable modules are **`noetic`** (the core) and **`workflows`** (self-contained products such as `taste_engine` and `twitter`). "Taste Engine" is the name of the vault-side system the package installs.
 
 ## Quickstart
 
@@ -21,22 +21,22 @@ Install into any markdown vault in one command (needs [uv](https://docs.astral.s
 
 ```bash
 # macOS / Linux
-curl -sSL https://raw.githubusercontent.com/KaiwalPanchal/OverMind/main/install.sh | bash -s -- --vault ~/my-vault
+curl -sSL https://raw.githubusercontent.com/KaiwalPanchal/Noetic/main/install.sh | bash -s -- --vault ~/my-vault
 # Windows PowerShell
-irm https://raw.githubusercontent.com/KaiwalPanchal/OverMind/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/KaiwalPanchal/Noetic/main/install.ps1 | iex
 # or directly, no global install
-uvx --from overmind-engine overmind install --vault /path/to/vault
-uvx --from overmind-engine overmind mcp-config --vault /path/to/vault   # wire up Claude Desktop / Claude Code / Cursor / Windsurf
+uvx --from noetic-engine noetic install --vault /path/to/vault
+uvx --from noetic-engine noetic mcp-config --vault /path/to/vault   # wire up Claude Desktop / Claude Code / Cursor / Windsurf
 ```
 
 Or work from a checkout:
 
 ```bash
-git clone https://github.com/KaiwalPanchal/OverMind.git && cd OverMind
+git clone https://github.com/KaiwalPanchal/Noetic.git && cd Noetic
 pip install -e ".[test]"
 pytest -q          # run the test suite
-overmind doctor    # check agent CLIs, MCP server construction, policy gate
-overmind eval      # run the eval harness (see "Eval Harness" below for what it does and does not measure)
+noetic doctor    # check agent CLIs, MCP server construction, policy gate
+noetic eval      # run the eval harness (see "Eval Harness" below for what it does and does not measure)
 ```
 
 Output captured from a real run (Windows, Python 3.14; the agent table in `doctor` depends on which CLIs you have installed):
@@ -45,18 +45,18 @@ Output captured from a real run (Windows, Python 3.14; the agent table in `docto
 $ pytest -q
 166 passed in 3.0s
 
-$ overmind doctor        # excerpt
-[OK] Model Context Protocol (MCP) Server: Ready (OverMind Taste Engine v0.2.0)
+$ noetic doctor        # excerpt
+[OK] Model Context Protocol (MCP) Server: Ready (Noetic v0.2.0)
 [OK] Security Policy Gate: Active (AST validation operational)
 
-$ overmind eval
+$ noetic eval
 Extractor: rule-based-baseline
 Dataset: golden_dataset.json  (30 cases)
 TP: 23 | FP: 0 | TN: 7 | FN: 0
 F1 Score                  | 1.000
 GATE PASSED: F1 1.000 >= 0.8
 
-$ overmind eval --dataset heldout
+$ noetic eval --dataset heldout
 Dataset: heldout_dataset.json  (12 cases)
 TP: 6 | FP: 4 | TN: 2 | FN: 0
 F1 Score                  | 0.750
@@ -69,7 +69,7 @@ The second result is expected and is the point: the baseline's rules were writte
 
 Terminal recordings of the real CLI (each command is executed and its captured output replayed; regenerate with `python demo/record.py`, scenes in [`demo/scenes.json`](demo/scenes.json)). MP4 versions sit next to the GIFs.
 
-**Tests and system check**: `pytest`, `overmind doctor` ([mp4](demo/01-tests-and-doctor.mp4))
+**Tests and system check**: `pytest`, `noetic doctor` ([mp4](demo/01-tests-and-doctor.mp4))
 
 ![tests and doctor](demo/01-tests-and-doctor.gif)
 
@@ -77,7 +77,7 @@ Terminal recordings of the real CLI (each command is executed and its captured o
 
 ![eval harness](demo/02-eval-harness.gif)
 
-**Install into a vault + thread length gate**: `install.py`, then `overmind validate-thread` rejecting an over-limit tweet ([mp4](demo/03-install-and-thread-gate.mp4))
+**Install into a vault + thread length gate**: `install.py`, then `noetic validate-thread` rejecting an over-limit tweet ([mp4](demo/03-install-and-thread-gate.mp4))
 
 ![install and thread gate](demo/03-install-and-thread-gate.gif)
 
@@ -100,7 +100,7 @@ The more iterations a system runs, the faster it compounds toward excellence:
 - **Machine Learning:** guess → measure loss → adjust → repeat.
 - **Craft & Engineering:** draft → critique → revise → repeat.
 
-OverMind optimizes for **cycle time and fast iteration loops**, not first-try perfection:
+Noetic optimizes for **cycle time and fast iteration loops**, not first-try perfection:
 - **The machine generates the variations.** It drafts frameworks, outlines briefs, and proposes code replications.
 - **You are the selection pressure.** Your taste, stances, and real-world judgment decide what survives into the next round.
 - **Taste cannot be outsourced.** The machine drafts, you decide.
@@ -108,7 +108,7 @@ OverMind optimizes for **cycle time and fast iteration loops**, not first-try pe
 ### 3. The Core Stances
 - **Frameworks over summaries:** A summary sits passively on disk. A framework is executable — if you cannot apply it to a codebase, design, or decision, you didn't learn it.
 - **Taste is subtraction:** What you reject defines your work. Negative filters protect your attention from noise and web sludge.
-- **The machine drafts, you decide:** OverMind enforces zero automatic publishing. Human approval gates are mandatory before anything is permanent.
+- **The machine drafts, you decide:** Noetic enforces zero automatic publishing. Human approval gates are mandatory before anything is permanent.
 - **Iteration count beats first-draft quality:** Reps with rapid feedback beat endless planning.
 - **Ship over structure:** Organizing your second brain is not output. Shipped code, published ideas, and completed briefs are.
 - **Steal from many, credit all:** Every build brief traces its lineage and credits original creators.
@@ -119,15 +119,15 @@ Read the full philosophical grounding in [`PHILOSOPHY.md`](PHILOSOPHY.md) and th
 
 ### Architecture: The 4 Primitives
 
-OverMind unifies your work into **four core primitives**:
+Noetic unifies your work into **four core primitives**:
 - **Projects:** Active goals, build briefs, ideas incubator, roadmaps, and domain applications (e.g. the Twitter pack in `workflows/twitter/`, `ideas/`, site replication).
 - **Knowledge Base:** Ground truth on disk — your local markdown vault, taste graph, stances, negative filters, and extracted thinking frameworks.
 - **Tools:** Pure, stateless instruments — model adapters, scrapers, schema checkers, link verifiers, and the Web Clipper (`tools/clipper.py`).
 - **Agents:** Autonomous intelligences and pipeline orchestrators (`compete`, `curate`, `research`, `ingest`, `goal-aligner`) bound by strict human-approval gates.
 
-> **The Inception Loop:** OverMind is a self-bootstrapping meta-harness — **we use OverMind to design, test, and build OverMind itself.** Specific workflows (like Twitter build-in-public or competitor research) are not baked into the core engine; they are modular **projects** or **pipelines** running on top of it.
+> **The Inception Loop:** Noetic is a self-bootstrapping meta-harness — **we use Noetic to design, test, and build Noetic itself.** Specific workflows (like Twitter build-in-public or competitor research) are not baked into the core engine; they are modular **projects** or **pipelines** running on top of it.
 >
-> **The Agent's Role:** Autonomous agents wire these primitives together. OverMind can also be exposed as an **MCP (Model Context Protocol)** server to any coding agent (Claude Code, Cursor, Antigravity, Codex).
+> **The Agent's Role:** Autonomous agents wire these primitives together. Noetic can also be exposed as an **MCP (Model Context Protocol)** server to any coding agent (Claude Code, Cursor, Antigravity, Codex).
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -145,7 +145,7 @@ OverMind unifies your work into **four core primitives**:
 ┌───────────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐   ┌───────▼────────┐
 │     PROJECTS       │   │ KNOWLEDGE BASE │   │     TOOLS      │   │     AGENTS     │
 ├────────────────────┤   ├────────────────┤   ├────────────────┤   ├────────────────┤
-│ · OverMind Engine  │   │ · Vault Notes  │   │ · Model Adapts │   │ · Subagents    │
+│ · Noetic Engine  │   │ · Vault Notes  │   │ · Model Adapts │   │ · Subagents    │
 │ · Twitter Pack     │   │ · Taste Graph  │   │ · Schema Check │   │ · Goal Aligner │
 │ · Ideas Incubator  │   │ · Stances      │   │ · Web Clipper  │   │ · Multi-model  │
 │ · Build Briefs     │   │ · Frameworks   │   │ · Link Verifier│   │ · Human Gates  │
@@ -179,7 +179,7 @@ OverMind unifies your work into **four core primitives**:
                  │                       │                       │
                  ▼                       ▼                       ▼
           [ CODE BRIEFS ]       [ PROJECT DECISIONS ]     [ CONTENT / POSTS ]
-        (Site Replication)       (OverMind Meta-Build)     (Your Project)  
+        (Site Replication)       (Noetic Meta-Build)     (Your Project)  
                  │                       │                       │
                  ▼                       ▼                       ▼
           [ Coding Agent ]        [ Project Wiki ]        [ Review Stager ]
@@ -193,7 +193,7 @@ OverMind unifies your work into **four core primitives**:
   FEEDBACK LOOP: real execution results ──▶ compound back into Taste
 ```
 
-OverMind operates as a continuous learning loop across the blocks:
+Noetic operates as a continuous learning loop across the blocks:
 1. **Ingest (`/ingest`):** Pulls from **Sources** into the **Knowledge Base**, extracting mental moves and core principles.
 2. **Steer (Taste Graph):** The **Knowledge Base** guides what is worth keeping, what gets mined (`/curate`), and what web noise gets rejected (`/research`).
 3. **Apply (`/apply`):** Translates frameworks into target **Projects** (content packages, code build briefs, or decisions).
@@ -229,7 +229,7 @@ Run these directly inside your vault with Claude Code:
 For automated runs, scheduled tasks, or using multiple AI models with failover:
 
 ```
- [ overmind run <command> ]
+ [ noetic run <command> ]
             │
             ▼
  ┌──────────────────────┐
@@ -257,20 +257,20 @@ For automated runs, scheduled tasks, or using multiple AI models with failover:
                     │
                     ▼
          ┌──────────────────────┐
-         │ Human Approval Gate  │ ──▶ overmind approve <file>
+         │ Human Approval Gate  │ ──▶ noetic approve <file>
          └──────────────────────┘
 ```
 
 ```bash
 cd <vault>
-overmind run list                     # pipelines, agents, routing
-overmind run doctor                   # verify installed agent CLIs
-overmind run ingest "Make it stick.md"   # vault note, URL, or book title
-overmind run curate "agent memory"
-overmind run research "temporal knowledge graphs" --agent agy
-overmind run replicate steal-like-an-artist https://a.com https://b.com --goal "portfolio hero" --build ../my-site
-overmind run approve "<file>"          # human gate
-overmind run status | resume <run-id>
+noetic run list                     # pipelines, agents, routing
+noetic run doctor                   # verify installed agent CLIs
+noetic run ingest "Make it stick.md"   # vault note, URL, or book title
+noetic run curate "agent memory"
+noetic run research "temporal knowledge graphs" --agent agy
+noetic run replicate steal-like-an-artist https://a.com https://b.com --goal "portfolio hero" --build ../my-site
+noetic run approve "<file>"          # human gate
+noetic run status | resume <run-id>
 ```
 
 ### Pipeline Guarantees
@@ -286,25 +286,25 @@ Agent CLIs supported: [Claude Code](https://claude.com/claude-code), [Codex CLI]
 
 ## Model Context Protocol (MCP) Server
 
-OverMind exposes its resources and tools through an MCP server built on the official [`mcp` Python SDK](https://pypi.org/project/mcp/) (2.x, `mcp.server.mcpserver.MCPServer`; the import was checked against the installed SDK). Transports `stdio`, `sse` and `streamable-http` are passed through to the SDK. The repo's tests call the registered tools and construct the server; they do not run a client-side protocol conformance suite, so "compliant" is not claimed.
+Noetic exposes its resources and tools through an MCP server built on the official [`mcp` Python SDK](https://pypi.org/project/mcp/) (2.x, `mcp.server.mcpserver.MCPServer`; the import was checked against the installed SDK). Transports `stdio`, `sse` and `streamable-http` are passed through to the SDK. The repo's tests call the registered tools and construct the server; they do not run a client-side protocol conformance suite, so "compliant" is not claimed.
 
 ### 1. Client configuration (one command)
 ```bash
-overmind mcp-config --vault /path/to/vault                     # all clients
-overmind mcp-config --vault /path/to/vault --client cursor     # claude-desktop | claude-code | cursor | windsurf
-overmind mcp-config --vault /path/to/vault --dry-run           # preview
+noetic mcp-config --vault /path/to/vault                     # all clients
+noetic mcp-config --vault /path/to/vault --client cursor     # claude-desktop | claude-code | cursor | windsurf
+noetic mcp-config --vault /path/to/vault --dry-run           # preview
 ```
-This merges an `overmind` entry into each client's config (`%APPDATA%\Claude\claude_desktop_config.json`, `<vault>/.mcp.json`, `<vault>/.cursor/mcp.json` or `~/.cursor/mcp.json` with `--scope global`, `~/.codeium/windsurf/mcp_config.json`). Other servers and keys are kept; a malformed file is left untouched. By hand, the entry is:
+This merges an `noetic` entry into each client's config (`%APPDATA%\Claude\claude_desktop_config.json`, `<vault>/.mcp.json`, `<vault>/.cursor/mcp.json` or `~/.cursor/mcp.json` with `--scope global`, `~/.codeium/windsurf/mcp_config.json`). Other servers and keys are kept; a malformed file is left untouched. By hand, the entry is:
 
 ```json
-{ "mcpServers": { "overmind": { "command": "overmind-mcp", "args": ["--vault", "C:/path/to/your/vault"] } } }
+{ "mcpServers": { "noetic": { "command": "noetic-mcp", "args": ["--vault", "C:/path/to/your/vault"] } } }
 ```
 
 ### 2. Capabilities Exposed via MCP:
 - **Resources:**
-  - `overmind://stances`: Real-time personal taste stances and negative filters from `interests.md`.
-  - `overmind://frameworks`: Catalog of extracted mental models and architectural frameworks.
-  - `overmind://status`: Active projects, run logs, and pipeline health.
+  - `noetic://stances`: Real-time personal taste stances and negative filters from `interests.md`.
+  - `noetic://frameworks`: Catalog of extracted mental models and architectural frameworks.
+  - `noetic://status`: Active projects, run logs, and pipeline health.
 - **Tools:**
   - `validate_thread`: Validates Twitter/X thread drafts with official weighting rules.
   - `inspect_code_safety`: Pre-execution AST static analysis blocking unsafe system calls.
@@ -314,35 +314,35 @@ This merges an `overmind` entry into each client's config (`%APPDATA%\Claude\cla
 
 ## 1-Click Installation & Modern CLI
 
-OverMind is packaged as a standard Python tool:
+Noetic is packaged as a standard Python tool:
 
 ```bash
 # Install the released package (once published to PyPI)
-pipx install overmind-engine      # or: uvx --from overmind-engine overmind --help
+pipx install noetic-engine      # or: uvx --from noetic-engine noetic --help
 
 # Development mode
-git clone https://github.com/KaiwalPanchal/OverMind.git && cd OverMind
+git clone https://github.com/KaiwalPanchal/Noetic.git && cd Noetic
 pip install -e .[test]
 
 # System Diagnostic & Health Check
-overmind doctor
+noetic doctor
 
 # Install into a vault / wire MCP clients
-overmind install --vault /path/to/vault --agents claude,gemini --with-wiki
-overmind mcp-config --vault /path/to/vault
+noetic install --vault /path/to/vault --agents claude,gemini --with-wiki
+noetic mcp-config --vault /path/to/vault
 
 # Run MCP Server
-overmind mcp --transport stdio
+noetic mcp --transport stdio
 
 # Run the eval harness (rule-based baseline extractor by default)
-overmind eval
+noetic eval
 ```
 
 ---
 
 ## Eval Harness (grader + pluggable extractor)
 
-**What it is.** A labelled-dataset grading harness in `overmind/evals/`: deterministic graders (schema, required-entity recall, forbidden-buzzword penalty, injection-marker leak) feed an approve/reject decision, scored with accuracy / precision / recall / F1 / Cohen's kappa. It grades *any* extractor `(source_text) -> dict` (see `evals/extractors.py`), which receives only the source text, never the label or category.
+**What it is.** A labelled-dataset grading harness in `noetic/evals/`: deterministic graders (schema, required-entity recall, forbidden-buzzword penalty, injection-marker leak) feed an approve/reject decision, scored with accuracy / precision / recall / F1 / Cohen's kappa. It grades *any* extractor `(source_text) -> dict` (see `evals/extractors.py`), which receives only the source text, never the label or category.
 
 **What it is not.** It does not evaluate the LLM extraction pipeline. No LLM is called. An earlier version graded a hard-coded stub and reported F1 = 1.0; that was circular and has been removed.
 
@@ -355,7 +355,7 @@ overmind eval
 **Plug in a real extractor.**
 
 ```bash
-overmind eval --extractor my_pkg.my_module:my_extractor --dataset heldout --output results.json
+noetic eval --extractor my_pkg.my_module:my_extractor --dataset heldout --output results.json
 ```
 
 `my_extractor` is any callable (or zero-arg class) returning `{"title", "core_principles", "mental_moves", "anti_patterns", "rejected"}`. No real-LLM result is reported here because none has been run.
@@ -366,7 +366,7 @@ CI runs the baseline on both datasets: golden with the default 0.80 F1 floor, he
 
 ## Security & Architectural Threat Model
 
-- **Static policy gate (`overmind/gates/policy_gate.py`).** A best-effort denylist, **not a sandbox**. `validate_python_ast` blocks dangerous builtins (`eval`, `exec`, `compile`, `__import__`, `getattr`, `open`, ...), forbidden imports (`subprocess`, `importlib`, `ctypes`, `builtins`, `socket`, `pty`), `os.system`/`os.popen`/`shutil.rmtree` including through import aliases, and dunder-based escape chains (`__class__`, `__subclasses__`, `__globals__`, ...). Python can still be obfuscated past a denylist, and the project runs no process sandbox. Do not execute untrusted code on the strength of this check.
+- **Static policy gate (`noetic/gates/policy_gate.py`).** A best-effort denylist, **not a sandbox**. `validate_python_ast` blocks dangerous builtins (`eval`, `exec`, `compile`, `__import__`, `getattr`, `open`, ...), forbidden imports (`subprocess`, `importlib`, `ctypes`, `builtins`, `socket`, `pty`), `os.system`/`os.popen`/`shutil.rmtree` including through import aliases, and dunder-based escape chains (`__class__`, `__subclasses__`, `__globals__`, ...). Python can still be obfuscated past a denylist, and the project runs no process sandbox. Do not execute untrusted code on the strength of this check.
 - **Path confinement.** `validate_vault_path` rejects any `..` segment, anything resolving outside the vault, and protected names (`.env`, `.git`, `.private-strings`, keys).
 - **Input sanitizing.** `sanitize_input` enforces a length budget, strips NULs and rejects reserved `taste-engine` block markers. It is a library function: the pipelines do not call it yet.
 - **Human approval gate.** Generated notes land as `status: pending_review`; nothing is published or committed automatically.
@@ -399,7 +399,7 @@ CI runs the baseline on both datasets: golden with the default 0.80 F1 floor, he
     ├── 02-signals/                 # Papers · Repos · Postmortems · Web notes
     ├── 03-pipeline/                # Inbox → Curation → Drafts → Ready → Archive
     ├── playbooks/                  # Editorial lenses and reusable playbooks
-    └── scripts/                    # overmind/ and workflows/ packages (importable)
+    └── scripts/                    # noetic/ and workflows/ packages (importable)
 ```
 
 ---
@@ -428,4 +428,4 @@ echo "your-private-project-name" >> .private-strings   # Local gitignored deny-l
 
 ## License
 
-[MIT](LICENSE) © 2026 OverMind Contributors
+[MIT](LICENSE) © 2026 Noetic Contributors

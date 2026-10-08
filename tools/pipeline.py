@@ -24,7 +24,7 @@ if sys.stdout and hasattr(sys.stdout, "reconfigure"):
 if sys.stderr and hasattr(sys.stderr, "reconfigure"):
   sys.stderr.reconfigure(encoding="utf-8")
 
-from overmind.orchestration.cli import main  # noqa: E402
+from noetic.orchestration.cli import main  # noqa: E402
 
 if __name__ == "__main__":
   main()

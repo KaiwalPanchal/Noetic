@@ -1,7 +1,7 @@
 """Tests for the Typer CLI commands."""
 
 from typer.testing import CliRunner
-from overmind.cli import app
+from noetic.cli import app
 
 runner = CliRunner()
 
@@ -9,7 +9,7 @@ runner = CliRunner()
 def test_cli_help():
   result = runner.invoke(app, ["--help"])
   assert result.exit_code == 0
-  assert "OverMind" in result.output
+  assert "Noetic" in result.output
   assert "doctor" in result.output
   assert "mcp" in result.output
   assert "eval" in result.output

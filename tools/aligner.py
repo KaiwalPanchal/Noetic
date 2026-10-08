@@ -1,6 +1,6 @@
 """OverMind Architect: repository architecture audit tool.
 
-The agent contract it enforces lives in overmind/agents/architect.md (the legacy name
+The agent contract it enforces lives in noetic/agents/architect.md (the legacy name
 goal_aligner.md is still accepted if present).
 
 Verifies that the codebase and connected vault adhere to OverMind's 4 primitives:
@@ -32,7 +32,7 @@ CONTRACT_NAMES = ("architect", "goal_aligner")  # preferred name first; legacy a
 def load_agent_contract(repo_root: Path) -> tuple[str | None, str]:
     """Return (name, text) of the architect agent contract, or (None, "") when absent."""
     for name in CONTRACT_NAMES:
-        path = repo_root / "overmind" / "agents" / f"{name}.md"
+        path = repo_root / "noetic" / "agents" / f"{name}.md"
         if path.is_file():
             return name, path.read_text(encoding="utf-8")
     return None, ""
@@ -76,7 +76,7 @@ def audit_core_harness_pollution(repo_root: Path) -> list[AlignmentIssue]:
             ))
 
     # Check config.py defaults
-    config_py = repo_root / "engine" / "scripts" / "overmind" / "knowledge" / "config.py"
+    config_py = repo_root / "engine" / "scripts" / "noetic" / "knowledge" / "config.py"
     if config_py.exists():
         cfg_content = config_py.read_text(encoding="utf-8")
         defaults_match = re.search(r"DEFAULTS = \{(.*?)\}", cfg_content, re.S)
@@ -106,9 +106,9 @@ def audit_core_harness_pollution(repo_root: Path) -> list[AlignmentIssue]:
 
 
 def audit_tools_purity(repo_root: Path) -> list[AlignmentIssue]:
-    """Verify that tools in overmind/tools/ are stateless pure functions and audit Web Clipper."""
+    """Verify that tools in noetic/tools/ are stateless pure functions and audit Web Clipper."""
     issues = []
-    tools_dir = repo_root / "engine" / "scripts" / "overmind" / "tools"
+    tools_dir = repo_root / "engine" / "scripts" / "noetic" / "tools"
     
     # Check Web Clipper tool status
     clipper_tool = tools_dir / "clipper.py"
@@ -116,14 +116,14 @@ def audit_tools_purity(repo_root: Path) -> list[AlignmentIssue]:
         issues.append(AlignmentIssue(
             block="TOOLS",
             severity="FAIL",
-            summary="Web Clipper is not implemented as a Tool in overmind/tools/",
+            summary="Web Clipper is not implemented as a Tool in noetic/tools/",
             details=(
                 "User requirement designates Web Clipper as a Tool. "
-                "However, no clipper.py exists in overmind/tools/. "
+                "However, no clipper.py exists in noetic/tools/. "
                 "Instead, docs speculate an external 'modules/clipper/' that does not exist."
             ),
             remediation=(
-                "Implement overmind/tools/clipper.py as a clean, stateless Tool "
+                "Implement noetic/tools/clipper.py as a clean, stateless Tool "
                 "(functions: clip_url, parse_html, format_signal) feeding markdown directly into Knowledge Base."
             )
         ))
@@ -172,7 +172,7 @@ def audit_speculative_architecture(repo_root: Path) -> list[AlignmentIssue]:
 
 
 def audit_vault_alignment(vault_root: Path) -> list[AlignmentIssue]:
-    """Verify that the vault adheres to OverMind governance and projects structure."""
+    """Verify that the vault adheres to Noetic governance and projects structure."""
     issues = []
     overmind_dir = vault_root / "OverMind"
     if not overmind_dir.exists():
@@ -180,7 +180,7 @@ def audit_vault_alignment(vault_root: Path) -> list[AlignmentIssue]:
             block="GOVERNANCE",
             severity="WARN",
             summary="OverMind governance directory missing in vault",
-            details=f"No OverMind directory found at {vault_root}",
+            details=f"No Noetic directory found at {vault_root}",
             remediation="Ensure vault has OverMind/ structure."
         ))
         return issues
@@ -255,7 +255,7 @@ def run_audit(repo_root: Path, vault_root: Path | None) -> list[AlignmentIssue]:
 
 def main():
     parser = argparse.ArgumentParser(description="OverMind Architect: repository architecture audit")
-    parser.add_argument("--repo", default=str(REPO_ROOT), help="Path to OverMind engine repository")
+    parser.add_argument("--repo", default=str(REPO_ROOT), help="Path to Noetic engine repository")
     parser.add_argument("--vault", help="Path to OverMind/Obsidian vault (optional)")
     args = parser.parse_args()
 
@@ -285,7 +285,7 @@ def main():
     print("=" * 70)
     contract_name, _ = load_agent_contract(repo)
     print(f"Engine Repo: {repo}")
-    print(f"Contract:    {'overmind/agents/' + contract_name + '.md' if contract_name else 'not found'}")
+    print(f"Contract:    {'noetic/agents/' + contract_name + '.md' if contract_name else 'not found'}")
     print(f"Vault:       {vault or 'Not specified'}\n")
 
     issues = run_audit(repo, vault)

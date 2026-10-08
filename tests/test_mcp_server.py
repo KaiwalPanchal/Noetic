@@ -3,12 +3,12 @@
 from pathlib import Path
 import pytest
 
-from overmind.mcp.server import create_mcp_server
+from noetic.mcp.server import create_mcp_server
 
 
 def test_mcp_server_initialization():
   server = create_mcp_server()
-  assert server.name == "OverMind Taste Engine"
+  assert server.name == "Noetic"
   assert server.version == "0.2.0"
   assert "autonomous agent harness" in server.description.lower()
 
@@ -58,9 +58,9 @@ def test_mcp_tool_check_json_schema_missing():
 def test_mcp_resource_stances():
   server = create_mcp_server()
   resources = {r.uri: r for r in server._resource_manager.list_resources()}
-  assert "overmind://stances" in resources
-  assert "overmind://status" in resources
-  assert "overmind://frameworks" in resources
+  assert "noetic://stances" in resources
+  assert "noetic://status" in resources
+  assert "noetic://frameworks" in resources
 
 
 def _server_for(vault):
@@ -69,7 +69,7 @@ def _server_for(vault):
 
 def test_mcp_registry_resources_registered():
   uris = {str(r.uri) for r in create_mcp_server()._resource_manager.list_resources()}
-  assert {"overmind://projects", "overmind://quests", "overmind://briefing"} <= uris
+  assert {"noetic://projects", "noetic://quests", "noetic://briefing"} <= uris
 
 
 def test_mcp_list_projects_and_get_briefing_tools(ovault):
@@ -86,7 +86,7 @@ def test_mcp_list_projects_and_get_briefing_tools(ovault):
 def test_mcp_registry_resources_return_json_and_hide_profile(ovault):
   import json
   res = {str(r.uri): r for r in _server_for(ovault)._resource_manager.list_resources()}
-  for uri in ("overmind://projects", "overmind://quests", "overmind://briefing"):
+  for uri in ("noetic://projects", "noetic://quests", "noetic://briefing"):
     text = res[uri].fn()
     assert "SECRET-PROFILE-TOKEN" not in text
     json.loads(text)
@@ -106,7 +106,7 @@ def test_mcp_stdio_handshake(tmp_path):
   from mcp.client.stdio import stdio_client
 
   async def go():
-    params = StdioServerParameters(command=sys.executable, args=["-m", "overmind.mcp.server", "--vault", str(tmp_path)])
+    params = StdioServerParameters(command=sys.executable, args=["-m", "noetic.mcp.server", "--vault", str(tmp_path)])
     async with stdio_client(params) as (read, write):
       async with ClientSession(read, write) as session:
         await session.initialize()

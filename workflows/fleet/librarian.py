@@ -13,8 +13,8 @@ import json
 from pathlib import Path
 import re
 
-from overmind.knowledge.config import Config
-from overmind.knowledge.context import iter_notes
+from noetic.knowledge.config import Config
+from noetic.knowledge.context import iter_notes
 
 INTERVAL = timedelta(hours=24)
 STOP = {"the", "and", "for", "with", "from", "that", "this", "note", "notes", "untitled", "new", "into", "how", "what"}
@@ -97,6 +97,6 @@ def run_librarian(cfg: Config, force: bool = False) -> Path | None:
 def schedule_hint(vault: Path) -> dict[str, str]:
   """Scheduler commands to paste. We print them; we never install a scheduled task for you."""
   return {
-      "windows": f'schtasks /Create /SC DAILY /ST 08:00 /TN OverMindLibrarian /TR "overmind librarian --vault \\"{vault}\\""',
-      "cron": f'0 8 * * * overmind librarian --vault "{vault}"',
+      "windows": f'schtasks /Create /SC DAILY /ST 08:00 /TN OverMindLibrarian /TR "noetic librarian --vault \\"{vault}\\""',
+      "cron": f'0 8 * * * noetic librarian --vault "{vault}"',
   }

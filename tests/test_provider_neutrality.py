@@ -3,7 +3,7 @@
 from pathlib import Path
 import re
 
-ENGINE = Path(__file__).resolve().parents[1] / "overmind"
+ENGINE = Path(__file__).resolve().parents[1] / "noetic"
 CANONICAL = ("prompts", "commands", "agents", "templates")
 BANNED = re.compile(r"claude|codex|gemini|antigravity|anthropic|openai|\bagy\b|WebFetch|WebSearch|slash[- ]command", re.I)
 

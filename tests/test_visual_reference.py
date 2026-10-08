@@ -4,10 +4,10 @@ from pathlib import Path
 
 from typer.main import get_command
 
-from overmind.cli import app
-from overmind.mcp.server import create_mcp_server
-from overmind.orchestration.loader import resource_dirs
-from overmind.orchestration.registry import discover
+from noetic.cli import app
+from noetic.mcp.server import create_mcp_server
+from noetic.orchestration.loader import resource_dirs
+from noetic.orchestration.registry import discover
 
 DOC = (Path(__file__).resolve().parents[1] / "docs" / "VISUAL_REFERENCE.md").read_text(encoding="utf-8")
 

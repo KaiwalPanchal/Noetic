@@ -10,13 +10,13 @@ from datetime import date
 from pathlib import Path
 import subprocess
 
-from overmind.gates.git import GitError, changed_files, current_branch, head, new_work_branch
-from overmind.knowledge import registry, repos
-from overmind.knowledge.config import slugify
-from overmind.orchestration.registry import arg, pipeline
-from overmind.orchestration.run import PipelineError
-from overmind.orchestration.steps import agent_step
-from overmind.tools import prompts
+from noetic.gates.git import GitError, changed_files, current_branch, head, new_work_branch
+from noetic.knowledge import registry, repos
+from noetic.knowledge.config import slugify
+from noetic.orchestration.registry import arg, pipeline
+from noetic.orchestration.run import PipelineError
+from noetic.orchestration.steps import agent_step
+from noetic.tools import prompts
 
 TAIL = 3000
 
@@ -67,7 +67,7 @@ def delegate(run, a) -> list[str]:
 
   def prepare():
     try:
-      branch = new_work_branch(repo, f"overmind/{slugify(proj['name'])[:24]}-{slugify(a['task'])[:24]}-{run.id[-4:]}")
+      branch = new_work_branch(repo, f"noetic/{slugify(proj['name'])[:24]}-{slugify(a['task'])[:24]}-{run.id[-4:]}")
       return {"branch": branch, "head": head(repo)}
     except GitError as exc:
       raise PipelineError(exc.code, exc.detail) from exc

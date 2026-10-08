@@ -1,10 +1,10 @@
 """journey: build-in-public entry with tweet candidates (privacy-filtered)."""
 
-from overmind.knowledge import context, notes
-from overmind.orchestration.registry import arg, pipeline
-from overmind.orchestration.steps import agent_step
-from overmind.tools import prompts
-from overmind.tools.tweets import too_long
+from noetic.knowledge import context, notes
+from noetic.orchestration.registry import arg, pipeline
+from noetic.orchestration.steps import agent_step
+from noetic.tools import prompts
+from noetic.tools.tweets import too_long
 
 
 @pipeline("journey", kind="content", help="build-in-public entry → Twitter/journey/",

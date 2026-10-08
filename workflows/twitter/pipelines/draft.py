@@ -1,11 +1,11 @@
 """draft: curation package or journey entry → thread draft that passes the length check."""
 
-from overmind.knowledge import context, notes
-from overmind.orchestration.registry import arg, pipeline
-from overmind.orchestration.run import PipelineError
-from overmind.orchestration.steps import agent_step
-from overmind.tools import prompts
-from overmind.tools.tweets import too_long
+from noetic.knowledge import context, notes
+from noetic.orchestration.registry import arg, pipeline
+from noetic.orchestration.run import PipelineError
+from noetic.orchestration.steps import agent_step
+from noetic.tools import prompts
+from noetic.tools.tweets import too_long
 
 
 @pipeline("draft", kind="content", help="note → validated thread draft", args=[arg("note")])

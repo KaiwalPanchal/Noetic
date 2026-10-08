@@ -1,7 +1,7 @@
 """Tests for Twitter/X thread length weighting and validation."""
 
 from pathlib import Path
-from overmind.tools.tweets import weighted_length, too_long
+from noetic.tools.tweets import weighted_length, too_long
 from workflows.twitter.scripts.thread_validator import parse_thread, validate_thread
 
 

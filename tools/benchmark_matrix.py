@@ -22,9 +22,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from overmind.agents.runners import run_agent, available
-from overmind.tools.schema_check import check
-from overmind.tools import prompts
+from noetic.agents.runners import run_agent, available
+from noetic.tools.schema_check import check
+from noetic.tools import prompts
 
 # Standard test fixtures for active workflows
 WORKFLOW_FIXTURES = {
@@ -85,7 +85,7 @@ def run_benchmark(harnesses: list[str], models_filter: list[str] | None, workflo
     target_workflows = [w for w in WORKFLOW_FIXTURES if not workflows_filter or w in workflows_filter]
 
     print("\n" + "=" * 80)
-    print(" OVERMIND WORKFLOW BENCHMARK MATRIX (AGY vs CLAUDE)")
+    print(" NOETIC WORKFLOW BENCHMARK MATRIX (AGY vs CLAUDE)")
     print("=" * 80)
 
     for harness in harnesses:
@@ -182,7 +182,7 @@ def print_summary_table(results: list[dict]):
 
 
 def generate_markdown(results: list[dict]) -> str:
-    md = "# OverMind Multi-Harness & Multi-Model Benchmark\n\n"
+    md = "# Noetic Multi-Harness & Multi-Model Benchmark\n\n"
     md += f"*Generated: {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}*\n\n"
     md += "| Harness | Model | Workflow | Status | Latency (s) | Schema Valid | Cost ($) |\n"
     md += "| :--- | :--- | :--- | :--- | :---: | :---: | :---: |\n"

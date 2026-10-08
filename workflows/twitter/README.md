@@ -3,7 +3,7 @@
 **Block:** PROJECTS  
 **Role:** Audience & Authority Engine (Linked to Goal G7 & Competency C2)
 
-This project pack runs on top of the OverMind core harness. It turns thinking frameworks and curated signals into high-density Twitter/X threads and build-in-public logs.
+This project pack runs on top of the Noetic core harness. It turns thinking frameworks and curated signals into high-density Twitter/X threads and build-in-public logs.
 
 ## Structure
 - `commands/`: Claude Code slash commands (`/draft`, `/ship`, `/journey`)
@@ -17,4 +17,4 @@ This project pack runs on top of the OverMind core harness. It turns thinking fr
 ## Principles
 1. **Manual Posting Only:** The agent drafts; the human reviews and posts by hand.
 2. **Strict Character Checking:** Twitter weights URLs as 23 characters and emoji as 2.
-3. **Decoupled from Core Harness:** The core OverMind engine remains pure; Twitter is an applied project.
+3. **Decoupled from Core Harness:** The core Noetic engine remains pure; Twitter is an applied project.

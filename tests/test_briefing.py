@@ -6,16 +6,16 @@ import json
 import pytest
 from typer.testing import CliRunner
 
-from overmind.gates import gate
-from overmind.cli import app
-from overmind.orchestration import registry as pipe_registry
-from overmind.orchestration import steps as steps_mod
-from overmind.orchestration.run import PipelineError, Run
+from noetic.gates import gate
+from noetic.cli import app
+from noetic.orchestration import registry as pipe_registry
+from noetic.orchestration import steps as steps_mod
+from noetic.orchestration.run import PipelineError, Run
 from workflows.briefing import pipeline as briefing
-from overmind.agents import runners as agents
-from overmind.tools import prompts
-from overmind.agents.runners import AgentResult
-from overmind.tools.schema_check import check
+from noetic.agents import runners as agents
+from noetic.tools import prompts
+from noetic.agents.runners import AgentResult
+from noetic.tools.schema_check import check
 
 from .conftest import TODAY
 

@@ -11,13 +11,13 @@ from __future__ import annotations
 from datetime import date
 import json
 
-from overmind.knowledge import notes, registry
-from overmind.knowledge.config import Config
-from overmind.orchestration.registry import pipeline
-from overmind.orchestration.run import PipelineError
-from overmind.orchestration.steps import agent_step
-from overmind.gates.policy_gate import SecurityViolation, validate_overmind_path, validate_vault_path
-from overmind.tools import prompts
+from noetic.knowledge import notes, registry
+from noetic.knowledge.config import Config
+from noetic.orchestration.registry import pipeline
+from noetic.orchestration.run import PipelineError
+from noetic.orchestration.steps import agent_step
+from noetic.gates.policy_gate import SecurityViolation, validate_overmind_path, validate_vault_path
+from noetic.tools import prompts
 
 PERSONA_LIMIT = 3000
 LOG_LINES = 20
@@ -77,7 +77,7 @@ def load_persona(cfg: Config) -> str:
 
 
 def render_briefing_text(b: dict) -> str:
-  """Plain-text view of the deterministic briefing (what `overmind briefing` prints)."""
+  """Plain-text view of the deterministic briefing (what `noetic briefing` prints)."""
   out = [f"Briefing {b['generated']}"]
   f = b["focus"]
   out.append(f"Focus: {f['kind']} {f['name']}: {f['next_action']} ({f['reason']})" if f else "Focus: none")

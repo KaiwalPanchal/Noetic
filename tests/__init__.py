@@ -1,1 +1,1 @@
-"""Test suite for OverMind Taste Engine."""
+"""Test suite for Noetic."""

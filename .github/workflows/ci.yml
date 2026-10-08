@@ -31,17 +31,17 @@ jobs:
 
     - name: Run pytest
       run: |
-        pytest tests/ -v --cov=overmind --cov-report=term-missing
+        pytest tests/ -v --cov=noetic --cov-report=term-missing
 
     - name: Eval harness (rule-based baseline extractor, in-sample regression floor)
       run: |
-        python -m overmind.evals.run_evals
-        python -m overmind.evals.run_evals --dataset heldout --threshold 0.5
+        python -m noetic.evals.run_evals
+        python -m noetic.evals.run_evals --dataset heldout --threshold 0.5
 
     - name: Verify CLI and MCP import
       run: |
-        overmind doctor
-        overmind --help
+        noetic doctor
+        noetic --help
 
   package:
     runs-on: ubuntu-latest
@@ -61,6 +61,6 @@ jobs:
         python -m venv /tmp/smoke
         /tmp/smoke/bin/pip install dist/*.whl
         mkdir /tmp/vault
-        /tmp/smoke/bin/overmind install --vault /tmp/vault --agents claude
-        /tmp/smoke/bin/overmind mcp-config --vault /tmp/vault --client claude-code
+        /tmp/smoke/bin/noetic install --vault /tmp/vault --agents claude
+        /tmp/smoke/bin/noetic mcp-config --vault /tmp/vault --client claude-code
         test -f /tmp/vault/CLAUDE.md && test -f /tmp/vault/.mcp.json

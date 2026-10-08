@@ -3,10 +3,10 @@
 import json
 from pathlib import Path
 
-from overmind.mcp.clients import CLIENTS, SERVER_KEY, config_path, write_client
+from noetic.mcp.clients import CLIENTS, SERVER_KEY, config_path, write_client
 
 
-def test_creates_config_with_overmind_entry(tmp_path: Path):
+def test_creates_config_with_noetic_entry(tmp_path: Path):
   vault = tmp_path / "v"
   vault.mkdir()
   r = write_client("cursor", vault, home=tmp_path / "home")

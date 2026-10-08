@@ -26,5 +26,5 @@ dist/
 build/
 
 
-# Generated eval output (use `overmind eval --output <path>`)
+# Generated eval output (use `noetic eval --output <path>`)
 eval_results.json

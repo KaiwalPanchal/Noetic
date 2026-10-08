@@ -2,7 +2,7 @@ name: Release
 
 # Publishes to PyPI when a GitHub release is published, using PyPI trusted publishing
 # (no API token stored). One-time setup: on pypi.org add this repo + workflow "release.yml"
-# + environment "pypi" as a trusted publisher for the project `overmind-engine`.
+# + environment "pypi" as a trusted publisher for the project `noetic-engine`.
 on:
   release:
     types: [published]

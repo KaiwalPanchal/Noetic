@@ -1,4 +1,4 @@
-# Threat Model: OverMind Agent & Knowledge Harness
+# Threat Model: Noetic Agent & Knowledge Harness
 
 **Document Version:** 1.1  
 **Methodology:** STRIDE (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege)  
@@ -8,7 +8,7 @@
 
 ## 1. System Architecture & Trust Boundaries
 
-OverMind is an open-source agent harness and Model Context Protocol (MCP) server operating on top of a local Markdown second brain (Obsidian).
+Noetic is an open-source agent harness and Model Context Protocol (MCP) server operating on top of a local Markdown second brain (Obsidian).
 
 ```
                       +---------------------------------------+
@@ -17,7 +17,7 @@ OverMind is an open-source agent harness and Model Context Protocol (MCP) server
                                           | Human Review Gates
                                           v
 +-----------------------+     +-------------------------------+     +-----------------------+
-|  Untrusted Sources    |     |     OverMind Engine Core      |     |  Coding Agents (MCP)  |
+|  Untrusted Sources    |     |     Noetic Engine Core      |     |  Coding Agents (MCP)  |
 |  (Web, Books, URLs)   | --> |  (Policy Gate + Orchestration)| <-- |  (Claude, Cursor, Agy)|
 +-----------------------+     +---------------+---------------+     +-----------------------+
                                               |

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from overmind.knowledge.config import CONFIG_NAME, Config
+from noetic.knowledge.config import CONFIG_NAME, Config
 
 
 @pytest.fixture
@@ -83,7 +83,7 @@ def _w(path: Path, text: str) -> None:
 
 @pytest.fixture
 def ovault(tmp_path: Path) -> Path:
-  """A vault with an OverMind wiki: projects, quests, a log, and a private profile."""
+  """A vault with an Noetic wiki: projects, quests, a log, and a private profile."""
   v = tmp_path / "ovault"
   (v / "taste-engine").mkdir(parents=True)
   (v / "frameworks").mkdir()

@@ -1,4 +1,4 @@
-"""twitter workflow: draft / journey pipelines and the `overmind validate-thread` command.
+"""twitter workflow: draft / journey pipelines and the `noetic validate-thread` command.
 
 The agent drafts; the owner posts by hand. Nothing here ever posts.
 """
@@ -13,8 +13,8 @@ def register(app, registry):
     return
   import typer
 
-  from overmind.gates.policy_gate import SecurityViolation, validate_vault_path
-  from overmind.knowledge.config import load_config
+  from noetic.gates.policy_gate import SecurityViolation, validate_vault_path
+  from noetic.knowledge.config import load_config
 
   @app.command("validate-thread")
   def validate_thread(

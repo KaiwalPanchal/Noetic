@@ -3,7 +3,7 @@
 from pathlib import Path
 import pytest
 
-from overmind.gates.policy_gate import (
+from noetic.gates.policy_gate import (
     SecurityViolation,
     validate_vault_path,
     validate_python_ast,
