@@ -6,6 +6,8 @@ import re
 import subprocess
 import sys
 
+from noetic.knowledge.config import CONFIG_NAME
+
 REPO = Path(__file__).resolve().parent.parent
 
 
@@ -33,7 +35,7 @@ def test_install_defaults_to_all_adapters_and_records_choice(tmp_path: Path):
   vault.mkdir()
   res = run_install(vault)
   assert res.returncode == 0, res.stderr
-  cfg = json.loads((vault / "taste-engine.config.json").read_text(encoding="utf-8"))
+  cfg = json.loads((vault / CONFIG_NAME).read_text(encoding="utf-8"))
   assert cfg["adapters"] == ["claude", "codex", "gemini", "antigravity"]
   for f in ["CLAUDE.md", "AGENTS.md", "GEMINI.md", ".gemini/commands/apply.toml",
             ".agent/skills/overmind-apply/SKILL.md", "taste-engine/canonical/commands/apply.md",
@@ -50,7 +52,7 @@ def test_install_agents_flag_limits_output_and_is_remembered(tmp_path: Path):
   assert not (vault / ".claude").exists()
   assert run_install(vault).returncode == 0  # re-run keeps the recorded choice
   assert not (vault / "CLAUDE.md").exists()
-  assert json.loads((vault / "taste-engine.config.json").read_text(encoding="utf-8"))["adapters"] == ["gemini"]
+  assert json.loads((vault / CONFIG_NAME).read_text(encoding="utf-8"))["adapters"] == ["gemini"]
   assert run_install(vault, "--agents", "bogus").returncode != 0
 
 
@@ -107,7 +109,7 @@ def test_cli_install_and_mcp_config(tmp_path: Path):
   runner = CliRunner()
   res = runner.invoke(app, ["install", "--vault", str(vault), "--agents", "claude"])
   assert res.exit_code == 0, res.output
-  assert (vault / "CLAUDE.md").is_file() and (vault / "taste-engine.config.json").is_file()
+  assert (vault / "CLAUDE.md").is_file() and (vault / CONFIG_NAME).is_file()
   res = runner.invoke(app, ["mcp-config", "--vault", str(vault), "--client", "claude-code"])
   assert res.exit_code == 0, res.output
   assert "noetic" in json.loads((vault / ".mcp.json").read_text(encoding="utf-8"))["mcpServers"]

@@ -36,7 +36,7 @@ def agent_step(
     if not order:
       order = [a for a in known_agents(cfg.commands) if available(a, cfg.commands)]
     if not order:
-      raise PipelineError("NO_AGENT", "no agent configured or installed; set `agents` in taste-engine.config.json "
+      raise PipelineError("NO_AGENT", "no agent configured or installed; set `agents` in noetic.config.json "
                                       "or define a `commands` entry", step=step)
   last = None
 

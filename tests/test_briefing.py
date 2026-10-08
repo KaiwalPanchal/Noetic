@@ -57,7 +57,7 @@ def test_briefing_without_overmind_is_empty_with_warning(cfg):
 
 
 def _env(monkeypatch, vault):
-  monkeypatch.setenv("TASTE_ENGINE_VAULT", str(vault))
+  monkeypatch.setenv("NOETIC_VAULT", str(vault))
   monkeypatch.chdir(vault)
 
 

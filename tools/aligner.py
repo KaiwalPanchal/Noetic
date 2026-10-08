@@ -265,14 +265,14 @@ def main():
     # If vault not passed, check env or discover sibling folder with taste-engine.config.json
     if not vault:
         import os
-        env_vault = os.environ.get("TASTE_ENGINE_VAULT")
+        env_vault = os.environ.get("NOETIC_VAULT") or os.environ.get("TASTE_ENGINE_VAULT")
         if env_vault and Path(env_vault).is_dir():
             vault = Path(env_vault)
         else:
             for parent in [repo.parent, repo.parent.parent]:
                 try:
                     for candidate in parent.glob("*"):
-                        if candidate.is_dir() and (candidate / "taste-engine.config.json").is_file():
+                        if candidate.is_dir() and ((candidate / "noetic.config.json").is_file() or (candidate / "taste-engine.config.json").is_file()):
                             vault = candidate
                             break
                 except Exception:

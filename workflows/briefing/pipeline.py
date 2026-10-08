@@ -39,7 +39,7 @@ def _focus(projects: list[dict], quests: list[dict]) -> dict | None:
 
 def build_briefing(cfg: Config, today: date | None = None) -> dict:
   today = today or date.today()
-  warnings = [] if cfg.overmind else ["paths.overmind is not set in taste-engine.config.json; nothing to read"]
+  warnings = [] if cfg.overmind else ["paths.overmind is not set in noetic.config.json; nothing to read"]
   projects = registry.load_projects(cfg, today)
   quests = registry.load_quests(cfg, today)
   gates = []

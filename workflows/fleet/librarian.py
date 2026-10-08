@@ -2,7 +2,7 @@
 
 For every note in `inbox/` it reports: empty/duplicate files, existing vault notes it likely relates to
 (by shared title words and exact title mentions), and its headings. The digest lands as a `pending_review`
-note. State in .taste-engine/librarian.json keeps it to once per 24 hours unless forced.
+note. State in .noetic/librarian.json keeps it to once per 24 hours unless forced.
 """
 
 from __future__ import annotations

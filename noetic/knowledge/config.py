@@ -1,9 +1,13 @@
 """Knowledge layer: vault config. Where everything lives and how the engine is wired.
 
-Finds the vault by locating `taste-engine.config.json`, checked in this order:
-1. the TASTE_ENGINE_VAULT environment variable
+Finds the vault by locating `noetic.config.json` (or the legacy `taste-engine.config.json`),
+checked in this order:
+1. the NOETIC_VAULT environment variable (legacy: TASTE_ENGINE_VAULT)
 2. the current directory and its parents
 3. this script's directory and its parents
+
+Machine state lives in `<vault>/.noetic/` (runs, taste rules, caches). A vault that still has the legacy
+names keeps working; `noetic migrate` renames them (see noetic/knowledge/migrate.py).
 """
 
 from __future__ import annotations
@@ -14,7 +18,26 @@ import os
 from pathlib import Path
 import re
 
-CONFIG_NAME = "taste-engine.config.json"
+CONFIG_NAME = "noetic.config.json"
+LEGACY_CONFIG_NAME = "taste-engine.config.json"
+STATE_DIR_NAME = ".noetic"
+LEGACY_STATE_DIR_NAME = ".taste-engine"
+ENV_VAULT = "NOETIC_VAULT"
+LEGACY_ENV_VAULT = "TASTE_ENGINE_VAULT"
+
+
+def config_file(vault: Path) -> Path:
+  """The vault's config file: the new name, else the legacy one, else where the new one would go."""
+  for name in (CONFIG_NAME, LEGACY_CONFIG_NAME):
+    if (vault / name).is_file():
+      return vault / name
+  return vault / CONFIG_NAME
+
+
+def state_dir_for(vault: Path) -> Path:
+  """`.noetic/`, unless only the legacy `.taste-engine/` exists (pre-migration vault)."""
+  new, old = vault / STATE_DIR_NAME, vault / LEGACY_STATE_DIR_NAME
+  return old if old.is_dir() and not new.exists() else new
 
 # .../noetic/knowledge/config.py → the noetic package; agent contracts live beside the runners.
 PACKAGE_DIR = Path(__file__).resolve().parents[1]
@@ -69,7 +92,7 @@ class Config:
     persona = data.get("persona", DEFAULTS["persona"])
     self.persona: Path | None = (vault / persona) if persona else None
     self.private_paths: list[str] = data.get("private_paths", DEFAULTS["private_paths"])
-    self.state_dir = vault / ".taste-engine"
+    self.state_dir = state_dir_for(vault)
 
   def agent_order(self, step: str) -> list[str]:
     """Agents to try for `step`: its override first, then the global ordered list. Deduplicated."""
@@ -94,28 +117,29 @@ def _as_list(value) -> list[str]:
 
 def _search_up(start: Path) -> Path | None:
   for folder in [start, *start.parents]:
-    if (folder / CONFIG_NAME).is_file():
+    if config_file(folder).is_file():
       return folder
   return None
 
 
 def find_vault() -> Path:
-  env = os.environ.get("TASTE_ENGINE_VAULT")
-  if env and (Path(env) / CONFIG_NAME).is_file():
-    return Path(env)
+  for var in (ENV_VAULT, LEGACY_ENV_VAULT):
+    env = os.environ.get(var)
+    if env and config_file(Path(env)).is_file():
+      return Path(env)
   for start in (Path.cwd(), Path(__file__).resolve().parent):
     found = _search_up(start)
     if found:
       return found
   raise SystemExit(
-    f"Could not find {CONFIG_NAME}. Run install.py --vault <path> first, "
-    "or set TASTE_ENGINE_VAULT."
+    f"Could not find {CONFIG_NAME}. Run `noetic install --vault <path>` first, "
+    f"or set {ENV_VAULT}."
   )
 
 
 def load_config() -> Config:
   vault = find_vault()
-  data = json.loads((vault / CONFIG_NAME).read_text(encoding="utf-8"))
+  data = json.loads(config_file(vault).read_text(encoding="utf-8"))
   return Config(vault, data)
 
 

@@ -39,7 +39,7 @@ def _workflows_dir() -> Path:
 
 
 PROJECTS_DIR = _workflows_dir()
-CONFIG_NAME = "taste-engine.config.json"
+from noetic.knowledge.config import CONFIG_NAME, config_file  # noqa: E402
 WIKI_SEED = SEED / "overmind-wiki"
 DEFAULT_OVERMIND_DIR = "OverMind"
 
@@ -64,7 +64,7 @@ ENGINE_DIRS = [
 
 
 def build_config(args: argparse.Namespace, vault: Path) -> dict:
-  path = vault / CONFIG_NAME
+  path = config_file(vault)
   cfg = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
   cfg.setdefault("paths", {})
   # Explicit flags override; otherwise keep what's there; otherwise defaults.
@@ -218,7 +218,7 @@ def main(argv: list[str] | None = None):
     (engine / d).mkdir(parents=True, exist_ok=True)
   (frameworks / "briefs").mkdir(parents=True, exist_ok=True)
 
-  (vault / CONFIG_NAME).write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+  config_file(vault).write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
   written = []
   proj_names = args.projects if args.projects is not None else [p.name for p in sorted(PROJECTS_DIR.iterdir()) if p.is_dir() and not p.name.startswith(("__", "."))]
@@ -244,8 +244,8 @@ def main(argv: list[str] | None = None):
   from noetic.adapters.sync import sync
   report = sync(vault, cfg["adapters"])
 
-  print(f"Taste Engine installed into {vault}")
-  print(f"  config:     {CONFIG_NAME}")
+  print(f"Noetic installed into {vault}")
+  print(f"  config:     {config_file(vault).name}")
   print(f"  adapters:   {', '.join(report.agents)} ({report.summary()})")
   for n in report.notes:
     print(f"    note: {n}")

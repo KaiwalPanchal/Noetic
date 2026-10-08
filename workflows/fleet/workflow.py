@@ -13,7 +13,7 @@ from pathlib import Path
 import typer
 
 from noetic.knowledge import repos as repo_telemetry
-from noetic.knowledge.config import CONFIG_NAME, Config, load_config
+from noetic.knowledge.config import Config, config_file, load_config
 from workflows.fleet import delegate as _delegate  # noqa: F401 (registers the `delegate` pipeline)
 from workflows.fleet import librarian as lib
 
@@ -22,7 +22,7 @@ def _config(vault: str | None) -> Config:
   if not vault:
     return load_config()
   root = Path(vault).expanduser().resolve()
-  f = root / CONFIG_NAME
+  f = config_file(root)
   return Config(root, json.loads(f.read_text(encoding="utf-8")) if f.exists() else {})
 
 

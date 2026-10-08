@@ -85,7 +85,7 @@ def list_everything(cfg: Config):
   print("\nAGENTS (tools/agents.py + config commands)")
   for name in known_agents(cfg.commands):
     print(f"  {name:<7} {'installed' if available(name, cfg.commands) else 'not installed'}")
-  print("\nROUTING (taste-engine.config.json → agents, steps)")
+  print("\nROUTING (noetic.config.json → agents, steps)")
   print(f"  {'agents':<12} {', '.join(cfg.agent_list) or '(none: first installed adapter is used)'}")
   for node, agent in {**cfg.agents, **cfg.steps}.items():
     if node != "fallback":
@@ -94,7 +94,7 @@ def list_everything(cfg: Config):
 
 def main():
   discover()
-  p = argparse.ArgumentParser(prog="pipeline.py", description="Taste Engine: multi-agent, human-gated pipelines")
+  p = argparse.ArgumentParser(prog="noetic run", description="Noetic: multi-agent, human-gated pipelines")
   sub = p.add_subparsers(dest="cmd", required=True)
 
   for pl in PIPELINES.values():

@@ -191,7 +191,7 @@ def test_agy_filters_to_schema_keys_and_cleans_temp_files(tmp_path, fake_cli):
   assert res.data == {"ok": True}
   assert "--mode" in calls[0]["cmd"] and "plan" in calls[0]["cmd"]
   assert calls[0]["stdin"] is None
-  assert list((tmp_path / ".taste-engine" / "tmp").iterdir()) == []
+  assert list((tmp_path / ".noetic" / "tmp").iterdir()) == []
 
 
 def test_agy_write_skips_permissions_and_failure_status_is_reported(tmp_path, fake_cli):

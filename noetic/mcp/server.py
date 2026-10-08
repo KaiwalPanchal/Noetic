@@ -30,9 +30,9 @@ def create_mcp_server(vault_override: Path | None = None) -> MCPServer:
 
   def _get_cfg():
     if vault_override:
-      from noetic.knowledge.config import Config, CONFIG_NAME
+      from noetic.knowledge.config import Config, config_file
 
-      cfg_file = vault_override / CONFIG_NAME
+      cfg_file = config_file(vault_override)
       data = json.loads(cfg_file.read_text(encoding="utf-8")) if cfg_file.exists() else {}
       return Config(vault_override, data)
     try:

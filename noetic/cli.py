@@ -192,6 +192,20 @@ def sync(
 
 
 @app.command()
+def migrate(
+    vault: str = typer.Option(None, "--vault", help="Vault root (default: auto-detected)"),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Show what would be renamed, change nothing"),
+):
+  """Rename a legacy vault (taste-engine.config.json, .taste-engine/) to noetic.config.json and .noetic/."""
+  from noetic.knowledge.config import find_vault
+  from noetic.knowledge.migrate import migrate as run_migrate
+
+  root = Path(vault).expanduser().resolve() if vault else find_vault()
+  for line in run_migrate(root, dry_run):
+    typer.echo(line)
+
+
+@app.command()
 def status(
     run_id: str = typer.Argument(None, help="Optional specific run ID to inspect"),
 ):

@@ -159,7 +159,7 @@ def _codex(prompt, schema, cwd, web, write, timeout, model) -> AgentResult:
 def _agy(prompt, schema, cwd, web, write, timeout, model) -> AgentResult:
   # agy only takes the prompt as an argument, and Windows caps command lines
   # at ~32K chars, so the real prompt goes in a file the agent reads first.
-  tmp_dir = cwd / ".taste-engine" / "tmp"
+  tmp_dir = cwd / ".noetic" / "tmp"
   tmp_dir.mkdir(parents=True, exist_ok=True)
   stamp = f"{int(time.time() * 1000)}"
   prompt_file = tmp_dir / f"prompt-{stamp}.md"

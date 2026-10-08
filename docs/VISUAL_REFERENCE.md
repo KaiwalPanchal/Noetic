@@ -126,6 +126,7 @@ Legend: ✔ works and was checked   ◐ works, with a caveat
   uvx, no global install             uvx --from noetic-cli ...            ◐ needs PyPI
   idempotent, keeps your notes       re-run any time                           ✔
   generate per-tool files            noetic sync [--dry-run]                 ✔
+  old vault names -> .noetic/        noetic migrate [--dry-run]              ✔ rename only, never deletes
 
  CONNECT
   Claude Desktop/Code/Cursor/        noetic mcp-config                       ✔

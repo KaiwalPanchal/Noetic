@@ -1,6 +1,6 @@
 """Orchestration layer: run state on disk (pause / resume, stateless reducer).
 
-One Run = one pipeline execution, saved at .taste-engine/runs/<run-id>.json.
+One Run = one pipeline execution, saved at .noetic/runs/<run-id>.json.
 Each finished step's output is cached there, so re-running the same run
 (`resume`) skips the finished steps and continues from the failure.
 """

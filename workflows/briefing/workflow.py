@@ -28,7 +28,7 @@ def register(app, registry):
       typer.echo(json.dumps(rows, indent=2, ensure_ascii=False))
       return
     if cfg.overmind is None:
-      typer.echo("paths.overmind is not set in taste-engine.config.json")
+      typer.echo("paths.overmind is not set in noetic.config.json")
     for p in rows:
       stale = "" if p["stale_days"] is None else f", {p['stale_days']}d since touched"
       flag = f"  [incomplete: missing {', '.join(p['missing'])}]" if p["incomplete"] else ""

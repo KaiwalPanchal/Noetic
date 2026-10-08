@@ -10,6 +10,8 @@ import tomllib
 
 import pytest
 
+from noetic.knowledge.config import CONFIG_NAME
+
 from noetic.adapters import REGISTRY, sync
 from noetic.adapters.base import BLOCK_RE, HEADER_PREFIX, Canonical, apply_block
 from noetic.adapters.gemini import toml_multiline
@@ -120,10 +122,10 @@ def test_legacy_overmind_block_is_migrated():
 
 
 def test_no_personal_data_in_generated_files(v, source):
-  (v / "taste-engine.config.json").write_text(
+  (v / CONFIG_NAME).write_text(
     json.dumps({"owner": "Zaphod Beeblebrox", "agent": "Claude Code"}), encoding="utf-8")
   sync(v, ALL, source=source)
-  blob = "\n".join(read(p) for p in v.rglob("*") if p.is_file() and p.name != "taste-engine.config.json")
+  blob = "\n".join(read(p) for p in v.rglob("*") if p.is_file() and p.name != CONFIG_NAME)
   assert "Zaphod" not in blob and "Beeblebrox" not in blob
   assert str(v) not in blob and str(Path.home()) not in blob
   assert not re.search(r"[\w.+-]+@[\w-]+\.[\w.]+", blob)
@@ -180,7 +182,7 @@ def test_gemini_toml_roundtrips_awkward_bodies():
 
 
 def test_agent_selection_config_alias_and_errors(v, source):
-  (v / "taste-engine.config.json").write_text(json.dumps({"adapters": ["gemini"]}), encoding="utf-8")
+  (v / CONFIG_NAME).write_text(json.dumps({"adapters": ["gemini"]}), encoding="utf-8")
   assert sync(v, None, source=source).agents == ["gemini"]
   assert (v / "GEMINI.md").exists() and not (v / "CLAUDE.md").exists() and not (v / "AGENTS.md").exists()
   assert sync(v, ["agy"], source=source).agents == ["antigravity"]

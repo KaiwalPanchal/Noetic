@@ -13,7 +13,7 @@ from noetic.knowledge.config import Config
 
 # Context budgets in characters.
 BUDGET = {"interests": 3000, "taste": 4500, "note": 12000, "vault_notes": 9000, "voice": 3000, "framework": 5000}
-SKIP_DIRS = {".obsidian", ".trash", ".taste-engine", ".claude", ".git", ".stfolder", "node_modules"}
+SKIP_DIRS = {".obsidian", ".trash", ".taste-engine", ".noetic", ".claude", ".git", ".stfolder", "node_modules"}
 
 
 def read_body(path: Path, limit: int) -> str:

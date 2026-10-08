@@ -18,9 +18,9 @@ from .claude import ClaudeAdapter
 from .codex import CodexAdapter
 from .gemini import GeminiAdapter
 from .universal import UniversalAdapter
+from noetic.knowledge.config import config_file
 from noetic.orchestration.loader import resource_dirs
 
-CONFIG_NAME = "taste-engine.config.json"
 PKG_DIR = Path(__file__).resolve().parents[1]  # .../noetic
 ENGINE_DIR = PKG_DIR
 AGENTS_DIR = PKG_DIR / "agents"  # agent contracts (names starting with `_` are shared fragments, not agents)
@@ -111,7 +111,7 @@ def load_canonical(vault: Path, cfg: dict | None = None, source: Path | None = N
 
 
 def read_config(vault: Path) -> dict:
-  p = vault / CONFIG_NAME
+  p = config_file(vault)
   return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
 
 

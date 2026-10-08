@@ -46,7 +46,7 @@
       }
     ],
     "env": {
-      "TASTE_ENGINE_VAULT": "{tmp}/vault"
+      "NOETIC_VAULT": "{tmp}/vault"
     }
   }
 }
