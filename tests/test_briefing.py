@@ -6,15 +6,16 @@ import json
 import pytest
 from typer.testing import CliRunner
 
-from taste_engine.actions import gate
-from taste_engine.cli import app
-from taste_engine.orchestration import registry as pipe_registry
-from taste_engine.orchestration import steps as steps_mod
-from taste_engine.orchestration.run import PipelineError, Run
-from taste_engine.pipelines import briefing
-from taste_engine.tools import agents, prompts
-from taste_engine.tools.agents import AgentResult
-from taste_engine.tools.schema_check import check
+from overmind.gates import gate
+from overmind.cli import app
+from overmind.orchestration import registry as pipe_registry
+from overmind.orchestration import steps as steps_mod
+from overmind.orchestration.run import PipelineError, Run
+from workflows.briefing import pipeline as briefing
+from overmind.agents import runners as agents
+from overmind.tools import prompts
+from overmind.agents.runners import AgentResult
+from overmind.tools.schema_check import check
 
 from .conftest import TODAY
 

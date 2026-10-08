@@ -4,8 +4,8 @@ from datetime import date
 
 import pytest
 
-from taste_engine.knowledge import registry
-from taste_engine.security.policy_gate import SecurityViolation, validate_overmind_path
+from overmind.knowledge import registry
+from overmind.gates.policy_gate import SecurityViolation, validate_overmind_path
 
 from .conftest import TODAY
 

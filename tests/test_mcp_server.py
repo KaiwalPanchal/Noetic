@@ -3,7 +3,7 @@
 from pathlib import Path
 import pytest
 
-from taste_engine.mcp.server import create_mcp_server
+from overmind.mcp.server import create_mcp_server
 
 
 def test_mcp_server_initialization():
@@ -95,3 +95,22 @@ def test_mcp_registry_resources_return_json_and_hide_profile(ovault):
 def test_mcp_registry_without_vault_is_graceful(tmp_path):
   tools = {t.name: t for t in _server_for(tmp_path)._tool_manager.list_tools()}
   assert tools["list_projects"].fn()["projects"] == []
+
+
+def test_mcp_stdio_handshake(tmp_path):
+  """Spawn the real server over stdio and list its tools through the MCP client."""
+  import asyncio
+  import sys
+
+  from mcp import ClientSession, StdioServerParameters
+  from mcp.client.stdio import stdio_client
+
+  async def go():
+    params = StdioServerParameters(command=sys.executable, args=["-m", "overmind.mcp.server", "--vault", str(tmp_path)])
+    async with stdio_client(params) as (read, write):
+      async with ClientSession(read, write) as session:
+        await session.initialize()
+        return {t.name for t in (await session.list_tools()).tools}
+
+  names = asyncio.run(asyncio.wait_for(go(), timeout=60))
+  assert {"get_briefing", "list_projects", "inspect_code_safety", "validate_thread"} <= names

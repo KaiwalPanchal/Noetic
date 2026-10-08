@@ -1,6 +1,6 @@
 """Tests for OpenTelemetry GenAI tracing instrumentation."""
 
-from taste_engine.telemetry.tracer import trace_agent_call
+from overmind.telemetry.tracer import trace_agent_call
 
 
 def test_telemetry_trace_successful_call():

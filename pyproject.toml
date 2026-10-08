@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=77.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,16 +8,19 @@ version = "0.2.0"
 description = "Harness, MCP native protocol server, and taste engine for personal knowledge vaults"
 readme = "README.md"
 authors = [{ name = "Kaiwal Panchal" }]
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["mcp", "obsidian", "second-brain", "agents", "markdown"]
 requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
@@ -38,17 +41,14 @@ test = [
 ]
 
 [project.scripts]
-overmind = "taste_engine.cli:app"
-overmind-mcp = "taste_engine.mcp.server:main"
-
-[tool.setuptools.package-dir]
-"" = "engine/scripts"
+overmind = "overmind.cli:app"
+overmind-mcp = "overmind.mcp.server:main"
 
 [tool.setuptools.packages.find]
-where = ["engine/scripts"]
+include = ["overmind*", "workflows*"]
 
 [tool.setuptools.package-data]
-"taste_engine.evals" = ["*.json"]
+"*" = ["*.md", "*.json", "*.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

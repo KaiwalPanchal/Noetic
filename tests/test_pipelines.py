@@ -2,15 +2,15 @@
 
 import pytest
 
-from taste_engine.orchestration import steps as steps_mod
-from taste_engine.orchestration.run import PipelineError, Run
-from taste_engine.pipelines import curate as curate_mod
-from taste_engine.pipelines import research as research_mod
-from taste_engine.pipelines.curate import curate
-from taste_engine.pipelines.ingest import ingest
-from taste_engine.pipelines.replicate import replicate
-from taste_engine.pipelines.research import dead_links, research
-from taste_engine.tools.agents import AgentResult
+from overmind.orchestration import steps as steps_mod
+from overmind.orchestration.run import PipelineError, Run
+from workflows.taste_engine.pipelines import curate as curate_mod
+from workflows.taste_engine.pipelines import research as research_mod
+from workflows.taste_engine.pipelines.curate import curate
+from workflows.taste_engine.pipelines.ingest import ingest
+from workflows.taste_engine.pipelines.replicate import replicate
+from workflows.taste_engine.pipelines.research import dead_links, research
+from overmind.agents.runners import AgentResult
 
 from .conftest import sample_curation, sample_framework, sample_research
 

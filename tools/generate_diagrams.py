@@ -371,7 +371,7 @@ def generate_architecture_svg():
     <g transform="translate(24, 20)">
       <text x="0" y="16" class="sans layer-title">1. ORCHESTRATION LAYER</text>
       <rect x="226" y="3" width="130" height="18" rx="4" fill="#1E1B4B"/>
-      <text x="291" y="16" class="mono" font-size="10" fill="#A5B4FC" text-anchor="middle">taste_engine/orchestration/</text>
+      <text x="291" y="16" class="mono" font-size="10" fill="#A5B4FC" text-anchor="middle">overmind/orchestration/</text>
       <text x="0" y="36" class="sans" font-size="12" fill="#94A3B8">Control flow is deterministic Python. Steps are isolated agent calls, never open-ended runaway loops.</text>
     </g>
 

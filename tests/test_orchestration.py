@@ -4,13 +4,13 @@ import json
 
 import pytest
 
-from taste_engine.actions import gate
-from taste_engine.knowledge import notes
-from taste_engine.orchestration import registry
-from taste_engine.orchestration import steps as steps_mod
-from taste_engine.orchestration.cli import attach_agent_notes, show_status
-from taste_engine.orchestration.run import PipelineError, Run
-from taste_engine.tools.agents import AgentResult
+from overmind.gates import gate
+from overmind.knowledge import notes
+from overmind.orchestration import registry
+from overmind.orchestration import steps as steps_mod
+from overmind.orchestration.cli import attach_agent_notes, show_status
+from overmind.orchestration.run import PipelineError, Run
+from overmind.agents.runners import AgentResult
 
 from .conftest import sample_curation
 

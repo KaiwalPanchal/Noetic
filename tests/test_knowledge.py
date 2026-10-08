@@ -2,8 +2,8 @@
 
 import pytest
 
-from taste_engine.knowledge import context, notes
-from taste_engine.knowledge.config import Config, slugify
+from overmind.knowledge import context, notes
+from overmind.knowledge.config import Config, slugify
 
 from .conftest import sample_framework, sample_package, sample_research
 

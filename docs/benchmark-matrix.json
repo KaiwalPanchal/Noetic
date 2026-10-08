@@ -1,0 +1,86 @@
+[
+  {
+    "harness": "agy",
+    "model": "gemini-3.8-flash-low",
+    "workflow": "ingest",
+    "status": "SUCCESS",
+    "duration_s": 21.31,
+    "schema_valid": true,
+    "schema_errors": [],
+    "cost_usd": null
+  },
+  {
+    "harness": "agy",
+    "model": "claude-sonnet-4-6",
+    "workflow": "ingest",
+    "status": "SUCCESS",
+    "duration_s": 38.57,
+    "schema_valid": true,
+    "schema_errors": [],
+    "cost_usd": null
+  },
+  {
+    "harness": "agy",
+    "model": "claude-opus-4-6-thinking",
+    "workflow": "ingest",
+    "status": "SUCCESS",
+    "duration_s": 71.02,
+    "schema_valid": true,
+    "schema_errors": [],
+    "cost_usd": null
+  },
+  {
+    "harness": "agy",
+    "model": "gemini-3.8-flash-high",
+    "workflow": "ingest",
+    "status": "SUCCESS",
+    "duration_s": 102.16,
+    "schema_valid": true,
+    "schema_errors": [],
+    "cost_usd": null
+  },
+  {
+    "harness": "agy",
+    "model": "gemini-3.8-flash-low",
+    "workflow": "draft",
+    "status": "SUCCESS",
+    "duration_s": 22.1,
+    "schema_valid": true,
+    "schema_errors": [],
+    "cost_usd": null
+  },
+  {
+    "harness": "agy",
+    "model": "gemini-3.8-flash-high",
+    "workflow": "draft",
+    "status": "SUCCESS",
+    "duration_s": 168.08,
+    "schema_valid": true,
+    "schema_errors": [],
+    "cost_usd": null
+  },
+  {
+    "harness": "claude",
+    "model": "sonnet",
+    "workflow": "ingest",
+    "status": "QUOTA_429",
+    "duration_s": 3.79,
+    "schema_valid": false,
+    "schema_errors": [
+      "Session limit reached (resets 5:50am Asia/Kolkata)"
+    ],
+    "cost_usd": null
+  },
+  {
+    "harness": "claude",
+    "model": "opus",
+    "workflow": "ingest",
+    "status": "QUOTA_429",
+    "duration_s": 3.5,
+    "schema_valid": false,
+    "schema_errors": [
+      "Session limit reached (resets 5:50am Asia/Kolkata)"
+    ],
+    "cost_usd": null
+  }
+]

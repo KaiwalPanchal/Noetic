@@ -1,6 +1,6 @@
 """OverMind Architect: repository architecture audit tool.
 
-The agent contract it enforces lives in engine/agents/architect.md (the legacy name
+The agent contract it enforces lives in overmind/agents/architect.md (the legacy name
 goal_aligner.md is still accepted if present).
 
 Verifies that the codebase and connected vault adhere to OverMind's 4 primitives:
@@ -32,7 +32,7 @@ CONTRACT_NAMES = ("architect", "goal_aligner")  # preferred name first; legacy a
 def load_agent_contract(repo_root: Path) -> tuple[str | None, str]:
     """Return (name, text) of the architect agent contract, or (None, "") when absent."""
     for name in CONTRACT_NAMES:
-        path = repo_root / "engine" / "agents" / f"{name}.md"
+        path = repo_root / "overmind" / "agents" / f"{name}.md"
         if path.is_file():
             return name, path.read_text(encoding="utf-8")
     return None, ""
@@ -60,7 +60,7 @@ def audit_core_harness_pollution(repo_root: Path) -> list[AlignmentIssue]:
     gitignore_path = repo_root / ".gitignore"
     if gitignore_path.exists():
         gi_text = gitignore_path.read_text(encoding="utf-8")
-        if "engine/commands/draft.md" in gi_text or "taste_engine/pipelines/draft.py" in gi_text:
+        if "engine/commands/draft.md" in gi_text or "overmind/pipelines/draft.py" in gi_text:
             issues.append(AlignmentIssue(
                 block="HARNESS",
                 severity="FAIL",
@@ -76,7 +76,7 @@ def audit_core_harness_pollution(repo_root: Path) -> list[AlignmentIssue]:
             ))
 
     # Check config.py defaults
-    config_py = repo_root / "engine" / "scripts" / "taste_engine" / "knowledge" / "config.py"
+    config_py = repo_root / "engine" / "scripts" / "overmind" / "knowledge" / "config.py"
     if config_py.exists():
         cfg_content = config_py.read_text(encoding="utf-8")
         defaults_match = re.search(r"DEFAULTS = \{(.*?)\}", cfg_content, re.S)
@@ -106,9 +106,9 @@ def audit_core_harness_pollution(repo_root: Path) -> list[AlignmentIssue]:
 
 
 def audit_tools_purity(repo_root: Path) -> list[AlignmentIssue]:
-    """Verify that tools in taste_engine/tools/ are stateless pure functions and audit Web Clipper."""
+    """Verify that tools in overmind/tools/ are stateless pure functions and audit Web Clipper."""
     issues = []
-    tools_dir = repo_root / "engine" / "scripts" / "taste_engine" / "tools"
+    tools_dir = repo_root / "engine" / "scripts" / "overmind" / "tools"
     
     # Check Web Clipper tool status
     clipper_tool = tools_dir / "clipper.py"
@@ -116,14 +116,14 @@ def audit_tools_purity(repo_root: Path) -> list[AlignmentIssue]:
         issues.append(AlignmentIssue(
             block="TOOLS",
             severity="FAIL",
-            summary="Web Clipper is not implemented as a Tool in taste_engine/tools/",
+            summary="Web Clipper is not implemented as a Tool in overmind/tools/",
             details=(
                 "User requirement designates Web Clipper as a Tool. "
-                "However, no clipper.py exists in taste_engine/tools/. "
+                "However, no clipper.py exists in overmind/tools/. "
                 "Instead, docs speculate an external 'modules/clipper/' that does not exist."
             ),
             remediation=(
-                "Implement taste_engine/tools/clipper.py as a clean, stateless Tool "
+                "Implement overmind/tools/clipper.py as a clean, stateless Tool "
                 "(functions: clip_url, parse_html, format_signal) feeding markdown directly into Knowledge Base."
             )
         ))
@@ -285,7 +285,7 @@ def main():
     print("=" * 70)
     contract_name, _ = load_agent_contract(repo)
     print(f"Engine Repo: {repo}")
-    print(f"Contract:    {'engine/agents/' + contract_name + '.md' if contract_name else 'not found'}")
+    print(f"Contract:    {'overmind/agents/' + contract_name + '.md' if contract_name else 'not found'}")
     print(f"Vault:       {vault or 'Not specified'}\n")
 
     issues = run_audit(repo, vault)

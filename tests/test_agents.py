@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from taste_engine.tools import agents
-from taste_engine.tools.agents import AgentResult, run_agent
+from overmind.agents import runners as agents
+from overmind.agents.runners import AgentResult, run_agent
 
 SCHEMA = {"type": "object", "properties": {"ok": {"type": "boolean"}}, "required": ["ok"]}
 

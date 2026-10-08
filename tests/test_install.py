@@ -17,9 +17,9 @@ def test_install_into_fresh_vault_includes_twitter_pack(tmp_path: Path):
   assert res.returncode == 0, res.stderr
   assert (vault / ".claude" / "commands" / "draft.md").is_file()           # pack command
   engine = vault / "taste-engine" / "scripts"
-  assert (engine / "taste_engine" / "pipelines" / "draft.py").is_file()     # pack pipeline
-  assert (engine / "thread_validator.py").is_file()                         # pack script
-  assert not (engine / "__init__.py").exists()                              # markers not leaked
+  assert (engine / "workflows" / "twitter" / "pipelines" / "draft.py").is_file()   # pack pipeline
+  assert (engine / "workflows" / "twitter" / "scripts" / "thread_validator.py").is_file()  # pack script
+  assert (engine / "overmind" / "__init__.py").is_file()                    # core package
   assert (vault / "Twitter" / "journey").is_dir()
 
 
@@ -86,12 +86,35 @@ def test_with_wiki_copies_template_and_never_overwrites(tmp_path: Path):
 
 
 def test_wiki_seed_is_personless():
-  text = "\n".join(p.read_text(encoding="utf-8") for p in (REPO / "seed" / "overmind-wiki").rglob("*") if p.is_file())
+  text = "\n".join(p.read_text(encoding="utf-8") for p in (REPO / "overmind" / "seed" / "overmind-wiki").rglob("*") if p.is_file())
   assert not re.search(r"[\w.+-]+@[\w-]+\.[\w.]+", text)
   from tests.conftest import private_terms
   assert not [t for t in private_terms() if t in text.lower()] and "C:\\" not in text
 
 
 def test_seed_block_is_provider_neutral_and_old_claude_block_is_gone():
-  assert (REPO / "seed" / "AGENTS.block.md").is_file()
-  assert not (REPO / "seed" / "CLAUDE.block.md").exists()
+  assert (REPO / "overmind" / "seed" / "AGENTS.block.md").is_file()
+  assert not (REPO / "overmind" / "seed" / "CLAUDE.block.md").exists()
+
+
+def test_cli_install_and_mcp_config(tmp_path: Path):
+  from typer.testing import CliRunner
+
+  from overmind.cli import app
+
+  vault = tmp_path / "v"
+  vault.mkdir()
+  runner = CliRunner()
+  res = runner.invoke(app, ["install", "--vault", str(vault), "--agents", "claude"])
+  assert res.exit_code == 0, res.output
+  assert (vault / "CLAUDE.md").is_file() and (vault / "taste-engine.config.json").is_file()
+  res = runner.invoke(app, ["mcp-config", "--vault", str(vault), "--client", "claude-code"])
+  assert res.exit_code == 0, res.output
+  assert "overmind" in json.loads((vault / ".mcp.json").read_text(encoding="utf-8"))["mcpServers"]
+  assert runner.invoke(app, ["mcp-config", "--vault", str(vault), "--client", "bogus"]).exit_code == 2
+
+
+def test_launchers_exist_and_call_the_cli():
+  assert "overmind" in (REPO / "install.sh").read_text(encoding="utf-8") and "uvx" in (REPO / "install.sh").read_text(encoding="utf-8")
+  ps = (REPO / "install.ps1").read_text(encoding="utf-8")
+  assert "uvx" in ps and "'install'" in ps

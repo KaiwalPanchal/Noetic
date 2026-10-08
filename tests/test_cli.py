@@ -1,7 +1,7 @@
 """Tests for the Typer CLI commands."""
 
 from typer.testing import CliRunner
-from taste_engine.cli import app
+from overmind.cli import app
 
 runner = CliRunner()
 

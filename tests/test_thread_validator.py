@@ -1,8 +1,8 @@
 """Tests for Twitter/X thread length weighting and validation."""
 
 from pathlib import Path
-from taste_engine.tools.tweets import weighted_length, too_long
-from taste_engine.projects.twitter.scripts.thread_validator import parse_thread, validate_thread
+from overmind.tools.tweets import weighted_length, too_long
+from workflows.twitter.scripts.thread_validator import parse_thread, validate_thread
 
 
 def test_weighted_length_plain_ascii():

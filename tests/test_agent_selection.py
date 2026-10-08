@@ -6,11 +6,11 @@ import subprocess
 
 import pytest
 
-from taste_engine.knowledge.config import Config
-from taste_engine.orchestration import steps as steps_mod
-from taste_engine.orchestration.run import PipelineError, Run
-from taste_engine.tools import agents
-from taste_engine.tools.agents import AgentResult
+from overmind.knowledge.config import Config
+from overmind.orchestration import steps as steps_mod
+from overmind.orchestration.run import PipelineError, Run
+from overmind.agents import runners as agents
+from overmind.agents.runners import AgentResult
 
 from .conftest import sample_curation
 
@@ -34,7 +34,7 @@ def test_no_default_agent_anywhere(vault):
 
 
 def test_no_hardcoded_agent_names_in_orchestration_or_pipelines():
-  root = Path(__file__).resolve().parents[1] / "engine" / "scripts" / "taste_engine"
+  root = Path(__file__).resolve().parents[1] / "overmind"
   for d in ("orchestration", "pipelines"):
     for f in (root / d).rglob("*.py"):
       text = f.read_text(encoding="utf-8").lower()

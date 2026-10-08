@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from taste_engine.knowledge.config import CONFIG_NAME, Config
+from overmind.knowledge.config import CONFIG_NAME, Config
 
 
 @pytest.fixture

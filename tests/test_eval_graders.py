@@ -1,5 +1,5 @@
 import pytest
-from taste_engine.evals.graders import DeterministicGrader, SemanticGrader, JudgeEvaluator
+from overmind.evals.graders import DeterministicGrader, SemanticGrader, JudgeEvaluator
 
 
 def test_deterministic_grade_schema_valid():

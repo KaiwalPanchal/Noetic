@@ -18,7 +18,7 @@ def test_aligner_reads_architect_contract():
 
 def test_aligner_falls_back_to_legacy_goal_aligner_name(tmp_path):
   mod = _load()
-  (tmp_path / "engine" / "agents").mkdir(parents=True)
-  (tmp_path / "engine" / "agents" / "goal_aligner.md").write_text("legacy", encoding="utf-8")
+  (tmp_path / "overmind" / "agents").mkdir(parents=True)
+  (tmp_path / "overmind" / "agents" / "goal_aligner.md").write_text("legacy", encoding="utf-8")
   assert mod.load_agent_contract(tmp_path) == ("goal_aligner", "legacy")
   assert mod.load_agent_contract(tmp_path / "nowhere") == (None, "")

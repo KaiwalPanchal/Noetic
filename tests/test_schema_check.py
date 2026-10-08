@@ -1,6 +1,6 @@
 """Tests for schema_check validator."""
 
-from taste_engine.tools.schema_check import check
+from overmind.tools.schema_check import check
 
 
 def test_schema_valid_object():
