@@ -156,6 +156,18 @@ Legend: ✔ works and was checked   ◐ works, with a caveat
   worker agent in a repo             noetic delegate <proj> "<task>"         ◐ tested with a mock agent
    (branch, test loop, no commit)       --test "pytest -q"
 
+ FOCUS & SENSEI
+  defend active focus                noetic focus ["<commitment>"]           ✔ warns on drift
+  park tangents without context loss noetic park "<thought>" [--title T]     ✔ appends to PARKED.md
+  judge thought against focus        noetic run think "<thought>"            ✔ pipeline think
+
+ CAPTURE & AGENTS
+  clip URL or text note              noetic clip <url|text>                  ✔ deterministic, no LLM
+  list registered worker tools       noetic tools                            ✔
+  inspect agent specs                noetic agents                           ✔
+  run agent pipeline                 noetic agent <name> [--arg k=v]         ✔
+  fire hook trigger                  noetic fire <event> [text]              ✔
+
  QUALITY & SAFETY
   grade an extractor                 noetic eval                             ◐ baseline is rule-based
   code safety pre-check              inspect_code_safety (AST denylist)        ◐ not a sandbox

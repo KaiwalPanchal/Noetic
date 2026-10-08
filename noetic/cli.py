@@ -235,6 +235,102 @@ def approve(
   console.print(f"[green]✓ Approved:[/green] {path.relative_to(cfg.vault)} → status: approved")
 
 
+@app.command()
+def tools():
+  """List registered tools."""
+  from noetic.tools import registry
+  discovered = registry.discover()
+  table = Table(title="Registered Tools")
+  table.add_column("Tool", style="cyan")
+  table.add_column("Help", style="green")
+  for name in sorted(discovered.keys()):
+    table.add_row(name, discovered[name].help)
+  console.print(table)
+
+
+@app.command()
+def agents():
+  """List registered agent specs and validation status."""
+  from noetic.agents import spec as agent_spec
+  from noetic.orchestration import registry as orch_registry
+  from noetic.tools import registry as tool_registry
+
+  tool_registry.discover()
+  orch_registry.discover()
+  specs = agent_spec.load_specs()
+
+  table = Table(title="Agent Specs")
+  table.add_column("Name", style="cyan")
+  table.add_column("Trigger", style="magenta")
+  table.add_column("Policy", style="blue")
+  table.add_column("Pipeline", style="yellow")
+  table.add_column("Tools", style="white")
+  table.add_column("Problems", style="red")
+
+  for name in sorted(specs.keys()):
+    s = specs[name]
+    problems = agent_spec.validate(s)
+    prob_str = "; ".join(problems) if problems else "-"
+    tools_str = ", ".join(s.tools) if s.tools else "-"
+    table.add_row(s.name, s.trigger, s.policy, s.pipeline, tools_str, prob_str)
+
+  console.print(table)
+
+
+@app.command()
+def agent(
+    name: str = typer.Argument(..., help="Agent spec name to execute"),
+    arg: list[str] = typer.Option(None, "--arg", help="Arguments as key=value"),
+):
+  """Run an agent spec's underlying pipeline."""
+  from noetic.agents import spec as agent_spec
+  from noetic.orchestration import cli as orch_cli
+  from noetic.orchestration import registry as orch_registry
+  from noetic.tools import registry as tool_registry
+
+  tool_registry.discover()
+  orch_registry.discover()
+  specs = agent_spec.load_specs()
+
+  if name not in specs:
+    known = ", ".join(sorted(specs.keys()))
+    typer.echo(f"Unknown agent '{name}'. Known agents: {known}", err=True)
+    raise typer.Exit(code=2)
+
+  s = specs[name]
+  args_dict: dict[str, str] = {}
+  for item in (arg or []):
+    k, _, v = item.partition("=")
+    args_dict[k.strip()] = v.strip()
+
+  cfg = load_config()
+  orch_cli.execute(cfg, s.pipeline, args_dict)
+
+
+@app.command()
+def fire(
+    event: str = typer.Argument(..., help="Hook event to trigger"),
+    text: str = typer.Argument("", help="Hook event payload text"),
+):
+  """Fire a hook event and execute matching agent specs."""
+  from noetic.agents import spec as agent_spec
+  from noetic.orchestration import cli as orch_cli
+  from noetic.orchestration import registry as orch_registry
+  from noetic.tools import registry as tool_registry
+
+  tool_registry.discover()
+  orch_registry.discover()
+  specs = agent_spec.load_specs()
+  matched = agent_spec.find_by_hook(specs, event)
+
+  cfg = load_config()
+  for s in matched:
+    args_dict = {s.payload: text} if s.payload else {}
+    orch_cli.execute(cfg, s.pipeline, args_dict)
+
+
+
+
 # Workflows (briefing, projects, validate-thread, ...) add their own commands through the loader.
 from noetic.orchestration.loader import load_workflows  # noqa: E402
 from noetic.orchestration import registry as _pipeline_registry  # noqa: E402

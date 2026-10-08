@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "think_verdict",
+  "type": "object",
+  "properties": {
+    "brief": {
+      "type": "string",
+      "description": "Structured synthesis containing Core Signal, Applied Framework, and Next Action."
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["on_focus", "tangent", "switch"]
+    },
+    "park_title": {
+      "type": "string",
+      "description": "Short 5-8 word title for parked tangent, empty string if on_focus"
+    },
+    "park_note": {
+      "type": "string",
+      "description": "2-3 sentence capture of the idea for parked tangent, empty string if on_focus"
+    },
+    "harness_notes": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Gaps, ambiguities, or assumptions. Empty list if none."
+    }
+  },
+  "required": ["brief", "verdict", "park_title", "park_note", "harness_notes"],
+  "additionalProperties": false
+}

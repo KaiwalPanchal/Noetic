@@ -15,6 +15,8 @@ import re
 
 from noetic.knowledge.config import Config
 from noetic.knowledge.context import iter_notes
+from noetic.orchestration.registry import arg, pipeline
+from noetic.tools.registry import tool
 
 INTERVAL = timedelta(hours=24)
 STOP = {"the", "and", "for", "with", "from", "that", "this", "note", "notes", "untitled", "new", "into", "how", "what"}
@@ -100,3 +102,18 @@ def schedule_hint(vault: Path) -> dict[str, str]:
       "windows": f'schtasks /Create /SC DAILY /ST 08:00 /TN OverMindLibrarian /TR "noetic librarian --vault \\"{vault}\\""',
       "cron": f'0 8 * * * noetic librarian --vault "{vault}"',
   }
+
+
+@tool("scan_inbox", help="scan inbox for empty/duplicate notes and relationships", needs_cfg=True)
+def tool_scan_inbox(cfg: Config) -> dict:
+  return scan(cfg)
+
+
+@pipeline("librarian", kind="knowledge", help="daily inbox digest (deterministic, no LLM, never moves notes)",
+          args=[arg("--force", action="store_true")], agent_flag=False)
+def librarian_pipeline(run, a) -> list[str]:
+  path = run.step("scan", lambda: run_librarian(run.cfg, bool(a.get("force"))))
+  if not path:
+    return []
+  return [run.output(Path(path))]
+
