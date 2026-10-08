@@ -123,7 +123,7 @@ Legend: ✔ works and was checked   ◐ works, with a caveat
  ───────────────────────────────────────────────────────────────────────────────────
  INSTALL
   one command into any md vault      noetic install / install.sh / .ps1      ✔
-  uvx, no global install             uvx --from noetic-engine ...            ◐ needs PyPI
+  uvx, no global install             uvx --from noetic-cli ...            ◐ needs PyPI
   idempotent, keeps your notes       re-run any time                           ✔
   generate per-tool files            noetic sync [--dry-run]                 ✔
 
@@ -194,7 +194,7 @@ Legend: ✔ works and was checked   ◐ works, with a caveat
  Eval baseline is rule-based, held-out F1 0.75           no real LLM extractor graded 3
  delegate never run against a real agent CLI             only mock-tested           2
  clip / think / focus / web (Phase 1) live in the vault   not in the public package  3  decide:
-  harness, not in `noetic-engine`                                                    port or keep private
+  harness, not in `noetic-cli`                                                    port or keep private
  Zen web view does not show repo telemetry               dashboard lags the CLI     4
  `noetic://quests` resource is legacy                  quest/XP system is retired 3  remove
  gemini adapter: CLI no longer works for personal        stale for most users       4

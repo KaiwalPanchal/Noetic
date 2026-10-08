@@ -31,7 +31,7 @@ def server_entry(vault: Path) -> dict:
   if exe:
     command, args = exe, []
   else:
-    command, args = "uvx", ["--from", "noetic-engine", "noetic-mcp"]
+    command, args = "uvx", ["--from", "noetic-cli", "noetic-mcp"]
   return {"command": command, "args": [*args, "--vault", str(vault)]}
 
 

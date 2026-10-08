@@ -13,7 +13,7 @@
 An open-source agent harness and taste engine for your second brain (Obsidian or any markdown vault).
 
 
-> **Names, to avoid confusion.** The repo and project are **Noetic** (https://github.com/KaiwalPanchal/Noetic; locally the folder may be called `noetic`). The installable Python package is **`noetic-engine`** (it provides the `noetic` and `noetic-mcp` commands). The importable modules are **`noetic`** (the core) and **`workflows`** (self-contained products such as `taste_engine` and `twitter`). "Taste Engine" is the name of the vault-side system the package installs.
+> **Names, to avoid confusion.** The repo and project are **Noetic** (https://github.com/KaiwalPanchal/Noetic; locally the folder may be called `noetic`). The installable Python package is **`noetic-cli`** (it provides the `noetic` and `noetic-mcp` commands). The importable modules are **`noetic`** (the core) and **`workflows`** (self-contained products such as `taste_engine` and `twitter`). "Taste Engine" is the name of the vault-side system the package installs.
 
 ## Quickstart
 
@@ -25,8 +25,8 @@ curl -sSL https://raw.githubusercontent.com/KaiwalPanchal/Noetic/main/install.sh
 # Windows PowerShell
 irm https://raw.githubusercontent.com/KaiwalPanchal/Noetic/main/install.ps1 | iex
 # or directly, no global install
-uvx --from noetic-engine noetic install --vault /path/to/vault
-uvx --from noetic-engine noetic mcp-config --vault /path/to/vault   # wire up Claude Desktop / Claude Code / Cursor / Windsurf
+uvx --from noetic-cli noetic install --vault /path/to/vault
+uvx --from noetic-cli noetic mcp-config --vault /path/to/vault   # wire up Claude Desktop / Claude Code / Cursor / Windsurf
 ```
 
 Or work from a checkout:
@@ -318,7 +318,7 @@ Noetic is packaged as a standard Python tool:
 
 ```bash
 # Install the released package (once published to PyPI)
-pipx install noetic-engine      # or: uvx --from noetic-engine noetic --help
+pipx install noetic-cli      # or: uvx --from noetic-cli noetic --help
 
 # Development mode
 git clone https://github.com/KaiwalPanchal/Noetic.git && cd Noetic

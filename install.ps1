@@ -9,7 +9,7 @@ param(
   [string]$Owner,
   [string]$Agents,
   [switch]$WithWiki,
-  [string]$Package = $(if ($env:NOETIC_PACKAGE) { $env:NOETIC_PACKAGE } else { 'noetic-engine' })
+  [string]$Package = $(if ($env:NOETIC_PACKAGE) { $env:NOETIC_PACKAGE } else { 'noetic-cli' })
 )
 $ErrorActionPreference = 'Stop'
 

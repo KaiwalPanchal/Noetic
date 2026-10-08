@@ -12,7 +12,7 @@
 | **Phase 1** | **Personal State Anchor & 2-Door OS** | Local CLI, Zen Web view, Door 1 clipper, Door 2 focus defense | **COMPLETED** |
 | **Phase 2** | **Universal MCP Protocol Server** | Native MCP server connecting Claude Desktop, Cursor, and CLI tools | **COMPLETED** |
 | **Phase 3** | **Single-Command Vault Installer** | `uvx` / curl / powershell 1-step installer into any Markdown vault | **COMPLETED** |
-| **Phase 4** | **Public Packaging & PyPI Release** | Publish `noetic-engine` to PyPI (wheel + CI + release workflow done; the upload itself is the one manual step) | **READY TO PUBLISH** |
+| **Phase 4** | **Public Packaging & PyPI Release** | Publish `noetic-cli` to PyPI (wheel + CI + release workflow done; the upload itself is the one manual step) | **READY TO PUBLISH** |
 | **Phase 5** | **Autonomous Background Fleet** | Background Librarian for graph memory + on-demand Worker dispatch | **BUILT** |
 
 ---
@@ -77,15 +77,15 @@
 - [x] **`uvx` / `pipx` Instant Runner:**
   - Run without installing globally:
     ```bash
-    uvx noetic-engine install --vault "/path/to/vault"
+    uvx noetic-cli install --vault "/path/to/vault"
     ```
 
 ---
 
 ### Phase 4: Public Packaging & PyPI Release (Ready to publish)
-*Objective: Publish `noetic-engine` as a standard, distributable open-source Python package.*
+*Objective: Publish `noetic-cli` as a standard, distributable open-source Python package.*
 
-- [x] **Package Configuration (`pyproject.toml`):** Configured for `noetic-engine` with MIT License and console scripts `noetic` and `noetic-mcp`.
+- [x] **Package Configuration (`pyproject.toml`):** Configured for `noetic-cli` with MIT License and console scripts `noetic` and `noetic-mcp`.
 - [x] **Test Suite Harmonization:** the 29 path-mismatch failures from the `engine/` -> `noetic/` + `workflows/` move are fixed; 245 tests pass.
 - [x] **Multi-Version CI Matrix:** Verify GitHub Actions pass cleanly across Python 3.10, 3.11, 3.12, 3.13, and 3.14.
 - [ ] **PyPI Publishing (manual last step: needs your PyPI trusted-publisher setup, then publish a GitHub release; `.github/workflows/release.yml` does the rest):**

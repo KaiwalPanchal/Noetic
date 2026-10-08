@@ -1,6 +1,6 @@
 """Install or update the Taste Engine into an Obsidian (or any markdown) vault.
 
-  noetic install --vault "/path/to/vault" --owner "Ada"   (or: uvx noetic-engine install ...)
+  noetic install --vault "/path/to/vault" --owner "Ada"   (or: uvx noetic-cli install ...)
   python install.py --vault "/path/to/vault" --owner "Ada"
 
 Running it again updates the engine-owned files (canonical commands/agents, the noetic package,
@@ -34,7 +34,7 @@ def _workflows_dir() -> Path:
   from noetic.orchestration.loader import workflows_dir
   d = workflows_dir()
   if d is None:
-    raise SystemExit("workflows package not found; reinstall noetic-engine")
+    raise SystemExit("workflows package not found; reinstall noetic-cli")
   return d
 
 

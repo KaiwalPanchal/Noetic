@@ -4,7 +4,7 @@
 # Everything after `--` is passed to `noetic install` (e.g. --owner "Ada" --agents claude,gemini --with-wiki).
 set -euo pipefail
 
-PKG="${NOETIC_PACKAGE:-noetic-engine}"
+PKG="${NOETIC_PACKAGE:-noetic-cli}"
 ARGS=("$@")
 has_vault=0
 for a in "${ARGS[@]:-}"; do [[ "$a" == "--vault" || "$a" == --vault=* ]] && has_vault=1; done

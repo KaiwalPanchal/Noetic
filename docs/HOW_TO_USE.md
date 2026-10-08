@@ -25,7 +25,7 @@ curl -sSL https://raw.githubusercontent.com/KaiwalPanchal/Noetic/main/install.sh
 irm https://raw.githubusercontent.com/KaiwalPanchal/Noetic/main/install.ps1 | iex
 
 # Any OS, nothing installed globally
-uvx --from noetic-engine noetic install --vault /path/to/vault
+uvx --from noetic-cli noetic install --vault /path/to/vault
 ```
 
 Until the package is on PyPI, install from a checkout instead: `pip install -e .` then `noetic install --vault /path/to/vault`.
