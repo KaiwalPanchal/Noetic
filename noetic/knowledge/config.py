@@ -49,6 +49,7 @@ DEFAULTS = {
   "paths": {
     "engine": "taste-engine",
     "frameworks": "frameworks",
+    "wiki": None,
     "overmind": None,
   },
   # Which agent CLIs run pipeline steps, in preference order. No default is
@@ -80,7 +81,9 @@ class Config:
     paths = {**DEFAULTS["paths"], **data.get("paths", {})}
     self.engine = vault / paths["engine"]
     self.frameworks = vault / paths["frameworks"]
-    self.overmind = vault / paths["overmind"] if paths.get("overmind") else None
+    wiki_path = paths.get("wiki") or paths.get("overmind")
+    self.wiki: Path | None = (vault / wiki_path) if wiki_path else None
+    self.overmind: Path | None = self.wiki  # Backward-compatible alias
     # Backward compatible optional project paths
     self.twitter = vault / paths["twitter"] if paths.get("twitter") else vault / "Twitter"
     self.x_char_limit: int = int(data.get("x_char_limit", 280))

@@ -27,8 +27,8 @@ def register(app, registry):
     if as_json:
       typer.echo(json.dumps(rows, indent=2, ensure_ascii=False))
       return
-    if cfg.overmind is None:
-      typer.echo("paths.overmind is not set in noetic.config.json")
+    if (cfg.wiki or cfg.overmind) is None:
+      typer.echo("paths.wiki is not set in noetic.config.json")
     for p in rows:
       stale = "" if p["stale_days"] is None else f", {p['stale_days']}d since touched"
       flag = f"  [incomplete: missing {', '.join(p['missing'])}]" if p["incomplete"] else ""

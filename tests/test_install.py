@@ -87,6 +87,18 @@ def test_with_wiki_copies_template_and_never_overwrites(tmp_path: Path):
   assert "OverMind/OVERMIND.md" in agents_md  # constitution is wired into the generated block
 
 
+def test_install_with_wiki_dir_custom_name(tmp_path: Path):
+  vault = tmp_path / "v"
+  vault.mkdir()
+  res = run_install(vault, "--with-wiki", "--wiki-dir", "PersonalKnowledge")
+  assert res.returncode == 0, res.stderr
+  cfg = json.loads((vault / CONFIG_NAME).read_text(encoding="utf-8"))
+  assert cfg["paths"]["wiki"] == "PersonalKnowledge"
+  assert cfg["paths"]["overmind"] == "PersonalKnowledge"
+  assert (vault / "PersonalKnowledge" / "OVERMIND.md").is_file()
+
+
+
 def test_wiki_seed_is_personless():
   text = "\n".join(p.read_text(encoding="utf-8") for p in (REPO / "noetic" / "seed" / "overmind-wiki").rglob("*") if p.is_file())
   assert not re.search(r"[\w.+-]+@[\w-]+\.[\w.]+", text)

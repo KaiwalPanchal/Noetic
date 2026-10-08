@@ -21,7 +21,12 @@ import yaml
 
 from noetic.knowledge.config import Config
 from noetic.knowledge.context import is_private
-from noetic.gates.policy_gate import SecurityViolation, is_profile_path, validate_overmind_path
+from noetic.gates.policy_gate import (
+    SecurityViolation,
+    is_profile_path,
+    validate_overmind_path,
+    validate_wiki_path,
+)
 
 STATUSES = ("active", "parked", "blocked", "done")
 REQUIRED = ("name", "status", "goal", "next_action", "last_touched")
@@ -39,24 +44,26 @@ def _private(cfg: Config, path: Path) -> bool:
 
 def read_page(cfg: Config, path: Path | str) -> str:
   """Policy-gated read of one wiki page (vault-confined, profile-blocked)."""
-  if cfg.overmind is None:
-    raise SecurityViolation("OverMind path is not configured.")
-  safe = validate_overmind_path(path, cfg.vault, cfg.overmind)
+  wiki = cfg.wiki or cfg.overmind
+  if wiki is None:
+    raise SecurityViolation("Wiki path is not configured.")
+  safe = validate_wiki_path(path, cfg.vault, wiki)
   if _private(cfg, safe):
     raise SecurityViolation("Path is listed in private_paths.")
   return safe.read_text(encoding="utf-8", errors="replace")
 
 
 def _pages(cfg: Config, *parts: str, pattern: str = "*.md") -> list[Path]:
-  if cfg.overmind is None:
+  wiki = cfg.wiki or cfg.overmind
+  if wiki is None:
     return []
-  folder = cfg.overmind.joinpath(*parts)
-  if not folder.is_dir() or is_profile_path(folder, cfg.overmind):
+  folder = wiki.joinpath(*parts)
+  if not folder.is_dir() or is_profile_path(folder, wiki):
     return []
   out = []
   for f in sorted(folder.glob(pattern)):
     try:
-      validate_overmind_path(f, cfg.vault, cfg.overmind)
+      validate_wiki_path(f, cfg.vault, wiki)
     except SecurityViolation:
       continue
     if f.is_file() and not _private(cfg, f):

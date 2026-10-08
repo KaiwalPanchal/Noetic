@@ -41,7 +41,8 @@ def _workflows_dir() -> Path:
 PROJECTS_DIR = _workflows_dir()
 from noetic.knowledge.config import CONFIG_NAME, config_file, state_dir_for  # noqa: E402
 WIKI_SEED = SEED / "overmind-wiki"
-DEFAULT_OVERMIND_DIR = "OverMind"
+DEFAULT_WIKI_DIR = "OverMind"
+DEFAULT_OVERMIND_DIR = DEFAULT_WIKI_DIR  # Backwards-compatible alias
 
 ENGINE_DIRS = [
   "01-taste-graph/stances",
@@ -74,11 +75,15 @@ def build_config(args: argparse.Namespace, vault: Path) -> dict:
   from noetic.adapters.sync import resolve_agents  # noqa: E402 (path set above)
   # The vault config is the single place that records which agent adapters are generated.
   cfg["adapters"] = resolve_agents([a for a in args.agents.split(",") if a] if args.agents else None, cfg)
+  wiki_flag = getattr(args, "wiki_dir", None) or getattr(args, "overmind_dir", None)
+  default_wiki = DEFAULT_WIKI_DIR if getattr(args, "with_wiki", False) else None
+  wiki_val = wiki_flag or cfg["paths"].get("wiki") or cfg["paths"].get("overmind") or default_wiki
+  cfg["paths"]["wiki"] = wiki_val
+  cfg["paths"]["overmind"] = wiki_val  # alias for backwards compatibility
   for key, flag, default in [
     ("engine", args.engine_dir, "taste-engine"),
     ("frameworks", args.frameworks_dir, "frameworks"),
     ("twitter", args.twitter_dir, "Twitter"),
-    ("overmind", args.overmind_dir, DEFAULT_OVERMIND_DIR if getattr(args, "with_wiki", False) else None),
   ]:
     cfg["paths"][key] = flag or cfg["paths"].get(key) or default
   return cfg
@@ -155,7 +160,8 @@ def install_canonical(vault: Path, cfg: dict, project_names: list[str]) -> list[
 
 def install_wiki(vault: Path, cfg: dict) -> list[str]:
   """Copy the generic wiki template. Existing files are never overwritten."""
-  base = vault / cfg["paths"]["overmind"]
+  wiki_key = cfg["paths"].get("wiki") or cfg["paths"].get("overmind")
+  base = vault / wiki_key
   created = []
   for src in sorted(WIKI_SEED.rglob("*")):
     if src.is_file():
@@ -196,7 +202,8 @@ def main(argv: list[str] | None = None):
   p.add_argument("--engine-dir", help="Engine folder inside the vault (default: taste-engine)")
   p.add_argument("--frameworks-dir", help="Frameworks folder (default: frameworks)")
   p.add_argument("--twitter-dir", help="Build-in-public folder (default: Twitter)")
-  p.add_argument("--overmind-dir", help="Optional Overmind folder (goals/quests/log integration)")
+  p.add_argument("--wiki-dir", help="Optional wiki folder (goals/quests/log integration, default: OverMind)")
+  p.add_argument("--overmind-dir", help="Legacy alias for --wiki-dir")
   p.add_argument("--x-char-limit", type=int, help="Per-tweet limit (default 280; raise for X Premium)")
   p.add_argument("--agents", help="Comma list of agent adapters to generate: claude,codex,gemini,antigravity,universal (default: all four main ones, or what the vault config already records)")
   p.add_argument("--with-wiki", action="store_true", help="Copy the generic Noetic wiki template (never overwrites existing files)")
@@ -261,7 +268,8 @@ def main(argv: list[str] | None = None):
     print(f"    note: {n}")
   print(f"  updated {len(written)} engine files (canonical commands/agents, noetic package, workflows)")
   if args.with_wiki:
-    print(f"  wiki:       {len(wiki)} template files created under {cfg['paths']['overmind']}/ (existing files kept)")
+    wiki_path = cfg["paths"].get("wiki") or cfg["paths"].get("overmind")
+    print(f"  wiki:       {len(wiki)} template files created under {wiki_path}/ (existing files kept)")
   for s in seeded:
     print(f"  seeded:     {s}")
   print("\nNext: edit interests.md, then open the vault in Claude Code and try `/ingest <a book you love>`.")

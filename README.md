@@ -425,7 +425,7 @@ CI runs the baseline on both datasets: golden with the default 0.80 F1 floor, he
 |---|---|---|
 | `--engine-dir` | `taste-engine` | Folder name for the taste graph, pipeline, and scripts |
 | `--frameworks-dir` | `frameworks` | Vault-wide frameworks folder (shared across all projects) |
-| `--overmind-dir` | none | Optional: personal wiki / goals folder |
+| `--wiki-dir` | none | Optional: personal wiki / goals folder (legacy alias: `--overmind-dir`) |
 
 ---
 

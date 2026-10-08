@@ -334,7 +334,8 @@ def set_status(path: Path, status: str, note: str = "") -> None:
 
 def briefing_note(cfg: Config, data: dict, narrative: dict, agent: str, run_id: str) -> Path:
   """A narrated briefing. Lands pending_review like every generated note."""
-  folder = (cfg.overmind / "wiki" / "briefings") if cfg.overmind else (cfg.engine / "briefings")
+  wiki = cfg.wiki or cfg.overmind
+  folder = (wiki / "wiki" / "briefings") if wiki else (cfg.engine / "briefings")
   fm = frontmatter(cfg, agent, run_id, "briefing", {"briefing_date": data["generated"]})
   actions = "\n".join(
     f"{n}. **{a['project']}**: {a['action']}" + (f" _(blocked by: {a['blocked_by']})_" if a.get("blocked_by") else "")

@@ -16,7 +16,12 @@ from noetic.knowledge.config import Config
 from noetic.orchestration.registry import pipeline
 from noetic.orchestration.run import PipelineError
 from noetic.orchestration.steps import agent_step
-from noetic.gates.policy_gate import SecurityViolation, validate_overmind_path, validate_vault_path
+from noetic.gates.policy_gate import (
+    SecurityViolation,
+    validate_overmind_path,
+    validate_vault_path,
+    validate_wiki_path,
+)
 from noetic.tools import prompts
 
 PERSONA_LIMIT = 3000
@@ -39,7 +44,8 @@ def _focus(projects: list[dict], quests: list[dict]) -> dict | None:
 
 def build_briefing(cfg: Config, today: date | None = None) -> dict:
   today = today or date.today()
-  warnings = [] if cfg.overmind else ["paths.overmind is not set in noetic.config.json; nothing to read"]
+  wiki = cfg.wiki or cfg.overmind
+  warnings = [] if wiki else ["paths.wiki is not set in noetic.config.json; nothing to read"]
   projects = registry.load_projects(cfg, today)
   quests = registry.load_quests(cfg, today)
   gates = []
@@ -66,8 +72,9 @@ def load_persona(cfg: Config) -> str:
   """Optional tone file from config `persona`. Never the private profile; absent by default."""
   if not cfg.persona:
     return ""
+  wiki = cfg.wiki or cfg.overmind
   try:
-    safe = (validate_overmind_path(cfg.persona, cfg.vault, cfg.overmind) if cfg.overmind
+    safe = (validate_wiki_path(cfg.persona, cfg.vault, wiki) if wiki
             else validate_vault_path(cfg.persona, cfg.vault))
   except SecurityViolation as exc:
     raise PipelineError("PERSONA_BLOCKED", str(exc), persona=str(cfg.persona))

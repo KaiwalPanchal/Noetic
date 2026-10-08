@@ -29,9 +29,12 @@ Anything that comes up mid-focus and isn't this goes to `ideas/PARKED.md`. Nothi
 
 
 def _require_overmind(cfg: Config) -> Path:
-  if cfg.overmind is None:
-    raise PipelineError("NO_OVERMIND", "paths.overmind is not set in noetic.config.json")
-  return cfg.overmind
+  wiki = cfg.wiki or cfg.overmind
+  if wiki is None:
+    raise PipelineError("NO_OVERMIND", "paths.wiki (or paths.overmind) is not set in noetic.config.json")
+  return wiki
+
+_require_wiki = _require_overmind
 
 
 def _q(value: str) -> str:
@@ -94,9 +97,10 @@ def log_event(cfg: Config, kind: str, text: str) -> None:
 
 def recent_switches(cfg: Config, days: int = 7) -> int:
   """Count 'Focus switched' log entries in the last `days` days (this and last month's logs)."""
-  if cfg.overmind is None:
+  wiki = cfg.wiki or cfg.overmind
+  if wiki is None:
     return 0
-  log_dir = cfg.overmind / "wiki" / "log"
+  log_dir = wiki / "wiki" / "log"
   today = date.today()
   first_of_month = today.replace(day=1)
   prev = (first_of_month - timedelta(days=1)).replace(day=1)

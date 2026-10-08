@@ -257,12 +257,12 @@ def is_safe_command(cmd_args: list[str]) -> bool:
 
 # ── Noetic wiki access ───────────────────────────────────────────────────
 
-PROFILE_PARTS = ("wiki", "profile")  # <overmind>/wiki/profile/ is private: never read, never quoted
+PROFILE_PARTS = ("wiki", "profile")  # <wiki>/wiki/profile/ is private: never read, never quoted
 
 
-def is_profile_path(target: Path | str, overmind_root: Path | str) -> bool:
+def is_profile_path(target: Path | str, wiki_root: Path | str) -> bool:
   """True when absolute `target` is the private profile directory or anything inside it."""
-  root = Path(overmind_root).resolve()
+  root = Path(wiki_root).resolve()
   blocked = root.joinpath(*PROFILE_PARTS)
   resolved = Path(target).resolve()
   try:
@@ -272,9 +272,14 @@ def is_profile_path(target: Path | str, overmind_root: Path | str) -> bool:
     return False
 
 
-def validate_overmind_path(target_path: Path | str, vault_root: Path | str, overmind_root: Path | str) -> Path:
+def validate_wiki_path(target_path: Path | str, vault_root: Path | str, wiki_root: Path | str) -> Path:
   """validate_vault_path + the Noetic private-profile block. Use for every wiki read."""
   safe = validate_vault_path(target_path, vault_root)
-  if is_profile_path(safe, overmind_root):
+  if is_profile_path(safe, wiki_root):
     raise SecurityViolation("Access to the private profile directory is blocked by policy gate.")
   return safe
+
+
+# Backward-compatible alias
+validate_overmind_path = validate_wiki_path
+

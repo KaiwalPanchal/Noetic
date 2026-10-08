@@ -37,7 +37,7 @@ Useful flags (all optional):
 | `--owner "Ada"` | Your name, used on AI-written notes |
 | `--agents claude,gemini` | Which tools get generated files. Default: claude, codex, gemini, antigravity. The choice is remembered. |
 | `--with-wiki` | Also create the generic Noetic wiki (focus, projects, log). Never overwrites existing files. |
-| `--engine-dir`, `--frameworks-dir`, `--twitter-dir`, `--overmind-dir` | Rename the folders Noetic uses |
+| `--engine-dir`, `--frameworks-dir`, `--twitter-dir`, `--wiki-dir` (alias: `--overmind-dir`) | Rename the folders Noetic uses |
 
 Running the installer again is safe. It updates Noetic's own files and never touches your notes or the text you wrote in `CLAUDE.md` outside the marked block.
 
@@ -212,7 +212,7 @@ Text you wrote outside the marked block, and command files you wrote yourself, a
   "owner": "Ada",
   "agent": "Claude Code",
   "x_char_limit": 280,
-  "paths": { "engine": ".noetic", "frameworks": "frameworks", "twitter": "Twitter", "overmind": "OverMind" },
+  "paths": { "engine": ".noetic", "frameworks": "frameworks", "twitter": "Twitter", "wiki": "OverMind" },
   "adapters": ["claude", "gemini"],
   "agents": ["claude", "codex", "agy"],
   "steps": { "research": "agy", "build": "codex" },

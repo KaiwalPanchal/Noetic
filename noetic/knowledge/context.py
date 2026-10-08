@@ -139,7 +139,8 @@ def playbooks(cfg: Config) -> str:
 
 
 def recent_log(cfg: Config, limit: int = 3000) -> str:
-  if not cfg.overmind:
+  wiki = cfg.wiki or cfg.overmind
+  if not wiki:
     return ""
-  logs = sorted((cfg.overmind / "wiki" / "log").glob("*.md"))
+  logs = sorted((wiki / "wiki" / "log").glob("*.md"))
   return read_body(logs[-1], limit)[-limit:] if logs else ""

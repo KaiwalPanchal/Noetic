@@ -82,8 +82,10 @@ def resolve_agents(agents: list[str] | None, cfg: dict) -> list[str]:
 
 def _values(cfg: dict) -> dict[str, str]:
   owner = cfg.get("owner") or "Owner"
-  paths = {"engine": "taste-engine", "frameworks": "frameworks", "twitter": "Twitter", "overmind": None,
-           **(cfg.get("paths") or {})}
+  cfg_paths = cfg.get("paths") or {}
+  wiki_val = cfg_paths.get("wiki") or cfg_paths.get("overmind")
+  paths = {"engine": "taste-engine", "frameworks": "frameworks", "twitter": "Twitter", "wiki": wiki_val, "overmind": wiki_val,
+           **cfg_paths}
   return {"owner": owner, "owner_slug": re.sub(r"[^\w-]+", "-", owner.lower()).strip("-"),
           "agent": cfg.get("agent") or "Claude Code", **{k: v or "" for k, v in paths.items()}}
 

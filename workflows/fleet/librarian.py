@@ -84,7 +84,8 @@ def push_to_liminal(cfg: Config, client: LiminalClient) -> dict[str, int]:
   for f in sorted(inbox.glob("*.md")) if inbox.is_dir() else []:
     if is_private(cfg, f):
       continue
-    if cfg.overmind and (cfg.overmind / "wiki" / "profile") in f.parents:
+    wiki = cfg.wiki or cfg.overmind
+    if wiki and (wiki / "wiki" / "profile") in f.parents:
       continue
     text = f.read_text(encoding="utf-8", errors="replace")
     body = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.S).strip()
@@ -133,7 +134,8 @@ def run_librarian(cfg: Config, force: bool = False, liminal: bool = False) -> Pa
     if client:
       report["liminal"] = push_to_liminal(cfg, client)
 
-  out_dir = (cfg.overmind / "wiki" / "librarian") if cfg.overmind else (cfg.engine / "librarian")
+  wiki = cfg.wiki or cfg.overmind
+  out_dir = (wiki / "wiki" / "librarian") if wiki else (cfg.engine / "librarian")
   out_dir.mkdir(parents=True, exist_ok=True)
   path = out_dir / f"digest-{datetime.now():%Y-%m-%d}.md"
   path.write_text("---\nauthor: ai-agent\nstatus: pending_review\nkind: librarian-digest\n---\n" + render(report),

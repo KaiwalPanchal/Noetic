@@ -197,3 +197,22 @@ def test_archive_lists_published_titles(cfg):
   (arch / "old-post.md").write_text("x", encoding="utf-8")
   (arch / "README.md").write_text("x", encoding="utf-8")
   assert context.archive(cfg) == "- old-post"
+
+
+def test_wiki_and_overmind_path_aliasing(vault):
+  c0 = Config(vault, {"paths": {}})
+  assert c0.wiki is None
+  assert c0.overmind is None
+
+  c1 = Config(vault, {"paths": {"wiki": "OverMind"}})
+  assert c1.wiki == vault / "OverMind"
+  assert c1.overmind == vault / "OverMind"
+
+  c2 = Config(vault, {"paths": {"overmind": "OverMind"}})
+  assert c2.wiki == vault / "OverMind"
+  assert c2.overmind == vault / "OverMind"
+
+  c3 = Config(vault, {"paths": {"wiki": "MyWiki", "overmind": "OldWiki"}})
+  assert c3.wiki == vault / "MyWiki"
+  assert c3.overmind == vault / "MyWiki"
+

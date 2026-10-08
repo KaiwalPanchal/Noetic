@@ -42,10 +42,11 @@ def run_tests(command: str, repo: Path, timeout: int = 900) -> dict:
 
 
 def append_log(cfg, text: str) -> str | None:
-  """Append a dated entry to <overmind>/wiki/log/YYYY-MM.md (the Overmind writes its own log)."""
-  if cfg.overmind is None:
+  """Append a dated entry to <wiki>/wiki/log/YYYY-MM.md."""
+  wiki = cfg.wiki or cfg.overmind
+  if wiki is None:
     return None
-  log = cfg.overmind / "wiki" / "log" / f"{date.today():%Y-%m}.md"
+  log = wiki / "wiki" / "log" / f"{date.today():%Y-%m}.md"
   log.parent.mkdir(parents=True, exist_ok=True)
   entry = f"## {date.today().isoformat()} — {text}\n"
   prior = log.read_text(encoding="utf-8").rstrip() if log.exists() else ""

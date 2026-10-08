@@ -5,7 +5,7 @@ from datetime import date
 import pytest
 
 from noetic.knowledge import registry
-from noetic.gates.policy_gate import SecurityViolation, validate_overmind_path
+from noetic.gates.policy_gate import SecurityViolation, validate_overmind_path, validate_wiki_path
 
 from .conftest import TODAY
 
@@ -85,3 +85,12 @@ def test_traversal_and_escape_blocked_and_normal_path_allowed(ocfg):
 def test_private_paths_config_also_respected(ocfg):
   ocfg.private_paths = ["OverMind/wiki/projects"]
   assert registry.load_projects(ocfg, today=D) == []
+
+
+def test_validate_wiki_path_alias_works(ocfg):
+  ok = validate_wiki_path("OverMind/wiki/projects/alpha.md", ocfg.vault, ocfg.wiki)
+  assert ok.name == "alpha.md"
+  secret = ocfg.wiki / "wiki" / "profile" / "secret.md"
+  with pytest.raises(SecurityViolation):
+    validate_wiki_path(str(secret), ocfg.vault, ocfg.wiki)
+
