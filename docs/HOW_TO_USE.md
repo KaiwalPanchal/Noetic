@@ -142,6 +142,55 @@ noetic delegate my-project "add input validation to the signup form" --test "pyt
 
 What happens: Noetic finds the project's repo, refuses if the working tree is dirty, creates a branch named `noetic/<project>-<task>-<id>`, runs an agent there, runs your test command, and feeds failures back (up to `--max-iterations`, default 3). It never commits or pushes. Review the diff, then commit or discard the branch yourself. The result is appended to `wiki/log/YYYY-MM.md`.
 
+### Focus defense & Sensei
+
+Track your active commitment and prevent context switching:
+
+```bash
+noetic focus "finish the API documentation"  # set or inspect current commitment
+noetic focus done                           # mark commitment complete
+noetic park "idea for a new CLI command"    # safely park tangents in ideas/PARKED.md
+noetic run think "should I refactor auth?"  # evaluates thought against active focus
+noetic fire off-focus "browsing hackernews" # triggers off-focus hooks
+```
+
+`noetic run think` classifies thoughts against your active commitment in `wiki/focus.md`. If it detects drift or a tangent, it parks the thought and redirects you to your goal.
+
+### Enforcing taste rules
+
+Define your editorial and stylistic standards in `.noetic/taste/`:
+- `.noetic/taste/anti-patterns.md`:
+  - `## Banned phrases`: case-insensitive forbidden strings (e.g. `game-changer`, `delve into`).
+  - `## Banned patterns`: regex patterns in backticks (e.g. ``- `\bseamless(ly)?\b` ``).
+  - `## Required`: substrings that must appear in the output.
+- `.noetic/taste/dogmas.md`: convictions prepended to generation prompts.
+
+Inspect and verify rules:
+```bash
+noetic taste show                   # view active dogmas and banned patterns
+noetic taste check path/to/draft.md # test a file against taste rules (exit 1 if violations)
+```
+During pipeline execution, `agent_step` rejects generic filler automatically, retrying once with exact JSONPath locations.
+
+### Grounded memory recall with Liminal
+
+Connect to an optional Liminal sidecar instance (`http://localhost:8000`) for graph-based associative memory:
+```bash
+noetic liminal                           # inspect Liminal sidecar health
+noetic recall "how does auth work here?" # query grounded memory with cited nodes
+noetic librarian --liminal               # opt-in ingest of inbox notes into Liminal
+```
+If Liminal is unconfigured or offline, `noetic recall` falls back to privacy-aware vault text search (`status: UNGROUNDED`). If Liminal refuses a query due to insufficient context, the refusal is preserved without hallucination.
+
+### Migrating an existing vault
+
+If you used earlier versions of the engine with legacy config or folder names:
+```bash
+noetic migrate --vault /path/to/vault            # executes safe rename
+noetic migrate --vault /path/to/vault --dry-run  # preview renames
+```
+This renames config and state folders to `noetic.config.json` and `.noetic/`. It renames only and never modifies or deletes note contents.
+
 ## 4. Keeping agent files in sync
 
 `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `.claude/commands/`, `.gemini/commands/` and `.agent/skills/` are generated. Do not edit the marked sections by hand. Regenerate with:
@@ -156,32 +205,34 @@ Text you wrote outside the marked block, and command files you wrote yourself, a
 
 ## 5. Configuration
 
-`<vault>/taste-engine.config.json`:
+`<vault>/noetic.config.json`:
 
 ```json
 {
   "owner": "Ada",
   "agent": "Claude Code",
   "x_char_limit": 280,
-  "paths": { "engine": "taste-engine", "frameworks": "frameworks", "twitter": "Twitter", "overmind": "OverMind" },
+  "paths": { "engine": ".noetic", "frameworks": "frameworks", "twitter": "Twitter", "overmind": "OverMind" },
   "adapters": ["claude", "gemini"],
   "agents": ["claude", "codex", "agy"],
   "steps": { "research": "agy", "build": "codex" },
   "models": { "claude": "sonnet" },
+  "liminal": { "url": "http://localhost:8000", "timeout": 10 },
   "private_paths": ["Journal", "Finance"]
 }
 ```
 
 - `agents` is the ordered list tried for every step; the next one is used when an agent is missing, out of quota or not logged in.
 - `steps` pins a step to a specific agent.
+- `liminal` optionally connects to a Liminal sidecar for grounded memory.
 - `private_paths` folders are never read as context.
-- Set `TASTE_ENGINE_VAULT` to point the CLI at a vault from anywhere.
+- Set `NOETIC_VAULT` (or legacy `TASTE_ENGINE_VAULT`) to point the CLI at a vault from anywhere.
 
 ## 6. Troubleshooting
 
 | Symptom | Fix |
 |---|---|
-| `Could not find taste-engine.config.json` | Run `noetic install --vault ...` first, run from inside the vault, or set `TASTE_ENGINE_VAULT`. |
+| `Could not find noetic.config.json` | Run `noetic install --vault ...` first, run from inside the vault, or set `NOETIC_VAULT`. |
 | `doctor` shows an agent as not installed | Install that CLI, or remove it from `agents` in the config. At least one is needed for LLM steps. |
 | Pipeline run failed | Read the error code, fix the cause, then `noetic run resume <run-id>`. |
 | `DIRTY_WORKTREE` from `delegate` | Commit or stash the target repo's changes first. |

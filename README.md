@@ -278,9 +278,57 @@ noetic run status | resume <run-id>
 - **Code-level validation:** Schemas and web citations are verified programmatically. If invalid, the harness retries once with exact error diagnostics.
 - **Cross-model failover:** If your primary agent is rate-limited, down, or unauthorized, the harness automatically falls back to your configured secondary agents (e.g., Claude → Antigravity → Codex).
 - **Human-in-the-loop gate:** All generated notes land as `status: pending_review`. Nothing is published, committed, or posted automatically.
-- **Resumable runs:** Run state is persisted to `.taste-engine/runs/`. Interrupted runs resume from the last successful step without redundant API costs.
+- **Resumable runs:** Run state is persisted to `.noetic/runs/`. Interrupted runs resume from the last successful step without redundant API costs.
 
-Agent CLIs supported: [Claude Code](https://claude.com/claude-code), [Codex CLI](https://github.com/openai/codex), Antigravity CLI (`agy`), Gemini CLI. Configure routing in `taste-engine.config.json`.
+Agent CLIs supported: [Claude Code](https://claude.com/claude-code), [Codex CLI](https://github.com/openai/codex), Antigravity CLI (`agy`), Gemini CLI. Configure routing in `noetic.config.json`.
+
+---
+
+## Agents & Declarative Specs
+
+Agents are defined as declarative markdown files in `workflows/*/agents/<name>.md`. Each spec defines strictly-typed input/output schemas, permitted tools, and event hooks:
+```bash
+noetic agents                   # list registered agent specs and schema validation
+noetic agent <name> [--arg k=v] # run an agent spec directly
+noetic fire <event> [text]      # trigger agents on hook events (e.g. off-focus, daily-inbox)
+```
+Multi-turn agent tasks are bounded using `run_loop`, enforcing explicit iteration limits and budget caps.
+
+---
+
+## Taste Gate
+
+Enforces stylistic dogmas and negative filters before note generation:
+- Defined in `.noetic/taste/anti-patterns.md` (banned phrases, banned regex patterns) and `.noetic/taste/dogmas.md`.
+- Deterministic string and regex validation runs during `agent_step` (fails once, retries with exact violations, rejects uncorrected generic filler).
+- Inspect rules and check files:
+```bash
+noetic taste show               # print active dogmas and banned patterns
+noetic taste check <file.md>    # test content against taste rules
+```
+
+---
+
+## Liminal Sidecar (Optional Grounded Memory)
+
+Connects to Liminal (`liminalfinal`), a temporal knowledge graph engine:
+```bash
+noetic liminal                  # check Liminal sidecar health (port 8000)
+noetic recall "<question>"      # grounded memory query with citations
+```
+- Configured in `noetic.config.json` (`"liminal": {"url": "http://localhost:8000", "timeout": 10}`).
+- Core Noetic works fully without Liminal: falls back gracefully to `context.search()` (vault grep) if the sidecar is unconfigured or unreachable.
+- Never hallucinates answers: if Liminal returns `REFUSED_INSUFFICIENT_CONTEXT`, the refusal passes through verbatim.
+
+---
+
+## Vault Migration
+
+If you have an older vault created with earlier versions of the engine:
+```bash
+noetic migrate [--vault /path/to/vault] [--dry-run]
+```
+Safely renames legacy `taste-engine.config.json` and `.taste-engine/` to `noetic.config.json` and `.noetic/`. It renames only and never deletes notes.
 
 ---
 
@@ -386,20 +434,21 @@ CI runs the baseline on both datasets: golden with the default 0.80 F1 floor, he
 ```
 <vault>/
 ├── CLAUDE.md                       # Marked instructions configuring Claude Code
-├── taste-engine.config.json        # Path mappings and agent model routing
+├── noetic.config.json              # Path mappings, agent model routing, Liminal sidecar
 ├── .env.example                    # Template for module secrets (e.g. MONGODB_URI)
 ├── .claude/commands/*.md           # The vault slash commands
-├── .taste-engine/runs/             # Resumable pipeline run logs
+├── .noetic/                        # Resumable pipeline runs and taste rules
+│   ├── runs/                       # Pipeline execution states
+│   └── taste/                      # Dogmas and anti-patterns
 ├── frameworks/                     # Extracted thinking frameworks & build briefs
 │   ├── briefs/
 │   └── sources/
-└── taste-engine/                   # The taste engine core
+└── taste-engine/                   # The taste engine workspace
     ├── interests.md                # Topics you care about
     ├── 01-taste-graph/             # Stances · Negative-filters · Exemplars
     ├── 02-signals/                 # Papers · Repos · Postmortems · Web notes
     ├── 03-pipeline/                # Inbox → Curation → Drafts → Ready → Archive
-    ├── playbooks/                  # Editorial lenses and reusable playbooks
-    └── scripts/                    # noetic/ and workflows/ packages (importable)
+    └── playbooks/                  # Editorial lenses and reusable playbooks
 ```
 
 ---

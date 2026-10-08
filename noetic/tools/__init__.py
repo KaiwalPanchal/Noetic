@@ -1,5 +1,7 @@
 """Tools layer: reusable instruments that pipelines compose.
 
+- registry.py      tool registry: @tool decorator, metadata, schema validation, discover()
+- builtin.py       built-in tools (clip_url, verify_url, check_schema, tweet_length, recall)
 - agents.py        agent CLIs behind run_agent(): built-in adapters, plus any CLI via config `commands`
                    (generic argv template); add a coded one with @adapter("name")
 - prompts.py       owned prompts (12-factor #2): fill a template from engine/prompts/, load a schema

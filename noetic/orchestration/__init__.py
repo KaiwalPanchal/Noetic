@@ -5,7 +5,8 @@
                finished steps are cached, so `resume` continues where a failure stopped
 - steps.py     agent_step(): route to an agent → call → validate → retry with a compact
                error → fall back to the next agent
+- loop.py      run_loop(): bounded execution loops with step and budget caps (Verdict, LoopResult)
 - cli.py       `noetic run <pipeline|approve|reject|status|resume|doctor|list>`
 
-Control flow is plain Python. LLM calls are isolated steps, never an open-ended loop.
+Control flow is plain Python. Loops are bounded by run_loop; LLM calls are isolated steps, never an unconstrained open-ended loop.
 """
