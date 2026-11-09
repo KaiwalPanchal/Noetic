@@ -107,13 +107,22 @@ def adapter(name: str):
 # ── adapters ────────────────────────────────────────────────────────────────
 
 @adapter("claude")
-def _claude(prompt, schema, cwd, web, write, timeout, model) -> AgentResult:
-  tools = ["Read", "Glob", "Grep"] + (["WebFetch", "WebSearch"] if web else []) + (["Write", "Edit"] if write else [])
+def _claude(prompt, schema, cwd, web, write, timeout, model, tools: list[str] | None = None) -> AgentResult:
+  if tools is not None:
+    tool_list = tools
+  else:
+    tool_list = ["Read", "Glob", "Grep"] + (["WebFetch", "WebSearch"] if web else []) + (["Write", "Edit"] if write else [])
+  tool_str = ",".join(tool_list)
   cmd = [
     shutil.which("claude"), "-p", "--output-format", "json",
     "--json-schema", json.dumps(schema),
     "--model", model or "sonnet",
-    "--tools", ",".join(tools), "--allowedTools", ",".join(tools),
+  ]
+  if tool_str:
+    cmd += ["--tools", tool_str, "--allowedTools", tool_str]
+  else:
+    cmd += ["--tools", "", "--allowedTools", ""]
+  cmd += [
     # Lean headless run: skip the user's plugins/MCP/skills (cuts cost ~15x).
     "--strict-mcp-config", "--disable-slash-commands", "--setting-sources", "",
     "--no-session-persistence",
@@ -277,7 +286,7 @@ def available(agent: str, commands: dict | None = None) -> bool:
 def run_agent(
   agent: str, prompt: str, schema: dict, *, cwd: Path,
   web: bool = False, write: bool = False, timeout: int = 900, model: str | None = None,
-  commands: dict | None = None,
+  commands: dict | None = None, tools: list[str] | None = None,
 ) -> AgentResult:
   spec = _spec_for(agent, commands)
   if spec is None and agent not in ADAPTERS:
@@ -292,7 +301,12 @@ def run_agent(
     if spec is not None:
       result = _command_adapter(agent, spec, prompt, schema, cwd, timeout)
     else:
-      result = ADAPTERS[agent](prompt, schema, cwd, web, write, timeout, model)
+      import inspect
+      sig = inspect.signature(ADAPTERS[agent])
+      if "tools" in sig.parameters:
+        result = ADAPTERS[agent](prompt, schema, cwd, web, write, timeout, model, tools=tools)
+      else:
+        result = ADAPTERS[agent](prompt, schema, cwd, web, write, timeout, model)
   except subprocess.TimeoutExpired:
     result = _err(agent, "TIMEOUT", f"no result after {timeout}s", suggested_fallback="another agent or a longer --timeout")
   except OSError as exc:

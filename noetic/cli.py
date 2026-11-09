@@ -165,6 +165,31 @@ def eval(
     raise typer.Exit(code=1)
 
 
+@app.command("abc-eval")
+def abc_eval(
+    quiet: bool = typer.Option(False, "--quiet", "-q", help="Suppress detailed summary output"),
+    output: str = typer.Option(None, "--output", "-o", help="Write JSON results to this path (default: .noetic/evals/abc_results.json)"),
+    baseline: str = typer.Option(None, "--baseline", "-b", help="Path to previous abc_results.json baseline to check for regressions"),
+    tolerance: float = typer.Option(0.05, "--tolerance", "-t", help="Regression tolerance delta threshold"),
+    prompt_version: str = typer.Option("1.0.0", "--prompt-version", "-p", help="Prompt version identifier"),
+):
+  """Rerunnable A/B/C eval harness: evaluates tasks under No Framework vs Single vs Stacked [R1]."""
+  from noetic.evals.abc_eval import run_abc_eval
+
+  results, passed = run_abc_eval(
+      quiet=quiet,
+      output_path=output,
+      baseline_path=baseline,
+      tolerance=tolerance,
+      prompt_version=prompt_version,
+  )
+  if passed:
+    console.print(f"[bold green]A/B/C EVAL PASSED:[/bold green] Condition C composite {results['summary']['condition_c']['composite_score']:.3f}")
+  else:
+    console.print("[bold red]A/B/C EVAL REGRESSION DETECTED[/bold red]")
+    raise typer.Exit(code=1)
+
+
 @app.command()
 def sync(
     vault: str = typer.Option(..., "--vault", help="Vault root to generate agent adapters into"),

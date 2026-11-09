@@ -9,4 +9,4 @@ from __future__ import annotations
 
 def register(app, registry):
   """Importing the pipeline modules runs their @pipeline decorators against the shared registry."""
-  from workflows.taste_engine.pipelines import curate, ingest, replicate, research  # noqa: F401
+  from workflows.taste_engine.pipelines import curate, ingest, replicate, research, spar  # noqa: F401

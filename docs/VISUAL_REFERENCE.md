@@ -64,7 +64,7 @@ Related: [HOW_TO_USE](HOW_TO_USE.md) (steps), [ARCHITECTURE](../ARCHITECTURE.md)
   │ taste_engine  │ twitter       │ briefing      │ fleet          │ sensei·capture│
   │ ingest curate │ draft journey │ briefing      │ librarian      │ focus · park  │
   │ research      │ ship (cmd)    │ projects      │ delegate·repos │ think · clip  │
-  │ replicate     │ thread check  │               │                │               │
+  │ replicate spar│ thread check  │               │                │               │
   └───────┬───────┴───────┬───────┴───────┬───────┴────────┬───────┴───────┬───────┘
           │ register(app, registry)  (each adds CLI commands / pipelines)
           ▼
@@ -139,18 +139,20 @@ Legend: ✔ works and was checked   ◐ works, with a caveat
  CONNECT
   Claude Desktop/Code/Cursor/        noetic mcp-config                       ✔
    Windsurf (merge, no clobber)
-  MCP resources (6)                  briefing projects stances frameworks      ✔
-                                     status quests
-  MCP tools (8)                      get_briefing list_projects check_taste    ✔
+  MCP resources                      briefing projects stances frameworks      ✔
+                                     status quests catalog
+  MCP tools (11)                     get_briefing list_projects check_taste    ✔
                                      recall get_active_stances
                                      inspect_code_safety validate_thread
-                                     check_json_schema
+                                     check_json_schema get_framework
+                                     stack_frameworks audit_against_frameworks
 
  KNOWLEDGE WORK
   source ──▶ framework               /ingest   · noetic run ingest           ✔
   curate a topic against taste       /curate   · noetic run curate           ✔
   sourced research, links checked    /research · noetic run research         ✔
   apply framework to a problem       /apply    · noetic run replicate        ✔
+  spar RFC / diff ──▶ ADR critique   /apply    · noetic run spar <target>    ✔ Mode B sparring
   site brief ──▶ code on a branch    replicate --build <repo>                  ◐ agent CLI needed
   thread draft / journey / ship      /draft /journey /ship                     ✔ you post by hand
   thread length/link check           noetic validate-thread <file>           ✔
@@ -183,6 +185,7 @@ Legend: ✔ works and was checked   ◐ works, with a caveat
 
  QUALITY & SAFETY
   grade an extractor                 noetic eval                             ◐ baseline is rule-based
+  rerunnable A/B/C cognitive eval    noetic abc-eval                         ✔ Condition A/B/C rubric
   code safety pre-check              inspect_code_safety (AST denylist)        ◐ not a sandbox
   taste check file                   noetic taste-check <file> · noetic taste check ✔ deterministic bans
   show taste rules                   noetic taste-show · noetic taste show        ✔ dogmas, bans, required
@@ -246,12 +249,12 @@ Reading the priority: 1 = blocks the public release, 2 = correctness or trust, 3
  ───────────────────────────────────────────────────────────────────────────────────────────
  CLI commands list                      `noetic --help` from the built wheel        28 commands
  MCP tools (8) and resources (6)        real stdio client: list_tools/list_resources  matches §4
- Pipelines and their kinds              registry.discover()                           10 pipelines:
+ Pipelines and their kinds              registry.discover()                           11 pipelines:
                                                                                       briefing curate
                                                                                       delegate draft
                                                                                       ingest journey
                                                                                       librarian replicate
-                                                                                      research think
+                                                                                      research spar think
  Slash commands                         workflows/*/commands/*.md                     7 (/apply /curate
                                                                                       /draft /ingest
                                                                                       /journey /research

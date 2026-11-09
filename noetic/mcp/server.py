@@ -77,16 +77,65 @@ def create_mcp_server(vault_override: Path | None = None) -> MCPServer:
 
   @server.resource("noetic://frameworks")
   def resource_frameworks() -> str:
-    """Lists available thinking frameworks and mental models in the vault."""
+    """Lists available approved thinking frameworks and mental models in the vault."""
     cfg = _get_cfg()
-    if not cfg:
+    if not cfg or not cfg.frameworks.exists():
       return "[]"
-    frameworks_dir = cfg.frameworks
+    from noetic.knowledge.stack import check_framework_trust
+    require_app = cfg.mcp_serve_policy.get("require_approved", True) if hasattr(cfg, "mcp_serve_policy") else True
+    verify_h = cfg.mcp_serve_policy.get("verify_hash", True) if hasattr(cfg, "mcp_serve_policy") else True
     names = []
-    if frameworks_dir.exists():
-      for f in frameworks_dir.glob("*.md"):
+    for f in sorted(cfg.frameworks.glob("*.md")):
+      if f.name.lower() in ("readme.md", "index.md"):
+        continue
+      ok, _ = check_framework_trust(f, include_unapproved=not require_app, verify_hash=verify_h)
+      if ok:
         names.append(f.stem)
     return json.dumps(names, indent=2)
+
+  @server.resource("noetic://frameworks/catalog")
+  def resource_frameworks_catalog() -> str:
+    """JSON catalog of all approved frameworks (slug, title, razor, admission_score, tiers, domain_tags)."""
+    cfg = _get_cfg()
+    if not cfg or not cfg.frameworks.exists():
+      return "[]"
+    from noetic.knowledge.stack import check_framework_trust, parse_framework_note
+    require_app = cfg.mcp_serve_policy.get("require_approved", True) if hasattr(cfg, "mcp_serve_policy") else True
+    verify_h = cfg.mcp_serve_policy.get("verify_hash", True) if hasattr(cfg, "mcp_serve_policy") else True
+    catalog = []
+    for f in sorted(cfg.frameworks.glob("*.md")):
+      if f.name.lower() in ("readme.md", "index.md"):
+        continue
+      ok, _ = check_framework_trust(f, include_unapproved=not require_app, verify_hash=verify_h)
+      if not ok:
+        continue
+      data = parse_framework_note(f)
+      catalog.append({
+          "slug": data["slug"],
+          "title": data["framework_name"],
+          "razor": data["razor"],
+          "admission_score": data["admission_score"],
+          "tiers": data["tiers"],
+          "domain_tags": data["domain_tags"],
+      })
+    return json.dumps(catalog, indent=2, ensure_ascii=False)
+
+  @server.resource("noetic://frameworks/{slug}")
+  def resource_framework(slug: str) -> str:
+    """Returns full markdown note of approved framework."""
+    cfg = _get_cfg()
+    if not cfg:
+      return "Vault configuration not loaded."
+    fw_path = cfg.frameworks / f"{slug}.md"
+    from noetic.knowledge.stack import check_framework_trust
+    require_app = cfg.mcp_serve_policy.get("require_approved", True) if hasattr(cfg, "mcp_serve_policy") else True
+    verify_h = cfg.mcp_serve_policy.get("verify_hash", True) if hasattr(cfg, "mcp_serve_policy") else True
+    ok, err = check_framework_trust(fw_path, include_unapproved=not require_app, verify_hash=verify_h)
+    if not ok:
+      if err == "APPROVAL_HASH_MISMATCH":
+        return "APPROVAL_HASH_MISMATCH"
+      return f"Error: {err}"
+    return fw_path.read_text(encoding="utf-8")
 
   def _json(obj) -> str:
     return json.dumps(obj, indent=2, ensure_ascii=False)
@@ -227,6 +276,64 @@ def create_mcp_server(vault_override: Path | None = None) -> MCPServer:
       return {"source": "vault-grep", "status": "UNGROUNDED", "answer": "", "citations": [], "note": "Vault not loaded"}
     from noetic.knowledge.recall import recall as run_recall
     return run_recall(cfg, question)
+
+  @server.tool()
+  def get_framework(slug: str, include_unapproved: bool = False) -> dict:
+    """Returns parsed data of approved framework."""
+    cfg = _get_cfg()
+    if not cfg:
+      return {"ok": False, "error": "Vault configuration not loaded."}
+    fw_path = cfg.frameworks / f"{slug}.md"
+    if not fw_path.exists():
+      return {"ok": False, "error": f"Framework '{slug}' not found."}
+    from noetic.knowledge.stack import check_framework_trust, parse_framework_note
+    verify_h = cfg.mcp_serve_policy.get("verify_hash", True) if hasattr(cfg, "mcp_serve_policy") else True
+    ok, err = check_framework_trust(fw_path, include_unapproved=include_unapproved, verify_hash=verify_h)
+    if not ok:
+      return {"ok": False, "error": err}
+    data = parse_framework_note(fw_path)
+    data["ok"] = True
+    return data
+
+  @server.tool()
+  def stack_frameworks(
+      slugs: list[str],
+      task: str = "",
+      allow_order_precedence: bool = False,
+      max_tokens: int = 4000,
+      include_unapproved: bool = False,
+  ) -> dict:
+    """Synthesizes multiple cognitive frameworks into a unified constraint charter validating against synthesis_charter.json."""
+    cfg = _get_cfg()
+    if not cfg:
+      return {"ok": False, "error": "Vault configuration not loaded."}
+    from noetic.knowledge.stack import stack_frameworks_logic
+    return stack_frameworks_logic(
+        cfg,
+        slugs=slugs,
+        task=task,
+        allow_order_precedence=allow_order_precedence,
+        max_tokens=max_tokens,
+        include_unapproved=include_unapproved,
+    )
+
+  @server.tool()
+  def audit_against_frameworks(
+      diff_or_text: str,
+      frameworks: list[str],
+      include_unapproved: bool = False,
+  ) -> dict:
+    """Scores content against stacked heuristics and anti-patterns."""
+    cfg = _get_cfg()
+    if not cfg:
+      return {"ok": False, "error": "Vault configuration not loaded."}
+    from noetic.knowledge.stack import audit_against_frameworks_logic
+    return audit_against_frameworks_logic(
+        cfg,
+        diff_or_text=diff_or_text,
+        frameworks=frameworks,
+        include_unapproved=include_unapproved,
+    )
 
   return server
 

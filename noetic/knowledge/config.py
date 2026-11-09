@@ -70,6 +70,13 @@ DEFAULTS = {
   "persona": None,
   # Optional Liminal sidecar service: {"url": "http://localhost:8000", "timeout": 10}
   "liminal": None,
+  # Cognitive Compiler & Execution Harness configuration [P0.1, P0.3]
+  "schema_version": "1.0.0",
+  "default_lenses": ["hats-haircuts-and-tattoos", "boring-technology"],
+  "similarity_thresholds": {"identical": 0.85, "cousin": 0.65},
+  "embedding_model": {"provider": "openai", "model": "text-embedding-3-small", "version": "1"},
+  "budget": {"per_run_usd": 1.00, "max_tokens_per_bundle": 4000},
+  "mcp_serve_policy": {"require_approved": True, "verify_hash": True},
 }
 
 
@@ -111,6 +118,25 @@ class Config:
     else:
       self.liminal_url: str | None = env_url or None
       self.liminal_timeout: int = 10
+
+    # Cognitive Compiler & Execution Harness [P0.1, P0.3]
+    self.schema_version: str = str(data.get("schema_version", DEFAULTS["schema_version"]))
+    self.default_lenses: list[str] = list(data.get("default_lenses", DEFAULTS["default_lenses"]))
+    self.similarity_thresholds: dict = {**DEFAULTS["similarity_thresholds"], **data.get("similarity_thresholds", {})}
+    self.embedding_model: dict = {**DEFAULTS["embedding_model"], **data.get("embedding_model", {})}
+    self.budget: dict = {**DEFAULTS["budget"], **data.get("budget", {})}
+    self.mcp_serve_policy: dict = {**DEFAULTS["mcp_serve_policy"], **data.get("mcp_serve_policy", {})}
+
+  def model_for(self, step: str, agent: str) -> str | None:
+    """Return model configured for (step, agent), or agent level, or None."""
+    # Check per-step agent override e.g. models.ingest.extract
+    step_models = self.models.get(step)
+    if isinstance(step_models, dict):
+      if agent in step_models:
+        return step_models[agent]
+    elif isinstance(step_models, str):
+      return step_models
+    return self.models.get(agent)
 
   def agent_order(self, step: str) -> list[str]:
     """Agents to try for `step`: its override first, then the global ordered list. Deduplicated."""

@@ -20,7 +20,7 @@ def agent_step(
   run: Run, step: str, node: str, prompt: str, schema_name: str, *,
   agent: str | None = None, web: bool = False, write: bool = False, cwd: Path | None = None,
   extra_check: Callable[[dict], list[str]] | None = None, timeout: int = 900,
-  taste: bool = True,
+  taste: bool = True, tools: list[str] | None = None,
 ) -> dict:
   """Run one agent node and return JSON that has passed validation.
 
@@ -28,6 +28,7 @@ def agent_step(
             with neither configured, the first installed adapter is used
   agent     force a specific agent (disables fallback)
   write     the agent may edit files in `cwd` (build steps); never retried blindly
+  tools     explicit tool whitelist; empty list [] disables all tool access [R1]
   """
   cfg = run.cfg
   schema = prompts.schema(schema_name)
@@ -49,8 +50,11 @@ def agent_step(
     fix = ""
     for attempt in (1, 2):
       res = run_agent(name, prompt + fix, schema, cwd=cwd or cfg.vault, web=web, write=write,
-                      timeout=timeout, model=cfg.models.get(name), commands=cfg.commands)
+                      timeout=timeout, model=cfg.model_for(step, name) or cfg.models.get(name),
+                      commands=cfg.commands, tools=tools)
       info = {"agent": name, "attempt": attempt, "ok": res.ok, "seconds": res.seconds, "cost_usd": res.cost_usd}
+      if res.cost_usd:
+        run.add_cost(res.cost_usd)
       if not res.ok:
         info["error"] = res.error
         run.log_attempt(step, info)

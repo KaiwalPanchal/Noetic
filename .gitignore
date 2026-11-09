@@ -25,6 +25,10 @@ Thumbs.db
 dist/
 build/
 
+# Machine state & caches
+.noetic/
+.taste-engine/
+graphify-out/
 
 # Generated eval output (use `noetic eval --output <path>`)
 eval_results.json

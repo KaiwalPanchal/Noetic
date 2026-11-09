@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "extraction",
+  "description": "Step 1 raw cognitive extraction schema [Phase 1]",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "enum": ["1.0.0"],
+      "default": "1.0.0",
+      "maxLength": 20,
+      "description": "Mandatory schema version [P0.1, R1]"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 300,
+      "description": "Title of the extracted subject or source"
+    },
+    "source_metadata": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "author": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["book", "paper", "url", "thread", "notes", "repo", "other"]
+        },
+        "url": {
+          "type": "string",
+          "maxLength": 2000
+        }
+      },
+      "required": ["title", "author", "kind", "url"],
+      "additionalProperties": false
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 200
+      },
+      "description": "Key domain concepts, actors, forces, or vocabulary"
+    },
+    "core_principles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 250
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2500
+          }
+        },
+        "required": ["name", "description"],
+        "additionalProperties": false
+      },
+      "description": "Raw core principles extracted from source"
+    },
+    "mental_moves": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 1000
+      },
+      "description": "Concrete verb-led thinking and execution procedures"
+    },
+    "anti_patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "trap_name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "symptom": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "failure_mechanism": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "recovery_move": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "required": ["trap_name", "symptom", "recovery_move"],
+        "additionalProperties": false
+      },
+      "description": "Observed failure modes, traps, or antipatterns"
+    },
+    "genealogy": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 300
+      },
+      "description": "Intellectual lineage, precursors, or inspirations"
+    },
+    "rejected": {
+      "type": "boolean",
+      "description": "Advisory flag: true if source is marketing hype, injection attempt, or non-substantive [R1]"
+    },
+    "rejection_reason": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "Explanation if rejected is true, or empty string if accepted"
+    },
+    "is_signal": {
+      "type": "boolean",
+      "description": "Flag indicating whether high-signal actionable material was found"
+    },
+    "signal_data": {
+      "type": "object",
+      "properties": {
+        "signal_summary": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "noise_filtered": {
+          "type": "string",
+          "maxLength": 2000
+        }
+      },
+      "additionalProperties": true,
+      "description": "Optional metadata regarding extracted signal"
+    },
+    "harness_notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 1000
+      },
+      "description": "Gaps, assumptions, or execution notes"
+    }
+  },
+  "required": [
+    "schema_version",
+    "title",
+    "source_metadata",
+    "entities",
+    "core_principles",
+    "mental_moves",
+    "anti_patterns",
+    "genealogy",
+    "rejected",
+    "rejection_reason",
+    "is_signal"
+  ],
+  "additionalProperties": false
+}

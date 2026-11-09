@@ -8,7 +8,7 @@ argument-hint: <topic or question>
 Topic: $ARGUMENTS
 
 ## 1. Load context
-1. Read `taste-engine.config.json`. Resolve `{engine}`, `{frameworks}`.
+1. Read `noetic.config.json`. Resolve `{engine}`, `{frameworks}`.
 2. Read `{engine}/interests.md` and `{engine}/01-taste-graph/negative-filters/*`. Also skim the stances and exemplars so you know what the owner already believes.
 
 ## 2. Search for ground truth, not SEO

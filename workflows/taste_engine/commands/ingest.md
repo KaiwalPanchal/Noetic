@@ -8,7 +8,7 @@ argument-hint: <url | book title | path to notes | pasted text>
 Source to ingest: $ARGUMENTS
 
 ## 1. Load context
-1. Read `taste-engine.config.json` at the vault root. Resolve `{engine}`, `{frameworks}`, `{twitter}`, `{overmind}` from `paths`, and `owner` / `agent`.
+1. Read `noetic.config.json` at the vault root. Resolve `{engine}`, `{frameworks}`, `{twitter}`, `{overmind}` from `paths`, and `owner` / `agent`.
 2. Read `{engine}/interests.md`. This is what the owner cares about. Every framework must link to at least one interest, or be flagged as off-interest.
 3. Skim the filenames in `{frameworks}/` and `{engine}/01-taste-graph/`. If this framework (or a close cousin) already exists, **extend that note** instead of duplicating it.
 

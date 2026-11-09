@@ -1,0 +1,392 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cognitive_framework",
+  "description": "Step 2 cognitive framework schema encoding 5 building blocks with strict separation of faithful vs applied layers [Phase 1, R1, R2]",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "enum": ["1.0.0"],
+      "default": "1.0.0",
+      "maxLength": 20,
+      "description": "Mandatory schema version [P0.1, R1]"
+    },
+    "framework_name": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "Human-readable name of the framework"
+    },
+    "slug": {
+      "type": "string",
+      "maxLength": 100,
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Kebab-case canonical identifier"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "author": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["book", "paper", "url", "thread", "notes", "repo", "other"]
+        },
+        "url": {
+          "type": "string",
+          "maxLength": 2000
+        }
+      },
+      "required": ["title", "author", "kind", "url"],
+      "additionalProperties": false
+    },
+    "ontology": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Primary domain of application"
+        },
+        "primitives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "kind": {
+                "type": "string",
+                "enum": ["entity", "variable", "force", "state"]
+              },
+              "definition": {
+                "type": "string",
+                "maxLength": 1000
+              },
+              "observable_indicator": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            },
+            "required": ["name", "kind", "definition", "observable_indicator"],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "description": "Domain vocabulary elements"
+        },
+        "governing_invariant": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Core equation or invariant relationship among primitives"
+        }
+      },
+      "required": ["domain", "primitives", "governing_invariant"],
+      "additionalProperties": false,
+      "description": "Block 1: Domain ontology and invariant"
+    },
+    "directional_heuristics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "context": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "When in [Context X]"
+          },
+          "prioritize": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Prioritize [Action Y]"
+          },
+          "over": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Over [Alternative Z]"
+          },
+          "because": {
+            "type": "string",
+            "maxLength": 1000,
+            "description": "Because of [Mechanism A]"
+          },
+          "operational_rule": {
+            "type": "string",
+            "maxLength": 1000,
+            "description": "Concrete Monday-morning operational rule"
+          },
+          "tier": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4,
+            "description": "1: Taste Dogmas, 2: System Architecture, 3: UI/Interaction, 4: Process Governance [R2]"
+          },
+          "domain_tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "minItems": 1,
+            "description": "Tags partitioning domain scope [R2]"
+          },
+          "provenance_anchor": {
+            "type": "string",
+            "maxLength": 1000,
+            "description": "Source quote span or paraphrase anchor grounding this heuristic [R1]"
+          }
+        },
+        "required": [
+          "context",
+          "prioritize",
+          "over",
+          "because",
+          "operational_rule",
+          "tier",
+          "domain_tags",
+          "provenance_anchor"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "description": "Block 2: Asymmetric directional heuristics"
+    },
+    "trade_off_matrix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dimension": {
+            "type": "string",
+            "maxLength": 300,
+            "description": "Tension dimension"
+          },
+          "recommended_choice": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Selected path"
+          },
+          "sacrificed": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "What is deliberately given up"
+          },
+          "gained": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "What is secured"
+          },
+          "boundary_flip_condition": {
+            "type": "string",
+            "maxLength": 1000,
+            "description": "Threshold or condition where this choice inverts"
+          }
+        },
+        "required": [
+          "dimension",
+          "recommended_choice",
+          "sacrificed",
+          "gained",
+          "boundary_flip_condition"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "description": "Block 3: Explicit trade-off tensions and flip conditions"
+    },
+    "anti_patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "trap_name": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Name of the trap"
+          },
+          "symptom": {
+            "type": "string",
+            "maxLength": 1000,
+            "description": "Observable failure symptom"
+          },
+          "failure_mechanism": {
+            "type": "string",
+            "maxLength": 1000,
+            "description": "Underlying breakdown mechanism"
+          },
+          "recovery_move": {
+            "type": "string",
+            "maxLength": 1000,
+            "description": "Actionable correction move"
+          }
+        },
+        "required": [
+          "trap_name",
+          "symptom",
+          "failure_mechanism",
+          "recovery_move"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "description": "Block 4: Anti-patterns, failure mechanisms, and recovery moves"
+    },
+    "evaluation_rubric": {
+      "type": "object",
+      "properties": {
+        "the_keyboard_test": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Observable alteration to code, CLI commands, or systems"
+        },
+        "admission_test_scores": {
+          "type": "object",
+          "properties": {
+            "executable_heuristic": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "cognitive_compression": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "keyboard_test": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "explicit_failure_mode": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "cross_domain_transfer": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            }
+          },
+          "required": [
+            "executable_heuristic",
+            "cognitive_compression",
+            "keyboard_test",
+            "explicit_failure_mode",
+            "cross_domain_transfer"
+          ],
+          "additionalProperties": false,
+          "description": "5-point admission scores (1-5 each) [R1]"
+        },
+        "falsification_criteria": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Concrete conditions under which this framework is disproven or invalidated"
+        }
+      },
+      "required": [
+        "the_keyboard_test",
+        "admission_test_scores",
+        "falsification_criteria"
+      ],
+      "additionalProperties": false,
+      "description": "Block 5: Evaluation rubric and admission scores"
+    },
+    "faithful_layer": {
+      "type": "object",
+      "properties": {
+        "core_idea": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "The author's core thesis distilled"
+        },
+        "razor": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "One-line operational decision razor"
+        },
+        "mental_moves": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "minItems": 1,
+          "description": "Source-faithful verb-led procedures"
+        }
+      },
+      "required": ["core_idea", "razor", "mental_moves"],
+      "additionalProperties": false,
+      "description": "Faithful layer: strictly author-grounded concepts [R1]"
+    },
+    "applied_layer": {
+      "type": "object",
+      "properties": {
+        "linked_interests": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "description": "Linked interests from Applied AI/interests.md"
+        },
+        "stance_alignments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "description": "Reinforced stances in Applied AI/01-taste-graph/stances/"
+        },
+        "stance_conflicts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "description": "Contradicted stances in Applied AI/01-taste-graph/stances/"
+        }
+      },
+      "required": ["linked_interests", "stance_alignments", "stance_conflicts"],
+      "additionalProperties": false,
+      "description": "Applied layer: how this framework connects to vault stances and interests [R1]"
+    },
+    "genealogy": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 300
+      },
+      "description": "What the author built on or stole from"
+    },
+    "harness_notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 1000
+      },
+      "description": "Gaps, assumptions, or execution notes"
+    }
+  },
+  "required": [
+    "schema_version",
+    "framework_name",
+    "slug",
+    "source",
+    "ontology",
+    "directional_heuristics",
+    "trade_off_matrix",
+    "anti_patterns",
+    "evaluation_rubric",
+    "faithful_layer",
+    "applied_layer"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,214 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "adr",
+  "description": "Architectural Decision Record produced by Mode B sparring pipeline [Phase 4, R1+R2]",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "enum": ["1.0.0"],
+      "default": "1.0.0",
+      "maxLength": 20,
+      "description": "Mandatory schema version [P0.1, R1]"
+    },
+    "adr_number": {
+      "type": "string",
+      "pattern": "^ADR-\\d{3,4}$",
+      "maxLength": 20,
+      "description": "Unique ADR identifier (e.g. ADR-001) [R1]"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "Short descriptive title of the architectural decision"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending_review", "accepted", "rejected", "superseded"],
+      "description": "Lifecycle state of this architectural decision [P0.5, R1]"
+    },
+    "target_doc": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Path or identifier of the evaluated RFC, PR diff, or proposal"
+    },
+    "evaluated_frameworks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 100
+      },
+      "minItems": 1,
+      "description": "Slugs of all cognitive frameworks used as sparring lenses [R2]"
+    },
+    "context_and_problem": {
+      "type": "string",
+      "maxLength": 4000,
+      "description": "Context, architectural forces, and problem statement"
+    },
+    "reversibility": {
+      "type": "object",
+      "properties": {
+        "classification": {
+          "type": "string",
+          "enum": ["hat", "haircut", "tattoo"],
+          "description": "Classification: hat (low cost), haircut (medium cost), tattoo (irreversible)"
+        },
+        "rationale": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Rationale for the reversibility classification"
+        },
+        "rollback_plan": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Concrete steps and costs to undo or migrate away from this decision"
+        }
+      },
+      "required": ["classification", "rationale", "rollback_plan"],
+      "additionalProperties": false,
+      "description": "Reversibility audit under the Hats, Haircuts, and Tattoos lens"
+    },
+    "complexity_audit": {
+      "type": "object",
+      "properties": {
+        "tokens_spent": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of innovation tokens consumed"
+        },
+        "token_budget": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Allocated innovation token ceiling"
+        },
+        "rationale": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Justification of why new technology or novelty is warranted"
+        },
+        "simpler_alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "description": "Boring or existing alternatives evaluated and why they were not chosen"
+        }
+      },
+      "required": ["tokens_spent", "token_budget", "rationale", "simpler_alternatives"],
+      "additionalProperties": false,
+      "description": "Complexity & innovation tokens audit under the Boring Technology lens"
+    },
+    "framework_compliance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "framework": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "check_name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "verdict": {
+            "type": "string",
+            "enum": ["pass", "warn", "fail"]
+          },
+          "critique": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "risk": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "required": ["framework", "check_name", "verdict", "critique", "risk"],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "description": "Adversarial sparring findings per evaluated framework and heuristic"
+    },
+    "unresolved_tensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tension_dimension": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "conflicting_frameworks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          "conflicting_heuristics": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 1000
+            }
+          },
+          "escalation_note": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "required": ["tension_dimension", "escalation_note"],
+        "additionalProperties": false
+      },
+      "description": "Tensions between conflicting principles or trade-offs escalated to human review [R1+R2]"
+    },
+    "decision_outcome": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string",
+          "enum": ["accepted", "rejected", "compromise"],
+          "description": "Recommended architectural decision outcome"
+        },
+        "justification": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Core justification for the decision"
+        },
+        "consequences": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Anticipated impact, trade-offs, and operational consequences"
+        }
+      },
+      "required": ["outcome", "justification", "consequences"],
+      "additionalProperties": false,
+      "description": "Recommended decision outcome and trade-offs"
+    },
+    "provenance": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Audit trail including evaluator agent, run id, and evaluation timestamp [R1]"
+    }
+  },
+  "required": [
+    "schema_version",
+    "adr_number",
+    "title",
+    "status",
+    "target_doc",
+    "evaluated_frameworks",
+    "context_and_problem",
+    "reversibility",
+    "complexity_audit",
+    "framework_compliance",
+    "unresolved_tensions",
+    "decision_outcome",
+    "provenance"
+  ],
+  "additionalProperties": false
+}

@@ -1,20 +1,35 @@
-"""Knowledge layer: write notes into the vault.
+r"""Knowledge layer: write notes into the vault.
 
-Renders validated agent JSON into vault markdown.
+Renders validated agent JSON into vault markdown conforming to the canonical
+5-point markdown layout [<vault>/frameworks/README.md].
 
-Python, not the agent, writes every file. Each note gets the pipeline
-frontmatter (status: pending_review + run id), so the human gate is always
-visible in Obsidian.
+Python, not the agent, writes every file. Machine-managed markers protect human edits:
+<!-- NOETIC:AUTO:START --> ... <!-- NOETIC:AUTO:END -->
+<!-- NOETIC:LOG:START --> ... <!-- NOETIC:LOG:END -->
+<!-- NOETIC:PROPOSED:START --> ... <!-- NOETIC:PROPOSED:END -->
+<!-- NOETIC:TABLE:START --> ... <!-- NOETIC:TABLE:END -->
 """
 
 from __future__ import annotations
 
+from datetime import datetime
+import hashlib
 from pathlib import Path
 import re
 
 from noetic.knowledge.config import Config, slugify, today
 
-STATUS_FLOW = ("pending_review", "approved", "published", "rejected")
+STATUS_FLOW = ("pending_review", "approved", "needs_merge_review", "published", "rejected", "superseded")
+ADR_STATUS_FLOW = ("pending_review", "accepted", "rejected", "superseded")
+
+AUTO_START = "<!-- NOETIC:AUTO:START -->"
+AUTO_END = "<!-- NOETIC:AUTO:END -->"
+LOG_START = "<!-- NOETIC:LOG:START -->"
+LOG_END = "<!-- NOETIC:LOG:END -->"
+PROPOSED_START = "<!-- NOETIC:PROPOSED:START -->"
+PROPOSED_END = "<!-- NOETIC:PROPOSED:END -->"
+TABLE_START = "<!-- NOETIC:TABLE:START -->"
+TABLE_END = "<!-- NOETIC:TABLE:END -->"
 
 
 def frontmatter(cfg: Config, agent: str, run_id: str, kind: str, extra: dict | None = None) -> str:
@@ -26,6 +41,7 @@ def frontmatter(cfg: Config, agent: str, run_id: str, kind: str, extra: dict | N
     f"type: {kind}",
     "status: pending_review",
     f"run: {run_id}",
+    f"schema_version: {getattr(cfg, 'schema_version', '1.0.0')}",
   ]
   for key, value in (extra or {}).items():
     lines.append(f"{key}: {value}")
@@ -69,16 +85,193 @@ def wikilink(cfg: Config, path_or_name: str) -> str:
   return f"[[{rel}]]"
 
 
-# ── per-type renderers ──────────────────────────────────────────────────────
+def compute_content_hash(text: str) -> str:
+  """Computes SHA-256 hash of note text normalizing away approval_hash, log blocks, and outer whitespace [R1]."""
+  if LOG_START in text and LOG_END in text:
+    pre, rest = text.split(LOG_START, 1)
+    _, post = rest.split(LOG_END, 1)
+    text = pre + post
+  lines = [l for l in text.splitlines() if not l.startswith("approval_hash:")]
+  normalized = "\n".join(lines).strip().encode("utf-8")
+  return hashlib.sha256(normalized).hexdigest()
 
-def framework(cfg: Config, d: dict, agent: str, run_id: str) -> Path:
+
+def get_approval_hash(path: Path) -> str | None:
+  if not path.exists():
+    return None
+  text = path.read_text(encoding="utf-8")
+  m = re.search(r"^approval_hash:\s*\"?([a-f0-9]{64})\"?", text, re.M)
+  return m.group(1) if m else None
+
+
+def verify_approval_hash(path: Path) -> bool:
+  h = get_approval_hash(path)
+  if not h:
+    return False
+  text = path.read_text(encoding="utf-8")
+  return compute_content_hash(text) == h
+
+
+def status_of(path: Path) -> str | None:
+  if not path.exists():
+    return None
+  m = re.search(r"^status:\s*(\S+)", path.read_text(encoding="utf-8"), re.M)
+  return m.group(1) if m else None
+
+
+def set_status(path: Path, status: str, note: str = "") -> None:
+  if status not in STATUS_FLOW and status not in ADR_STATUS_FLOW:
+    raise ValueError(f"status must be one of {STATUS_FLOW} or {ADR_STATUS_FLOW}")
+  text = path.read_text(encoding="utf-8")
+  if not text.startswith("---"):
+    raise ValueError(f"{path.name} has no frontmatter")
+  end = text.index("\n---", 3)
+  fm, body = text[:end], text[end:]
+  lines = [l for l in fm.splitlines() if not l.startswith(("status:", "review_note:", "reviewed:", "approval_hash:"))]
+  lines += [f"status: {status}", f"reviewed: {today()}"]
+  if note:
+    lines.append(f'review_note: "{note}"')
+  if status in ("approved", "accepted"):
+    interim_text = "\n".join(lines) + body
+    app_hash = compute_content_hash(interim_text)
+    lines.append(f'approval_hash: "{app_hash}"')
+  path.write_text("\n".join(lines) + body, encoding="utf-8")
+
+
+# ── Canonical 5-point renderers ─────────────────────────────────────────────
+
+def _render_cognitive_framework_body(d: dict, cousins: list[str] | None = None) -> str:
+  src = d.get("source") or {}
+  source_title = src.get("title", "")
+  source_author = src.get("author", "")
+  source_url = src.get("url", "")
+  source_line = source_title + (f" — {source_author}" if source_author else "") + (f" ({source_url})" if source_url else "")
+
+  applied = d.get("applied_layer") or {}
+  interests = ", ".join(f"[[interests#{i}]]" for i in applied.get("linked_interests", [])) or "_none matched_"
+
+  ontology = d.get("ontology") or {}
+  domain = ontology.get("domain", "")
+  tags = f"#framework" + (f" #{slugify(domain)}" if domain else "")
+
+  rubric = d.get("evaluation_rubric") or {}
+  scores = rubric.get("admission_test_scores") or {}
+  score_vals = [v for v in scores.values() if isinstance(v, (int, float))]
+  avg_score = (sum(score_vals) / len(score_vals)) if score_vals else 5.0
+  keyboard_test = rubric.get("the_keyboard_test", "")
+
+  faithful = d.get("faithful_layer") or {}
+  core_idea = faithful.get("core_idea") or d.get("core_idea", "")
+  razor = faithful.get("razor", "")
+  invariant = ontology.get("governing_invariant", "")
+
+  # Directional heuristics
+  heuristics = d.get("directional_heuristics") or []
+  h_lines = []
+  for h in heuristics:
+    tags_suffix = f" [Tags: {', '.join(h['domain_tags'])}]" if h.get("domain_tags") else ""
+    anchor_suffix = f" [Anchor: {h['provenance_anchor']}]" if h.get("provenance_anchor") else ""
+    h_lines.append(
+      f"- **When in {h['context']}** → Prioritize **{h['prioritize']}** over _{h['over']}_ "
+      f"because {h['because']}. (Rule: `{h['operational_rule']}`) [Tier {h.get('tier', 1)}]{tags_suffix}{anchor_suffix}"
+    )
+  h_block = "\n".join(h_lines) if h_lines else "- _none declared_"
+
+  # Primitives
+  primitives = ontology.get("primitives") or []
+  p_lines = []
+  for p in primitives:
+    p_lines.append(f"- **{p['name']}** (`{p.get('kind', 'entity')}`): {p.get('definition', '')}")
+  p_block = ("\n### Ontology Primitives\n" + "\n".join(p_lines)) if p_lines else ""
+
+  # Mental moves
+  moves = faithful.get("mental_moves") or d.get("mental_moves") or []
+  moves_block = "\n".join(f"{n}. {m}" for n, m in enumerate(moves, 1)) if moves else "- _none declared_"
+
+  # Where to apply & Trade-offs
+  trade_offs = d.get("trade_off_matrix") or []
+  to_rows = []
+  for t in trade_offs:
+    to_rows.append(f"| {t['dimension']} | {t['recommended_choice']} | {t['sacrificed']} | {t['gained']} | {t['boundary_flip_condition']} |")
+  to_table = (
+    "| Tension Dimension | Recommended Choice | Sacrificed | Gained | Boundary Flip Condition |\n"
+    "| :--- | :--- | :--- | :--- | :--- |\n" + "\n".join(to_rows)
+  ) if to_rows else "_none declared_"
+
+  # Anti-patterns
+  anti = d.get("anti_patterns") or []
+  anti_lines = []
+  for a in anti:
+    if isinstance(a, dict):
+      anti_lines.append(f"- **{a['trap_name']}**: {a.get('symptom', '')} → {a.get('failure_mechanism', '')} (Recovery: {a.get('recovery_move', '')})")
+    else:
+      anti_lines.append(f"- {a}")
+  anti_block = "\n".join(anti_lines) if anti_lines else "- _none declared_"
+
+  # Genealogy & Cousins
+  gen = d.get("genealogy") or []
+  gen_str = ", ".join(gen) if gen else "None"
+  cousin_links = [f"[[{c}]]" for c in (cousins or [])]
+  cousin_str = ", ".join(cousin_links) if cousin_links else "None"
+
+  return f"""{AUTO_START}
+# Framework: {d['framework_name']}
+
+**Source:** {source_line}  
+**Linked Interests:** {interests}  
+**Tags:** {tags}  
+**Admission Score:** {avg_score:.1f}/5.0 (Admission Rubric)  
+**The Keyboard Test:** {keyboard_test}  
+
+---
+
+## 1. Core Idea
+{core_idea}
+
+## 2. Core Heuristic & Trigger
+{h_block}
+- **The Core Question / Razor:** "{razor}"
+- **Governing Invariant:** {invariant}
+
+## 3. Mental Moves / Procedures
+{moves_block}
+
+## 4. Where to Apply
+- **Primary Domain:** {domain}{p_block}
+
+### Trade-Off Matrix
+{to_table}
+
+## 5. Anti-Patterns & Boundaries (When it Breaks)
+{anti_block}
+
+## 6. Source Genealogy & Cousins
+- **Lineage:** {gen_str}
+- **Cousins:** {cousin_str}
+{AUTO_END}
+
+{LOG_START}
+## Applications Log
+-
+{LOG_END}
+
+{PROPOSED_START}
+{PROPOSED_END}
+"""
+
+
+def _render_legacy_framework_body(d: dict, cousins: list[str] | None = None) -> str:
   src = d["source"]
-  source_line = f"{src['title']}" + (f" — {src['author']}" if src["author"] else "") + (f" ({src['url']})" if src["url"] else "")
-  interests = ", ".join(f"[[interests#{i}]]" for i in d["linked_interests"]) or "_none matched_"
-  principles = "\n".join(f"{n}. **{p['name']}**: {p['explanation']}" for n, p in enumerate(d["principles"], 1))
-  moves = "\n".join(f"{n}. {m}" for n, m in enumerate(d["mental_moves"], 1))
-  w = d["when_to_apply"]
-  body = f"""# Framework: {d['framework_name']}
+  source_line = f"{src['title']}" + (f" — {src['author']}" if src.get("author") else "") + (f" ({src['url']})" if src.get("url") else "")
+  interests = ", ".join(f"[[interests#{i}]]" for i in d.get("linked_interests", [])) or "_none matched_"
+  principles = "\n".join(f"{n}. **{p['name']}**: {p['explanation']}" for n, p in enumerate(d.get("principles", []), 1))
+  moves = "\n".join(f"{n}. {m}" for n, m in enumerate(d.get("mental_moves", []), 1))
+  w = d.get("when_to_apply", {})
+  cousin_links = [f"[[{c}]]" for c in (cousins or [])]
+  cousin_str = f"\n- **Cousins:** {', '.join(cousin_links)}" if cousin_links else ""
+
+  return f"""{AUTO_START}
+# Framework: {d['framework_name']}
 
 **Source:** {source_line}
 **Linked Interests:** {interests}
@@ -87,7 +280,7 @@ def framework(cfg: Config, d: dict, agent: str, run_id: str) -> Path:
 ---
 
 ## Core Idea
-{d['core_idea']}
+{d.get('core_idea', '')}
 
 ## Principles
 {principles}
@@ -96,41 +289,215 @@ def framework(cfg: Config, d: dict, agent: str, run_id: str) -> Path:
 {moves}
 
 ## When to Apply
-- **Content:** {w['content']}
-- **Code:** {w['code']}
-- **Projects / Decisions:** {w['project']}
+- **Content:** {w.get('content', '')}
+- **Code:** {w.get('code', '')}
+- **Projects / Decisions:** {w.get('project', '')}
 
 ## Anti-Patterns
-{bullets(d['anti_patterns'])}
+{bullets(d.get('anti_patterns', []))}
 
 ## Source Genealogy
-{bullets(d['genealogy'])}
+{bullets(d.get('genealogy', []))}{cousin_str}
 
 ## Provenance
-{d['provenance_note']}
+{d.get('provenance_note', '')}
+{AUTO_END}
 
+{LOG_START}
 ## Applications Log
 -
+{LOG_END}
+
+{PROPOSED_START}
+{PROPOSED_END}
 """
-  fm = frontmatter(cfg, agent, run_id, "framework", {
-    "source": f'"{source_line}"', "applies-to": "[content, code, project]",
-  })
-  return write(cfg.frameworks / f"{slugify(d['slug'] or d['framework_name'])}.md", fm + body)
+
+
+def framework(cfg: Config, d: dict, agent: str, run_id: str, cousins: list[str] | None = None) -> Path:
+  slug = slugify(d.get("slug") or d.get("framework_name", ""))
+  is_cognitive = "directional_heuristics" in d or "ontology" in d
+
+  if is_cognitive:
+    body = _render_cognitive_framework_body(d, cousins=cousins)
+    src = d.get("source") or {}
+    source_line = f"{src.get('title', '')}" + (f" — {src.get('author')}" if src.get('author') else "") + (f" ({src.get('url')})" if src.get('url') else "")
+    fm = frontmatter(cfg, agent, run_id, "framework", {
+      "source": f'"{source_line}"',
+      "applies-to": "[code, content, product, business, decisions]",
+      "approval_hash": '""',
+    })
+  else:
+    body = _render_legacy_framework_body(d, cousins=cousins)
+    src = d["source"]
+    source_line = f"{src['title']}" + (f" — {src['author']}" if src.get("author") else "") + (f" ({src['url']})" if src.get("url") else "")
+    fm = frontmatter(cfg, agent, run_id, "framework", {
+      "source": f'"{source_line}"',
+      "applies-to": "[content, code, project]",
+      "approval_hash": '""',
+    })
+
+  return write(cfg.frameworks / f"{slug}.md", fm + body)
+
+
+def merge_framework(cfg: Config, target_path: Path, framework_data: dict, agent: str, run_id: str) -> Path:
+  """Non-clobbering merge [R1+R2].
+  
+  If target note is approved, NEVER overwrite it in place!
+  Appends proposed enrichment inside <!-- NOETIC:PROPOSED:START --> and sets status: needs_merge_review.
+  If target note is pending_review, updates machine-managed AUTO block.
+  """
+  text = target_path.read_text(encoding="utf-8")
+  curr_status = status_of(target_path) or "pending_review"
+
+  if curr_status == "approved":
+    src = framework_data.get("source") or {}
+    src_line = f"{src.get('title', '')}" + (f" by {src.get('author')}" if src.get('author') else "")
+
+    heuristics = framework_data.get("directional_heuristics", [])
+    h_lines = []
+    for h in heuristics:
+      if isinstance(h, dict):
+        h_lines.append(f"- **When in {h['context']}** → Prioritize **{h['prioritize']}** over _{h['over']}_ (Rule: `{h['operational_rule']}`) [Tier {h.get('tier', 1)}]")
+    h_text = "\n".join(h_lines) if h_lines else "- _none_"
+
+    trade_offs = framework_data.get("trade_off_matrix", [])
+    t_lines = []
+    for t in trade_offs:
+      if isinstance(t, dict):
+        t_lines.append(f"- **{t['dimension']}**: Choose {t['recommended_choice']} (Sacrifice: {t['sacrificed']}, Gain: {t['gained']})")
+    t_text = "\n".join(t_lines) if t_lines else "- _none_"
+
+    enrichment = f"""
+### Proposed Enrichment ({today()} · run `{run_id}` · agent `{agent}`)
+**Candidate Source:** {src_line}
+
+#### Additional Directional Heuristics
+{h_text}
+
+#### Trade-Offs & Invariants
+{t_text}
+"""
+    if PROPOSED_START in text and PROPOSED_END in text:
+      pre, rest = text.split(PROPOSED_START, 1)
+      prop_content, post = rest.split(PROPOSED_END, 1)
+      new_prop = prop_content.rstrip() + "\n" + enrichment.strip() + "\n"
+      text = f"{pre}{PROPOSED_START}\n{new_prop}{PROPOSED_END}{post}"
+    else:
+      text = text.rstrip() + f"\n\n{PROPOSED_START}\n{enrichment.strip()}\n{PROPOSED_END}\n"
+
+    target_path.write_text(text, encoding="utf-8")
+    set_status(target_path, "needs_merge_review", f"Enrichment proposed by run {run_id}")
+  else:
+    is_cognitive = "directional_heuristics" in framework_data or "ontology" in framework_data
+    new_body = _render_cognitive_framework_body(framework_data) if is_cognitive else _render_legacy_framework_body(framework_data)
+
+    if AUTO_START in new_body and AUTO_END in new_body and AUTO_START in text and AUTO_END in text:
+      new_auto = new_body.split(AUTO_START, 1)[1].split(AUTO_END, 1)[0]
+      pre = text.split(AUTO_START, 1)[0]
+      post = text.split(AUTO_END, 1)[1]
+      text = f"{pre}{AUTO_START}{new_auto}{AUTO_END}{post}"
+      target_path.write_text(text, encoding="utf-8")
+    else:
+      target_path.write_text(new_body, encoding="utf-8")
+
+  return target_path
+
+
+def add_cousin_wikilink(target_path: Path, cousin_slug: str) -> None:
+  """Safely records a cousin link on an existing framework note without touching human content."""
+  if not target_path.exists():
+    return
+  text = target_path.read_text(encoding="utf-8")
+  link = f"[[{cousin_slug}]]"
+  if link in text:
+    return
+
+  if "- **Cousins:** None" in text:
+    text = text.replace("- **Cousins:** None", f"- **Cousins:** {link}", 1)
+  elif "- **Cousins:** " in text:
+    text = text.replace("- **Cousins:** ", f"- **Cousins:** {link}, ", 1)
+  elif "## 6. Source Genealogy & Cousins" in text:
+    text = text.replace("## 6. Source Genealogy & Cousins\n", f"## 6. Source Genealogy & Cousins\n- **Cousins:** {link}\n", 1)
+  elif "## Source Genealogy" in text:
+    text = text.replace("## Source Genealogy\n", f"## Source Genealogy\n- **Cousins:** {link}\n", 1)
+  elif AUTO_END in text:
+    text = text.replace(AUTO_END, f"- **Cousins:** {link}\n{AUTO_END}", 1)
+  else:
+    text = text.rstrip() + f"\n\n- **Cousins:** {link}\n"
+
+  target_path.write_text(text, encoding="utf-8")
+
+
+def update_master_table(cfg: Config) -> Path:
+  """Updates Master Table in frameworks/README.md strictly within table markers [R2]."""
+  readme_path = cfg.frameworks / "README.md"
+  if not readme_path.exists():
+    cfg.frameworks.mkdir(parents=True, exist_ok=True)
+    readme_path.write_text(
+      "# The Knowledgebase Framework Bar\n\n## Master Frameworks Catalog\n\n<!-- NOETIC:TABLE:START -->\n<!-- NOETIC:TABLE:END -->\n",
+      encoding="utf-8"
+    )
+
+  text = readme_path.read_text(encoding="utf-8")
+  if TABLE_START not in text or TABLE_END not in text:
+    text = text.rstrip() + f"\n\n## Master Frameworks Catalog\n\n{TABLE_START}\n{TABLE_END}\n"
+
+  rows = []
+  headers = "| Framework | Slug | Status | Domain | Admission Score | Source |\n| :--- | :--- | :--- | :--- | :--- | :--- |"
+
+  framework_files = sorted(cfg.frameworks.glob("*.md"), key=lambda p: p.name.lower())
+  for f in framework_files:
+    if f.name.lower() in ("readme.md", "index.md"):
+      continue
+    note_text = f.read_text(encoding="utf-8")
+
+    m_title = re.search(r"^# Framework:\s*(.+)$", note_text, re.M)
+    title = m_title.group(1).strip() if m_title else f.stem
+
+    slug = f.stem
+    status = status_of(f) or "curated"
+
+    m_dom = re.search(r"\*\*Tags:\*\*\s*(.+)$", note_text, re.M)
+    domain = m_dom.group(1).strip() if m_dom else "-"
+
+    m_score = re.search(r"\*\*Admission Score:\*\*\s*([0-9\.\/]+)", note_text, re.M)
+    score = m_score.group(1).strip() if m_score else "-"
+
+    m_src = re.search(r"\*\*Source:\*\*\s*(.+)$", note_text, re.M)
+    source = m_src.group(1).strip() if m_src else "-"
+
+    rows.append(f"| [[{slug}|{title}]] | `{slug}` | `{status}` | {domain} | {score} | {source} |")
+
+  table_content = headers + "\n" + ("\n".join(rows) if rows else "| _none_ | - | - | - | - | - |")
+
+  pre, rest = text.split(TABLE_START, 1)
+  _, post = rest.split(TABLE_END, 1)
+
+  new_text = f"{pre}{TABLE_START}\n{table_content}\n{TABLE_END}{post}"
+  readme_path.write_text(new_text, encoding="utf-8")
+  return readme_path
 
 
 def source_note(cfg: Config, d: dict, framework_path: Path, agent: str, run_id: str) -> Path:
-  src = d["source"]
-  slug = slugify(src["title"]) or slugify(d["framework_name"])
+  src = d.get("source") or d.get("source_metadata") or {}
+  title = src.get("title") or d.get("framework_name") or d.get("title") or "Source"
+  author = src.get("author", "")
+  kind = src.get("kind", "other")
+  url = src.get("url", "")
+  topics_list = d.get("linked_interests") or d.get("entities") or []
+  topics = "[" + ", ".join(topics_list) + "]"
+  slug = slugify(title) or slugify(d.get("framework_name", "")) or "source"
+
   fm = frontmatter(cfg, agent, run_id, "source", {
     "id": f"src-{today().replace('-', '')}-{slug[:24]}",
-    "title": f'"{src["title"]}"',
-    "source_author": f'"{src["author"]}"',
-    "kind": src["kind"],
-    "topics": "[" + ", ".join(d["linked_interests"]) + "]",
+    "title": f'"{title}"',
+    "source_author": f'"{author}"',
+    "kind": kind,
+    "topics": topics,
     "extracted_frameworks": f'["[[{framework_path.stem}]]"]',
     "last_processed": today(),
   })
-  body = f"# Source: {src['title']}\n\n{src['url'] or ''}\n\nExtracted → [[{framework_path.stem}]]\n"
+  body = f"# Source: {title}\n\n{url or ''}\n\nExtracted → [[{framework_path.stem}]]\n"
   return write(cfg.frameworks / "sources" / f"{slug}.md", fm + body)
 
 
@@ -240,7 +607,14 @@ def journey(cfg: Config, d: dict, agent: str, run_id: str) -> Path:
   return write(cfg.twitter / "journey" / f"{today()}-{slugify(d['slug'] or d['title'])}.md", fm + body)
 
 
-def build_brief(cfg: Config, d: dict, framework_slug: str, agent: str, run_id: str) -> Path:
+def build_brief(
+    cfg: Config,
+    d: dict,
+    framework_slug: str | list[str],
+    agent: str,
+    run_id: str,
+    charter: dict | None = None,
+) -> Path:
   refs = "\n".join(f"| {n} | {r['name']} | {r['url']} | {r['stealing']} |" for n, r in enumerate(d["references"], 1))
   elements = "\n\n".join(
     f"""### {e['id']}: {e['name']}
@@ -250,7 +624,39 @@ def build_brief(cfg: Config, d: dict, framework_slug: str, agent: str, run_id: s
 - **Why it works:** {e['why_it_works']}
 - **Steal (mechanism):** {e['steal']}
 - **Transform (our expression):** {e['transform']}""" for e in d["elements"])
-  fm = frontmatter(cfg, agent, run_id, "build-brief", {"framework": f'"[[{framework_slug}]]"'})
+  
+  if isinstance(framework_slug, (list, tuple)):
+    fw_tag = ", ".join(f"[[{s}]]" for s in framework_slug)
+  else:
+    fw_tag = f"[[{framework_slug}]]"
+
+  fm = frontmatter(cfg, agent, run_id, "build-brief", {"framework": f'"{fw_tag}"'})
+
+  # Dialectic Trade-off Matrix if tensions or collisions exist
+  trade_off_matrix_section = ""
+  if charter:
+    tensions = charter.get("unresolved_tensions", [])
+    collisions = charter.get("resolved_collisions", [])
+    if tensions or collisions:
+      rows = []
+      if tensions:
+        rows.append("### Unresolved Tensions (Human Decision Required)")
+        rows.append("| Tension Dimension | Conflicting Frameworks | Conflicting Heuristics | Escalation Note |")
+        rows.append("| :--- | :--- | :--- | :--- |")
+        for t in tensions:
+          fws = ", ".join(t.get("conflicting_frameworks", []))
+          heurs = " vs ".join(t.get("conflicting_heuristics", []))
+          note = t.get("escalation_note", "")
+          rows.append(f"| {t.get('tension_dimension', '')} | {fws} | {heurs} | {note} |")
+      if collisions:
+        rows.append("\n### Resolved Collisions")
+        rows.append("| Collision Dimension | Frameworks | Winner | Tier/Domain Rationale |")
+        rows.append("| :--- | :--- | :--- | :--- |")
+        for c in collisions:
+          fws = ", ".join(c.get("frameworks_involved", []))
+          rows.append(f"| {c.get('collision_dimension', '')} | {fws} | {c.get('winning_framework', '')} | {c.get('tier_domain_rationale', '')} |")
+      trade_off_matrix_section = "\n## Dialectic Trade-off Matrix\n" + "\n".join(rows) + "\n"
+
   body = f"""# Build Brief: {d['title']}
 
 ## Goal
@@ -263,7 +669,7 @@ def build_brief(cfg: Config, d: dict, framework_slug: str, agent: str, run_id: s
 
 ## Element Breakdown
 {elements}
-
+{trade_off_matrix_section}
 ## Stack Suggestion
 {d['stack']}
 
@@ -302,34 +708,185 @@ def build_report_section(d: dict, agent: str, repo: Path, branch: str) -> str:
 """
 
 
-def append_application(framework_file: Path, mode: str, output: Path) -> None:
-  """Close the loop: record on the framework where it was applied."""
-  if not framework_file.exists():
-    return
-  text = framework_file.read_text(encoding="utf-8").rstrip() + "\n"
-  line = f"- {today()} · {mode} · [[{output.stem}]]"
-  marker = "## Applications Log"
-  if f"{marker}\n-\n" in text:  # empty placeholder bullet
-    text = text.replace(f"{marker}\n-\n", f"{marker}\n{line}\n", 1)
-  elif marker in text:  # it's the last section by convention
-    text += f"{line}\n"
-  else:
-    text += f"\n{marker}\n{line}\n"
-  framework_file.write_text(text, encoding="utf-8")
+VALID_OUTCOMES = {"followed", "overridden", "regretted"}
+OUTCOME_ALIASES = {
+    "override": "overridden",
+    "overrode": "overridden",
+    "regret": "regretted",
+    "follow": "followed",
+}
 
-def set_status(path: Path, status: str, note: str = "") -> None:
-  if status not in STATUS_FLOW:
-    raise ValueError(f"status must be one of {STATUS_FLOW}")
-  text = path.read_text(encoding="utf-8")
-  if not text.startswith("---"):
-    raise ValueError(f"{path.name} has no frontmatter")
-  end = text.index("\n---", 3)
-  fm, body = text[:end], text[end:]
-  lines = [l for l in fm.splitlines() if not l.startswith(("status:", "review_note:", "reviewed:"))]
-  lines += [f"status: {status}", f"reviewed: {today()}"]
-  if note:
-    lines.append(f'review_note: "{note}"')
-  path.write_text("\n".join(lines) + body, encoding="utf-8")
+
+def append_application(
+    path: Path | str | None = None,
+    kind: str | None = None,
+    artifact_ref: Path | str | None = None,
+    outcome: str | None = None,
+    *,
+    framework_file: Path | str | None = None,
+    mode: str | None = None,
+    output: Path | str | None = None,
+) -> None:
+  """Close the loop: record on the framework where it was applied strictly inside LOG markers [R1+R2].
+  
+  Supports outcome tracking: 'followed', 'overridden', or 'regretted'.
+  """
+  target_path = Path(path if path is not None else (framework_file or ""))
+  if not target_path or not target_path.exists():
+    return
+
+  effective_kind = kind if kind is not None else (mode or "project")
+  effective_ref_obj = artifact_ref if artifact_ref is not None else output
+  if effective_ref_obj is None:
+    return
+
+  ref = effective_ref_obj.stem if isinstance(effective_ref_obj, Path) else Path(str(effective_ref_obj)).stem
+
+  if outcome is not None:
+    outcome_str = outcome.strip().lower()
+    normalized_outcome = OUTCOME_ALIASES.get(outcome_str, outcome_str)
+    if normalized_outcome not in VALID_OUTCOMES:
+      raise ValueError(f"Invalid outcome: {outcome!r}. Must be one of {sorted(VALID_OUTCOMES)}")
+    line = f"- {today()} · {effective_kind} · [[{ref}]] · outcome: {normalized_outcome}"
+  else:
+    line = f"- {today()} · {effective_kind} · [[{ref}]]"
+
+  text = target_path.read_text(encoding="utf-8")
+
+  if LOG_START in text and LOG_END in text:
+    pre, rest = text.split(LOG_START, 1)
+    log_content, post = rest.split(LOG_END, 1)
+    if "## Applications Log\n-\n" in log_content:
+      log_content = log_content.replace("## Applications Log\n-\n", f"## Applications Log\n{line}\n", 1)
+    elif "## Applications Log" in log_content:
+      log_content = log_content.rstrip() + f"\n{line}\n"
+    else:
+      log_content = f"\n## Applications Log\n{line}\n"
+    new_text = f"{pre}{LOG_START}{log_content}{LOG_END}{post}"
+  else:
+    marker = "## Applications Log"
+    if f"{marker}\n-\n" in text:
+      new_text = text.replace(f"{marker}\n-\n", f"{marker}\n{line}\n", 1)
+    elif marker in text:
+      new_text = text.rstrip() + f"\n{line}\n"
+    else:
+      new_text = text.rstrip() + f"\n\n{LOG_START}\n{marker}\n{line}\n{LOG_END}\n"
+
+  target_path.write_text(new_text, encoding="utf-8")
+
+
+def framework_confidence_metric(cfg: Any, slug: str) -> dict[str, Any]:
+  """Parses the applications log for a framework and calculates adoption metrics [R1].
+  
+  Returns dict containing:
+    - total_applications: int
+    - followed_count: int
+    - override_count: int
+    - regret_count: int
+    - confidence_rating: float (0.0 to 1.0)
+    - confidence_level: str ('high', 'medium', 'low')
+    - last_validated: str | None (YYYY-MM-DD of latest application)
+  """
+  frameworks_dir = getattr(cfg, "frameworks", None)
+  if frameworks_dir is None:
+    if isinstance(cfg, Path):
+      frameworks_dir = cfg / "frameworks" if (cfg / "frameworks").is_dir() else cfg
+    else:
+      frameworks_dir = Path(str(cfg))
+
+  target_file = Path(slug) if str(slug).endswith(".md") else (frameworks_dir / f"{slug}.md")
+  if not target_file.is_file() and not target_file.exists():
+    candidate = frameworks_dir / f"{slug}.md"
+    if candidate.exists():
+      target_file = candidate
+
+  if not target_file.exists():
+    return {
+        "slug": slug,
+        "total_applications": 0,
+        "followed_count": 0,
+        "override_count": 0,
+        "regret_count": 0,
+        "confidence_rating": 0.0,
+        "confidence_level": "low",
+        "confidence": "low",
+        "last_validated": None,
+    }
+
+  text = target_file.read_text(encoding="utf-8")
+
+  # Extract log section
+  if LOG_START in text and LOG_END in text:
+    _, rest = text.split(LOG_START, 1)
+    log_content, _ = rest.split(LOG_END, 1)
+  elif "## Applications Log" in text:
+    _, log_content = text.split("## Applications Log", 1)
+    if "\n## " in log_content:
+      log_content, _ = log_content.split("\n## ", 1)
+  else:
+    log_content = ""
+
+  pattern = re.compile(
+      r"^-\s*(\d{4}-\d{2}-\d{2})\s*[·|\-]\s*([^\s·|\-]+(?:[^\n·|\-]*))\s*[·|\-]\s*\[\[([^\]]+)\]\](?:\s*[·|\-]\s*outcome:\s*(\w+))?",
+      re.M,
+  )
+
+  dates: list[str] = []
+  followed = 0
+  override = 0
+  regret = 0
+  total = 0
+
+  for m in pattern.finditer(log_content):
+    date_str, _kind_str, _ref_str, outcome_str = m.groups()
+    total += 1
+    dates.append(date_str)
+    if outcome_str:
+      out_lower = outcome_str.lower()
+      if out_lower in ("followed", "follow"):
+        followed += 1
+      elif out_lower in ("overridden", "override", "overrode"):
+        override += 1
+      elif out_lower in ("regretted", "regret"):
+        regret += 1
+
+  if total == 0:
+    return {
+        "slug": slug,
+        "total_applications": 0,
+        "followed_count": 0,
+        "override_count": 0,
+        "regret_count": 0,
+        "confidence_rating": 0.0,
+        "confidence_level": "low",
+        "confidence": "low",
+        "last_validated": None,
+    }
+
+  unspecified = total - (followed + override + regret)
+  score = (followed * 1.0 + unspecified * 0.7 + override * 0.3 + regret * 0.0) / total
+  score = round(max(0.0, min(1.0, score)), 2)
+
+  if score >= 0.7:
+    level = "high"
+  elif score >= 0.4:
+    level = "medium"
+  else:
+    level = "low"
+
+  last_validated = max(dates) if dates else None
+
+  return {
+      "slug": slug,
+      "total_applications": total,
+      "followed_count": followed,
+      "override_count": override,
+      "regret_count": regret,
+      "confidence_rating": score,
+      "confidence_level": level,
+      "confidence": level,
+      "last_validated": last_validated,
+  }
 
 
 def briefing_note(cfg: Config, data: dict, narrative: dict, agent: str, run_id: str) -> Path:
@@ -357,3 +914,125 @@ def briefing_note(cfg: Config, data: dict, narrative: dict, agent: str, run_id: 
 {bullets(narrative['check_in'])}
 """
   return write(folder / f"briefing-{data['generated']}.md", fm + body)
+
+
+def _render_adr_body(d: dict) -> str:
+  adr_number = d.get("adr_number", "ADR-001")
+  title = d.get("title", "Architectural Decision")
+  status = d.get("status", "pending_review")
+  target_doc = d.get("target_doc", "")
+  fws = d.get("evaluated_frameworks", [])
+  fw_links = ", ".join(f"[[{f}]]" for f in fws) if fws else "_none_"
+
+  rev = d.get("reversibility") or {}
+  comp = d.get("complexity_audit") or {}
+  alts = comp.get("simpler_alternatives") or []
+  alt_bullets = "\n".join(f"- {a}" for a in alts) if alts else "- _none recorded_"
+
+  compliance = d.get("framework_compliance") or []
+  c_rows = []
+  for c in compliance:
+    c_rows.append(f"| [[{c['framework']}]] | {c['check_name']} | **{c['verdict'].upper()}** | {c['critique']} | {c['risk']} |")
+  c_table = (
+    "| Framework | Check | Verdict | Critique | Risk |\n"
+    "| :--- | :--- | :--- | :--- | :--- |\n" + "\n".join(c_rows)
+  ) if c_rows else "_none evaluated_"
+
+  tensions = d.get("unresolved_tensions") or []
+  t_lines = []
+  for t in tensions:
+    cfws = ", ".join(t.get("conflicting_frameworks", []))
+    suffix = f" ({cfws})" if cfws else ""
+    t_lines.append(f"- **{t['tension_dimension']}**{suffix}: {t['escalation_note']}")
+  t_block = "\n".join(t_lines) if t_lines else "- _No unresolved tensions identified; proposal aligns within framework boundaries._"
+
+  outcome = d.get("decision_outcome") or {}
+  provenance = d.get("provenance", "")
+
+  return f"""{AUTO_START}
+# {adr_number}: {title}
+
+**Status:** {status}  
+**Date:** {today()}  
+**Target Document:** {target_doc}  
+**Evaluated Frameworks:** {fw_links}  
+
+---
+
+## 1. Context and Problem Statement
+{d.get('context_and_problem', '')}
+
+## 2. Reversibility Assessment (Decision Classification)
+- **Classification:** **{str(rev.get('classification', '')).upper()}**
+- **Rationale:** {rev.get('rationale', '')}
+- **Rollback Plan:** {rev.get('rollback_plan', '')}
+
+## 3. Complexity & Innovation Tokens Audit
+- **Tokens Spent:** {comp.get('tokens_spent', 0)} / {comp.get('token_budget', 0)}
+- **Rationale:** {comp.get('rationale', '')}
+- **Simpler Alternatives Considered:**
+{alt_bullets}
+
+## 4. Framework Compliance & Sparring Audit
+{c_table}
+
+## 5. Unresolved Tensions & Escalations
+{t_block}
+
+## 6. Decision Outcome
+- **Outcome:** **{str(outcome.get('outcome', '')).upper()}**
+- **Justification:** {outcome.get('justification', '')}
+- **Consequences:** {outcome.get('consequences', '')}
+
+## 7. Provenance & Audit Trail
+{provenance}
+{AUTO_END}
+"""
+
+
+def write_adr_note(cfg: Config, d: dict, agent: str, run_id: str, target_dir: Path | None = None) -> Path:
+  """Writes or updates an ADR note, preserving human edits outside machine markers [R1+R2]."""
+  adr_number = d.get("adr_number", "ADR-001")
+  slug = slugify(d.get("title", "decision"))
+  filename = f"{adr_number}-{slug}.md" if slug else f"{adr_number}.md"
+
+  if target_dir is None:
+    wiki = cfg.wiki or cfg.overmind
+    if wiki:
+      target_dir = (wiki / "wiki" / "adr") if (wiki / "wiki").is_dir() else (wiki / "adr")
+    else:
+      target_dir = cfg.frameworks / "adr"
+
+  target_dir.mkdir(parents=True, exist_ok=True)
+  path = target_dir / filename
+
+  # Frontmatter
+  fws = d.get("evaluated_frameworks", [])
+  fws_repr = "[" + ", ".join(f'"{f}"' for f in fws) + "]"
+  fm = frontmatter(cfg, agent, run_id, "adr", {
+    "adr_number": adr_number,
+    "target_doc": f'"{d.get("target_doc", "")}"',
+    "evaluated_frameworks": fws_repr,
+  })
+  body = _render_adr_body(d)
+
+  if path.exists():
+    text = path.read_text(encoding="utf-8")
+    if AUTO_START in text and AUTO_END in text and AUTO_START in body and AUTO_END in body:
+      new_auto = body.split(AUTO_START, 1)[1].split(AUTO_END, 1)[0]
+      pre = text.split(AUTO_START, 1)[0]
+      post = text.split(AUTO_END, 1)[1]
+      new_text = f"{pre}{AUTO_START}{new_auto}{AUTO_END}{post}"
+      path.write_text(new_text, encoding="utf-8")
+      return path
+
+  human_section = (
+    "\n## Human Review Notes\n"
+    "_Add review comments, amendments, or manual override rationale here. "
+    "Human edits outside AUTO markers are preserved across updates._\n"
+  )
+  path.write_text(fm + body + human_section, encoding="utf-8")
+  return path
+
+
+adr_note = write_adr_note

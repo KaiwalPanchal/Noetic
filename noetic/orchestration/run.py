@@ -46,14 +46,19 @@ class Run:
     self.state["updated"] = datetime.now().isoformat(timespec="seconds")
     self.path.write_text(json.dumps(self.state, indent=2, ensure_ascii=False), encoding="utf-8")
 
-  def step(self, name: str, fn):
-    """Run a step once; a resumed run reuses the cached result."""
+  def step(self, name: str, fn, cache_key: str | None = None):
+    """Run a step once; a resumed run reuses the cached result unless cache_key changed [R1]."""
     cached = self.state["steps"].get(name)
     if cached and cached.get("status") == "done":
-      print(f"  ↺ {name} (cached)")
-      return cached["output"]
+      if cache_key is not None and cached.get("cache_key") != cache_key:
+        print(f"  ⚡ {name} (cache invalidated: key changed)")
+      else:
+        print(f"  ↺ {name} (cached)")
+        return cached["output"]
     print(f"  ▸ {name} …", flush=True)
     self.state["steps"][name] = {"status": "running", "attempts": []}
+    if cache_key is not None:
+      self.state["steps"][name]["cache_key"] = cache_key
     self.save()
     try:
       output = fn()
@@ -63,8 +68,24 @@ class Run:
       self.save()
       raise
     self.state["steps"][name].update(status="done", output=output)
+    if cache_key is not None:
+      self.state["steps"][name]["cache_key"] = cache_key
     self.save()
     return output
+
+  def add_cost(self, cost_usd: float | None):
+    """Accumulates step cost and enforces hard per-run budget ceiling [R1]."""
+    if cost_usd is not None and cost_usd > 0:
+      self.state["total_cost_usd"] = round(self.state.get("total_cost_usd", 0.0) + cost_usd, 4)
+      self.save()
+      per_run_budget = float(getattr(self.cfg, "budget", {}).get("per_run_usd", 1.00))
+      if self.state["total_cost_usd"] > per_run_budget:
+        raise PipelineError(
+          "BUDGET_EXCEEDED",
+          f"Run exceeded per-run budget ceiling (${self.state['total_cost_usd']:.3f} > ${per_run_budget:.2f})",
+          total_cost=self.state["total_cost_usd"],
+          budget=per_run_budget,
+        )
 
   def log_attempt(self, step: str, info: dict):
     self.state["steps"].setdefault(step, {}).setdefault("attempts", []).append(info)

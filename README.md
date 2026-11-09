@@ -43,9 +43,10 @@ Output captured from a real run (Windows, Python 3.14; the agent table in `docto
 
 ```text
 $ pytest -q
-166 passed in 3.0s
+443 passed in 34.9s
 
 $ noetic doctor        # excerpt
+[OK] Vault located at: /path/to/vault (Owner: user)
 [OK] Model Context Protocol (MCP) Server: Ready (Noetic v0.2.0)
 [OK] Security Policy Gate: Active (AST validation operational)
 
@@ -208,19 +209,19 @@ Run these directly inside your vault with Claude Code:
 
 | Command | What it does | Primitives Used |
 |---|---|---|
-| `/ingest <source>` | Book / URL / notes → framework note: principles, **mental moves**, anti-patterns | Knowledge |
-| `/apply <framework> content\|code\|project [target]` | Framework → curation package, **build brief**, or proposed decision | Knowledge → Projects |
+| `/ingest <source>` | 2-step compiler: strips fluff/injections → builds canonical 5-point cognitive framework note | Knowledge |
+| `/apply <framework1+framework2> content\|code\|project [target]` | Stacks frameworks → curation package, **build brief**, or proposed decision | Knowledge → Projects |
 | `/curate [topic]` | Mines vault for non-obvious ideas and records what was rejected | Knowledge |
 | `/research <topic>` | Taste-filtered web research → signal notes + curation package | Tools → Knowledge |
 
-### Example: Steal like an artist, for websites
+### Execution Modes
 
-```bash
-/ingest Steal Like an Artist by Austin Kleon
-/apply steal-like-an-artist code https://some-awwwards-site.com https://a-portfolio-you-love.dev
-```
+Noetic unifies cognitive frameworks into two distinct downstream execution modes:
 
-→ Generates `frameworks/briefs/<date>-<slug>-build-brief.md`: an element-by-element breakdown (layout, typography, motion, interaction), what to steal (the mechanism) vs. transform (the expression), acceptance criteria, and source credits. Hand it directly to your coding agent.
+- **Mode A: Product/Site Replication (`/apply <slugs> code <urls>` or `noetic run replicate`)**  
+  Deconstructs reference applications element-by-element ($E_1..E_n$), separates the *mechanism* to steal from the *expression* to transform, and generates a Build Brief with a Dialectic Trade-off Matrix. With `--build <repo>`, an agent executes on an ephemeral git branch under a strict zero-commit contract (`CONTRACT_VIOLATION` if git `HEAD` moves).
+- **Mode B: Architectural Sparring Partner (`noetic run spar <target_doc> [frameworks...]`)**  
+  Audits proposals, RFCs, and pull requests against stacked framework heuristics. Classifies reversibility (*Hat* vs. *Haircut* vs. *Tattoo* via `@hats-haircuts-and-tattoos`), tracks innovation token budgets (via `@boring-technology`), and generates formal Architecture Decision Records (`ADR-NNN`) in `wiki/adr/` with atomic sequence numbering.
 
 ---
 
@@ -245,40 +246,41 @@ For automated runs, scheduled tasks, or using multiple AI models with failover:
             │
             ▼
  ┌──────────────────────┐
- │ Strict Validation    │ ──▶ Schema Check + Link Verifier + Char Counter
+ │ Strict Validation    │ ──▶ Schema Check (Draft-07) + Link Verifier + Char Counter
  └──────────┬───────────┘
             ├─── ✗ Invalid  ──▶ Retry 1x with exact error diagnostic
             └─── ✓ Valid
                     │
                     ▼
          ┌──────────────────────┐
-         │ status: pending      │ ──▶ Written to Markdown vault
+         │ status: pending      │ ──▶ Written to Markdown vault (Marker-bounded)
          └──────────┬───────────┘
                     │
                     ▼
          ┌──────────────────────┐
-         │ Human Approval Gate  │ ──▶ noetic approve <file>
+         │ Human Approval Gate  │ ──▶ noetic approve <file> (Cryptographic Hash)
          └──────────────────────┘
 ```
 
 ```bash
 cd <vault>
-noetic run list                     # pipelines, agents, routing
-noetic run doctor                   # verify installed agent CLIs
-noetic run ingest "Make it stick.md"   # vault note, URL, or book title
-noetic run curate "agent memory"
-noetic run research "temporal knowledge graphs" --agent agy
-noetic run replicate steal-like-an-artist https://a.com https://b.com --goal "portfolio hero" --build ../my-site
-noetic run approve "<file>"          # human gate
-noetic run status | resume <run-id>
+noetic run list                                                  # pipelines, agents, routing
+noetic doctor                                                    # verify installed agent CLIs & MCP
+noetic run ingest "Make it stick.md"                             # 2-step cached cognitive compilation
+noetic run replicate linear-ui local-first-sync https://linear.app --goal "board" --build ../my-site
+noetic run spar ./rfcs/realtime-sync.md                          # Mode B adversarial architectural audit
+noetic abc-eval                                                  # run A/B/C eval (baseline vs 1 vs stacked)
+noetic approve "<file>"                                          # human approval gate & hash seal
+noetic run status | resume <run-id>                              # resume without paying API re-compute
 ```
 
 ### Pipeline Guarantees
-- **Python owns the flow:** Agent CLIs are isolated workers receiving structured prompts and returning strict JSON schemas.
-- **Code-level validation:** Schemas and web citations are verified programmatically. If invalid, the harness retries once with exact error diagnostics.
-- **Cross-model failover:** If your primary agent is rate-limited, down, or unauthorized, the harness automatically falls back to your configured secondary agents (e.g., Claude → Antigravity → Codex).
-- **Human-in-the-loop gate:** All generated notes land as `status: pending_review`. Nothing is published, committed, or posted automatically.
-- **Resumable runs:** Run state is persisted to `.noetic/runs/`. Interrupted runs resume from the last successful step without redundant API costs.
+- **Python owns the flow:** Agent CLIs are isolated workers receiving structured prompts and returning strict Draft-07 JSON schemas.
+- **2-Step cached compilation:** Step 1 extracts raw primitives with zero tool access; Step 2 synthesizes against vault stances. Step 1 is cached across runs by `source_hash:prompt_hash:schema_version:model_name`.
+- **Human edit protection:** All generated markdown uses explicit machine markers (`<!-- NOETIC:AUTO:START -->` / `END`). Human notes outside markers are never clobbered.
+- **Cryptographic serving trust:** MCP server serves only approved notes by default; notes tampered post-approval are refused with `APPROVAL_HASH_MISMATCH`.
+- **Cross-model failover:** If your primary agent is rate-limited, down, or unauthorized, the harness automatically falls back to secondary agents.
+- **Resumable runs & budget limits:** Persists state to `.noetic/runs/` and halts execution if `per_run_usd` is exceeded.
 
 Agent CLIs supported: [Claude Code](https://claude.com/claude-code), [Codex CLI](https://github.com/openai/codex), Antigravity CLI (`agy`), Gemini CLI. Configure routing in `noetic.config.json`.
 

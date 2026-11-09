@@ -1,0 +1,228 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "synthesis_charter",
+  "description": "Standardized output contract for stack_frameworks, Mode A replication briefs, and Mode B sparring [Phase 1, R2]",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "enum": ["1.0.0"],
+      "default": "1.0.0",
+      "maxLength": 20,
+      "description": "Mandatory schema version [P0.1, R1]"
+    },
+    "active_frameworks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 100
+      },
+      "minItems": 1,
+      "description": "Slugs of all frameworks participating in this stack/synthesis"
+    },
+    "active_primitives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "framework_slug": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["entity", "variable", "force", "state"]
+          },
+          "definition": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "required": ["name", "framework_slug", "kind", "definition"],
+        "additionalProperties": false
+      },
+      "description": "Active domain vocabulary primitives across the stacked frameworks"
+    },
+    "harmonized_heuristics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "framework_slug": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "context": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "prioritize": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "over": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "because": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "operational_rule": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "tier": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4,
+            "description": "1: Taste Dogmas, 2: Architecture, 3: UI/Interaction, 4: Governance"
+          },
+          "domain_tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          "provenance_anchor": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "framework_slug",
+          "context",
+          "prioritize",
+          "over",
+          "because",
+          "operational_rule",
+          "tier",
+          "domain_tags",
+          "provenance_anchor"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Heuristics selected and harmonized across active frameworks"
+    },
+    "resolved_collisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "collision_dimension": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "frameworks_involved": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          "winning_framework": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "tier_domain_rationale": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "collision_dimension",
+          "frameworks_involved",
+          "winning_framework",
+          "tier_domain_rationale"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Collisions resolved deterministically by tier hierarchy or domain partitioning [R2]"
+    },
+    "unresolved_tensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tension_dimension": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "conflicting_frameworks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          "conflicting_heuristics": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 1000
+            }
+          },
+          "escalation_note": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "tension_dimension",
+          "conflicting_frameworks",
+          "conflicting_heuristics",
+          "escalation_note"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Same-tier, same-domain collisions escalated to human decision [R1+R2]"
+    },
+    "token_budget_metadata": {
+      "type": "object",
+      "properties": {
+        "included_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of heuristics included in active bundle"
+        },
+        "trimmed_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of heuristics trimmed due to token or relevance constraints"
+        },
+        "estimated_tokens": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Estimated token footprint of active constraint bundle"
+        }
+      },
+      "required": ["included_count", "trimmed_count", "estimated_tokens"],
+      "additionalProperties": false,
+      "description": "Constraint bundle token budget accounting [R1]"
+    },
+    "harness_notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 1000
+      },
+      "description": "Gaps, assumptions, or execution notes"
+    }
+  },
+  "required": [
+    "schema_version",
+    "active_frameworks",
+    "active_primitives",
+    "harmonized_heuristics",
+    "resolved_collisions",
+    "unresolved_tensions",
+    "token_budget_metadata"
+  ],
+  "additionalProperties": false
+}

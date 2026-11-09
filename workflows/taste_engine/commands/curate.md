@@ -8,7 +8,7 @@ argument-hint: [optional topic or interest to focus on]
 Focus: $ARGUMENTS (if empty, use the highest-weight interests that have the fewest recent posts)
 
 ## 1. Load context
-1. Read `taste-engine.config.json`. Resolve `{engine}`, `{frameworks}`, `{twitter}`.
+1. Read `noetic.config.json`. Resolve `{engine}`, `{frameworks}`, `{twitter}`.
 2. Read `{engine}/interests.md`, every file in `{engine}/01-taste-graph/` (stances, negative filters, exemplars) and `{engine}/playbooks/editorial-lenses.md` if present.
 3. Read `{engine}/03-pipeline/04-archive/` and `{twitter}/posted.md` so you don't repeat what's already shipped.
 

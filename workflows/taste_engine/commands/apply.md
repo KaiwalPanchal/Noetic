@@ -9,7 +9,7 @@ Arguments: $ARGUMENTS
 (The first word is the framework slug, the second is the mode, and the rest is the target.)
 
 ## 1. Load context
-1. Read `taste-engine.config.json`. Resolve `{engine}`, `{frameworks}`, `{overmind}`.
+1. Read `noetic.config.json`. Resolve `{engine}`, `{frameworks}`, `{overmind}`.
 2. Read `{frameworks}/<framework-slug>.md`. If it's missing, list close matches and stop. Suggest `/ingest` instead.
 3. Read `{engine}/interests.md` and `{engine}/01-taste-graph/negative-filters/*`.
 

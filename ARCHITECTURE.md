@@ -246,10 +246,16 @@ It shows up in `noetic run list` and `--help` automatically. If it uses an LLM, 
 | 11 Trigger from anywhere | Claude Code commands + CLI (cron and folder-drop triggers: future) |
 | 12 Stateless reducer | each step = f(context, input) → JSON; state lives in the run file |
 
-## Newer layers (Oct 2026)
+## Newer layers (Oct-Nov 2026)
 
 | Piece | Where | Notes |
 |---|---|---|
+| Cognitive Compiler | `workflows/taste_engine/pipelines/ingest.py` | 2-step cached compilation: `extract` (zero tools, injection defense) → `build_framework` (5 cognitive blocks, stance grounding) → `write`. Cache key keyed by `source_hash:prompt_hash:schema_version:model_name`. |
+| Concept Deduplication | `noetic/knowledge/dedup.py` | 3-tier matching: Tier 1 (slug length guards) → Tier 2 (SQLite vector cache at `.noetic/embeddings.db`, calibrated thresholds) → Tier 3 (novel note). Merges into approved notes via `needs_merge_review` blocks, never clobbering human edits. |
+| MCP Trust & Stacking | `noetic/mcp/server.py`, `noetic/knowledge/stack.py` | Serves only approved notes by default; refuses tampered notes via `APPROVAL_HASH_MISMATCH`. Stacks multiple frameworks into `synthesis_charter.json` with 4-tier taxonomy and default tension escalation. |
+| Mode A: Site Replication | `workflows/taste_engine/pipelines/replicate.py` | Deconstructs references against stacked frameworks, writes Build Brief with Dialectic Trade-off Matrix, builds on branch under zero-commit check (`CONTRACT_VIOLATION` if HEAD moves). |
+| Mode B: Sparring Partner | `workflows/taste_engine/pipelines/spar.py` | Config-driven architectural sparring using `default_lenses` from config (fails loudly if unapproved). Reversibility audit (*Hat* vs. *Tattoo*), innovation tokens, atomic ADR numbering (`OverMind/wiki/adr/ADR-NNN`). |
+| A/B/C Evaluation Harness | `noetic/evals/abc_eval.py` (`noetic abc-eval`) | Rerunnable 12-task benchmark evaluating No Framework vs. Single vs. Stacked against 4 rubric criteria, with regression check against baseline. |
 | Installer | `noetic/installer.py` (`noetic install`, `install.py`, `install.sh`, `install.ps1`) | Copies the `noetic` and `workflows` packages into `<vault>/.noetic/scripts/`, canonical commands/agents into `<engine>/canonical/`, then runs adapter sync. Idempotent. |
 | MCP client config | `noetic/mcp/clients.py` (`noetic mcp-config`) | Merges one `noetic` entry into Claude Desktop, Claude Code, Cursor and Windsurf configs. Never overwrites other servers or malformed files. |
 | Repo telemetry | `noetic/knowledge/repos.py` (`noetic repos`, `noetic status`) | Read-only git status for each project that declares `repo:`. |
