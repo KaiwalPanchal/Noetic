@@ -192,6 +192,7 @@ def test_spar_custom_default_lenses_from_config(vault, mock_spar_agent):
   """Verify spar dynamically respects custom default_lenses defined in config [R2]."""
   custom_cfg = {
     "owner": "Tester",
+    "agents": ["claude", "agy", "codex"],
     "default_lenses": ["custom-lens-one"],
     "paths": {"frameworks": "frameworks"}
   }

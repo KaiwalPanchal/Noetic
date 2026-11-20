@@ -6,7 +6,10 @@ import json
 from pathlib import Path
 import re
 import shutil
-import tomllib
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
 
 import pytest
 

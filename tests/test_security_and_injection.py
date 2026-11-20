@@ -605,6 +605,7 @@ def test_agent_step_budget_ceiling_halts_execution(tmp_path: Path, monkeypatch):
   (vault / CONFIG_NAME).write_text(
       json.dumps({
           "owner": "BudgetAuditor",
+          "agents": ["claude", "agy", "codex"],
           "budget": {"per_run_usd": 1.00},
       }),
       encoding="utf-8",

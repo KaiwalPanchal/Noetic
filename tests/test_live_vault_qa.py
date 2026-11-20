@@ -303,6 +303,7 @@ def test_live_vault_end_to_end_qa(tmp_path: Path, monkeypatch):
 
   config_data = {
       "owner": "Engineering Lead",
+      "agents": ["claude", "agy", "codex"],
       "schema_version": "1.0.0",
       "default_lenses": ["raft-consensus"],
       "similarity_thresholds": {
