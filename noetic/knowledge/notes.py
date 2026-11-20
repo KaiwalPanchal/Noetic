@@ -171,9 +171,14 @@ def _render_cognitive_framework_body(d: dict, cousins: list[str] | None = None) 
   for h in heuristics:
     tags_suffix = f" [Tags: {', '.join(h['domain_tags'])}]" if h.get("domain_tags") else ""
     anchor_suffix = f" [Anchor: {h['provenance_anchor']}]" if h.get("provenance_anchor") else ""
+    ctx = h.get("context") or h.get("when", "any context")
+    op_rule = h.get("operational_rule") or h.get("prioritize", "")
+    p_text = h.get("prioritize", "")
+    o_text = h.get("over", "")
+    b_text = h.get("because", "")
     h_lines.append(
-      f"- **When in {h['context']}** → Prioritize **{h['prioritize']}** over _{h['over']}_ "
-      f"because {h['because']}. (Rule: `{h['operational_rule']}`) [Tier {h.get('tier', 1)}]{tags_suffix}{anchor_suffix}"
+      f"- **When in {ctx}** → Prioritize **{p_text}** over _{o_text}_ "
+      f"because {b_text}. (Rule: `{op_rule}`) [Tier {h.get('tier', 1)}]{tags_suffix}{anchor_suffix}"
     )
   h_block = "\n".join(h_lines) if h_lines else "- _none declared_"
 

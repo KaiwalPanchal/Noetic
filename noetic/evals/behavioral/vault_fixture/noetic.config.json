@@ -1,0 +1,22 @@
+{
+  "owner": "Verification Harness",
+  "agent": "Noetic Evaluator",
+  "schema_version": "1.0.0",
+  "paths": {
+    "engine": "taste-engine",
+    "frameworks": "frameworks",
+    "wiki": "taste-engine"
+  },
+  "default_lenses": [
+    "hats-haircuts-tattoos",
+    "boring-technology"
+  ],
+  "mcp_serve_policy": {
+    "require_approved": true,
+    "verify_hash": true
+  },
+  "budget": {
+    "per_run_usd": 1.0,
+    "max_tokens_per_bundle": 4000
+  }
+}

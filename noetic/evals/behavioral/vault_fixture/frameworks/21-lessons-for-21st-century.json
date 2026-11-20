@@ -1,0 +1,96 @@
+{
+  "framework_name": "21 Lessons for the 21st Century",
+  "slug": "21-lessons-for-the-21st-century",
+  "source": {
+    "title": "21 Lessons for the 21st Century",
+    "author": "Yuval Noah Harari",
+    "kind": "book",
+    "url": "calibre://library"
+  },
+  "ontology": {
+    "domain": "macro-sociopolitical-resilience",
+    "primitives": [
+      {
+        "name": "Clarity",
+        "kind": "variable",
+        "definition": "The scarce capacity to cut through irrelevant information, recognize existential stakes, and maintain focused agency amid rapid technological and political transformation."
+      },
+      {
+        "name": "Technological Disruption",
+        "kind": "force",
+        "definition": "The accelerating convergence of infotech and biotech (AI, big data, algorithms) that dismantles labor markets, threatens individual liberty, and concentrates power among data owners."
+      },
+      {
+        "name": "Global Predicament",
+        "kind": "state",
+        "definition": "The systemic planetary condition wherein existential threats (climate change, nuclear war, technological upheavals) cannot be resolved by isolated nation-states or obsolete local narratives."
+      },
+      {
+        "name": "Tribal / Ideological Narratives",
+        "kind": "entity",
+        "definition": "Parochial religious, nationalist, and historical mythologies that divide humanity and obscure shared material realities precisely when global cooperation is imperative."
+      }
+    ]
+  },
+  "core_idea": "In an era where infotech and biotech merge to challenge human agency, labor utility, and democratic governance while existential ecological and technological threats transcend nation-states, human survival depends on breaking free from bankrupt ideological myths, demystifying internal biochemical algorithms, preventing extreme biological inequality, and cultivating present-focused cognitive clarity to participate in planet-scale governance.",
+  "directional_heuristics": [
+    {
+      "prioritize": "Synthesizing an overarching systemic map across technological, political, existential, and cognitive fronts",
+      "over": "Engaging in isolated, myopic analysis of individual crises or ungrounded deep dives",
+      "because": "Modern existential threats—infotech, biotech, ecological collapse, and ideological vacuums—are interconnected systems where micro-level choices aggregate into irreversible macro outcomes that bypass local autonomy.",
+      "when": "Confronted with high-dimensional systemic disorientation and an overwhelming deluge of disconnected global developments."
+    },
+    {
+      "prioritize": "Maintaining cognitive clarity and present-moment focus on urgent macro-disruptions",
+      "over": "Escaping into retrospective historical analysis, speculative distant futures, or passive disorientation",
+      "because": "In an era of relentless technological, ecological, and political upheaval, clarity is power; failing to understand and engage with present forces leaves individuals at the mercy of decisions made without them.",
+      "when": "Confronting rapid, disorienting contemporary crises (technological disruption, misinformation, existential threats) where traditional narratives fail."
+    },
+    {
+      "prioritize": "Confronting ideological void and conducting empirical reality checks amid narrative collapse",
+      "over": "Clinging dogmatically to failing grand narratives or lapsing into disoriented apocalyptic panic",
+      "because": "Human cognition relies on simplified grand stories to interpret reality, but when historical and technological shifts shatter the dominant narrative, losing that interpretive prism causes elites and societies to either retreat into reactionary illusions or mistake the collapse of their specific story for the literal end of civilization.",
+      "when": "When an established sociopolitical or ideological framework fails to predict or manage emerging macro-level disruptions and crises."
+    },
+    {
+      "prioritize": "Anticipating structural human economic irrelevance driven by the confluence of infotech and biotech",
+      "over": "Relying on historical precedents of automation and assuming cognitive or emotional tasks remain permanently uniquely human",
+      "because": "Human intuition and emotional discernment are biochemical algorithms and pattern-recognition processes rather than mystical qualities, meaning AI equipped with biological understanding, connectivity, and updateability can outperform humans across both physical and cognitive domains with no guaranteed third refuge.",
+      "when": "Evaluating long-term economic trajectories, labor market disruptions, and career/institutional planning in an era of rapid AI and life-sciences advancement."
+    },
+    {
+      "prioritize": "Interrogating and demystifying internal feelings and desires as hackable biochemical algorithms",
+      "over": "Sanctifying human feelings, choices, and intuitions as the ultimate, untouchable source of authority and free will",
+      "because": "Liberal democracy and markets assume feelings reflect sovereign free will, but modern biology and infotech reveal that feelings are biochemical calculations that external Big Data algorithms can increasingly decipher, manipulate, and weaponize, turning reliance on 'the heart' into an emotional puppet show.",
+      "when": "Evaluating authority, political choices, market decisions, or personal agency in an era where data-processing algorithms can monitor and manipulate human biological mechanisms."
+    },
+    {
+      "prioritize": "Preventing the monopolization of data and technological enhancements to avert permanent biological caste stratification",
+      "over": "Relying on the twentieth-century assumption that globalization, technology, and welfare-state momentum naturally bend toward egalitarianism",
+      "because": "When economic value and military power no longer depend on mass human labor, states lose the strategic incentive to invest in the health and education of the masses, allowing economic disparity combined with biotechnology to transform temporary societal gaps into irreversible, biological divides between enhanced superhumans and redundant Homo sapiens.",
+      "when": "Technological and economic transitions combine AI-driven mass displacement with proprietary biotechnological and cognitive upgrades."
+    },
+    {
+      "prioritize": "Anchoring social cohesion in physical, intimate, embodied human communities and demanding structural alignment from platforms",
+      "over": "Entrusting community-building and social fabric restoration to algorithmic social networks driven by attention-monetization models",
+      "because": "Humans remain biologically Stone Age animals whose psychological flourishing depends on small-scale, embodied intimacy that abstract imagined networks cannot replicate, especially when corporate business models prioritize harvesting attention over genuine social connection.",
+      "when": "Evaluating technological solutions, corporate manifestos, or algorithmic platforms designed to remediate modern alienation, loneliness, and social-political fragmentation."
+    }
+  ],
+  "boundary_flip_condition": "When local immediate physical crises demand urgent tactical triage where macro systemic analysis induces fatal inaction, or when technological development and institutional decentralization definitively decouple data ownership from political and biological dominance, rendering centralized global governance unnecessary.",
+  "evaluation_rubric": {
+    "rubric_dimensions": [
+      "accuracy",
+      "restraint",
+      "reversibility_awareness"
+    ]
+  },
+  "applied_layer": {
+    "linked_interests": [
+      "strategy",
+      "decision-making"
+    ],
+    "tier": 2
+  },
+  "schema_version": "1.0.0"
+}

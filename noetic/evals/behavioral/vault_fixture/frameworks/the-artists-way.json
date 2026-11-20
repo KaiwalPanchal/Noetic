@@ -1,0 +1,96 @@
+{
+  "framework_name": "The Artist's Way",
+  "slug": "the-artist-s-way",
+  "source": {
+    "title": "The Artist's Way",
+    "author": "Julia Cameron",
+    "kind": "book",
+    "url": "calibre://library"
+  },
+  "ontology": {
+    "domain": "creative-recovery",
+    "primitives": [
+      {
+        "name": "Creative Energy / Spirit",
+        "kind": "force",
+        "definition": "An inexhaustible, transcendent life force and spiritual flow that seeks active expression through human consciousness and creative work."
+      },
+      {
+        "name": "Inner Artist / Child",
+        "kind": "entity",
+        "definition": "The vulnerable, intuitive, and playful core self responsible for generative creative impulses, requiring safety and nurturing to thrive."
+      },
+      {
+        "name": "Creative Block / Resistance",
+        "kind": "state",
+        "definition": "A condition of paralysis and artistic stagnation rooted in fear, perfectionism, toxic self-criticism, and societal invalidation."
+      },
+      {
+        "name": "Recovery / Unblocking",
+        "kind": "variable",
+        "definition": "The degree of progressive reclamation of psychological safety, power, integrity, and faith through disciplined rehabilitative practices."
+      }
+    ]
+  },
+  "core_idea": "Creativity is an innate, universal spiritual energy inherent to all humans rather than a rare elite talent. Blockages are psychological defense mechanisms rooted in fear, judgment, and internalized criticism. By committing to sequential emotional rehabilitation and disciplined, uncritical practices—such as daily longhand stream-of-consciousness writing and trusting alignment with a higher creative force—individuals dismantle the inner Censor, heal the inner artist child, and restore prolific creative abundance.",
+  "directional_heuristics": [
+    {
+      "prioritize": "Unfiltered daily longhand stream-of-consciousness writing executed immediately upon waking without self-censorship, editing, or evaluation",
+      "over": "Striving for artistic polish, literary quality, intellectual sophistication, or withholding expression out of fear of petty, repetitive output",
+      "because": "Externalizing mundane anxieties, resentments, and petty subconscious clutter directly onto the page evades the internalized Censor, neutralizing its paralyzing perfectionism and clearing the mental debris that blocks natural creative flow.",
+      "when": "Starting each day during creative recovery or whenever confronting internalized perfectionism, creative paralysis, and the self-critical analytical mind."
+    },
+    {
+      "prioritize": "Approaching creative work as an invited spiritual alignment and channel for universal energy through committed empirical practice",
+      "over": "Demanding conceptual/theological certainty beforehand, viewing creative expression as egotistical self-indulgence, or blocking flow with intellectual skepticism",
+      "because": "Creativity is the natural underlying life force rather than an elite ego-driven pursuit; aligning with it through faith-driven action ('leap, and the net will appear') removes internal blockages and triggers synchronicity and organic momentum.",
+      "when": "Embarking on creative recovery or facing creative paralysis stemming from internalized judgment, parental guilt projections, or fear of egotism."
+    },
+    {
+      "prioritize": "Engaging in open-minded, pragmatic experimentation with creative flow and daily practice",
+      "over": "Getting paralyzed by theological debate, rigid semantic hang-ups, or intellectual demands for conceptual proof",
+      "because": "Creativity operates like spiritual electricity or biological blood—an inherent living force that unlocks through the direct mechanics of practice regardless of whether one intellectually defines, names, or theologically believes in the underlying Source.",
+      "when": "Encountering spiritual vocabulary, naming conventions, or unfamiliar concepts while seeking to unblock creative expression."
+    },
+    {
+      "prioritize": "Following spiritual and creative callings through simple, faith-driven execution and serving the unblocking of others",
+      "over": "Demanding external market validation upfront or guarding personal artistic focus in solitary isolation",
+      "because": "Art is a spiritual transaction where authentic creation generates its own resonant audience, and the act of nurturing and unblocking others simultaneously opens and enriches one's own creative channel.",
+      "when": "Feeling called toward a new creative venture, pilgrimage, or teaching opportunity despite self-doubt, lack of preexisting commercial demand, or fear that community involvement will detract from personal output."
+    },
+    {
+      "prioritize": "Following a systematic, sequential rehabilitation of foundational emotional safety and psychological ground",
+      "over": "Jumping directly into advanced creative production, technical critique, or spiritual demands without emotional scaffolding",
+      "because": "Creative recovery is hierarchical; unblocking expressive energy requires establishing fundamental psychological safety and identity before attempting higher-order autonomy, risk-taking, and faith.",
+      "when": "Initiating a long-term creative rehabilitation process or structuring an unblocking curriculum."
+    },
+    {
+      "prioritize": "Treating creative expression as an expansive, multi-disciplinary continuum spanning diverse mediums",
+      "over": "Confining creative identity to a single specialized medium or rigid professional label",
+      "because": "Creative unblocking naturally flows outward across multiple creative forms—nonfiction, fiction, theatre, poetry, visual art—demonstrating that the underlying creative source is singular while its expressive outlets are varied and fluid.",
+      "when": "Defining one's creative range or facing artistic compartmentalization and self-limiting specialization."
+    },
+    {
+      "prioritize": "Actively cultivating and acknowledging an ecosystem of protective champions, collaborators, and structural guardians",
+      "over": "Viewing creative recovery and prolific output as a solitary hero's journey independent of external protection and support",
+      "because": "Vulnerable creative recovery and sustained artistic risk-taking require an underlying container of interpersonal safety, practical stewardship, and emotional protection to withstand trials and grow without collapse.",
+      "when": "Building, expanding, or safeguarding a creative body of work or rehabilitative practice against vulnerability, criticism, and operational friction."
+    }
+  ],
+  "boundary_flip_condition": "When the project transitions from rehabilitative unblocking, exploratory play, and subconscious excavation into rigorous final-stage editing, commercial delivery, technical optimization, or contractual execution where ruthless critical editing, adherence to strict domain specifications, and critical peer scrutiny are mandatory for structural integrity and completion.",
+  "evaluation_rubric": {
+    "rubric_dimensions": [
+      "accuracy",
+      "restraint",
+      "reversibility_awareness"
+    ]
+  },
+  "applied_layer": {
+    "linked_interests": [
+      "strategy",
+      "decision-making"
+    ],
+    "tier": 2
+  },
+  "schema_version": "1.0.0"
+}

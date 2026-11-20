@@ -1,0 +1,86 @@
+{
+  "framework_name": "Personal Taste Heuristics",
+  "slug": "personal-taste-heuristics",
+  "source": {
+    "title": "Personal Heuristics and Obsidian Vault Notes",
+    "author": "Curator",
+    "kind": "notes",
+    "url": "obsidian://vault"
+  },
+  "ontology": {
+    "domain": "personal-taste-and-life-strategy",
+    "primitives": [
+      {
+        "name": "EmotionalSkepticism",
+        "kind": "filter",
+        "definition": "Treating acute urgency, dread, or fear as physiological signals rather than facts or prognoses."
+      },
+      {
+        "name": "DignifiedAvowal",
+        "kind": "action",
+        "definition": "Expressing vulnerable capacity limits calmly without explosive anger or silent sulking."
+      },
+      {
+        "name": "DisposableExecution",
+        "kind": "action",
+        "definition": "Taking small, rough, disposable actions while scared instead of waiting for confidence or mastery."
+      },
+      {
+        "name": "DeterministicContracts",
+        "kind": "structural",
+        "definition": "Enforcing strict schemas and single-purpose modules over open-ended probabilistic loops."
+      }
+    ]
+  },
+  "core_idea": "High-agency living requires prioritizing physiological regulation over cognitive rationalization, dignified vulnerability over defensive retaliation, and deterministic execution over speculative perfectionism.",
+  "directional_heuristics": [
+    {
+      "prioritize": "Walking away in silence",
+      "over": "Defending your reputation or proving you are right",
+      "because": "Pride-driven disputes waste energy and create enemies for zero ROI unless actual money or an essential relationship is directly on the line",
+      "when": "Navigating an escalating public argument or conflict"
+    },
+    {
+      "prioritize": "Buying 90 seconds and treating emotions with robust skepticism",
+      "over": "Immediately analyzing or acting on the urgent feeling",
+      "because": "An impression is not a prognosis, fear is not a fact, and feelings above a 5/10 are old emotional tracks projecting onto the present",
+      "when": "Feeling acute anxiety, panic, or urge to react in a personal or professional relationship"
+    },
+    {
+      "prioritize": "Making a calm, dignified avowal of limited bandwidth and vulnerable state",
+      "over": "Dramatic severance, icy isolation, or tactical ghosting",
+      "because": "Extreme detachment escalates drama while clear, non-negotiable structural schedules preserve integrity",
+      "when": "Setting boundaries with a draining or volatile collaborator or friend"
+    },
+    {
+      "prioritize": "Translating anger through the Honest, Kind, and Polite filter by naming vulnerable fears and needs directly",
+      "over": "Explosive confrontation or silent sulking",
+      "because": "Sulking is a game expecting mind-reading, and anger triggers immediate defensive walls",
+      "when": "Communicating difficult feedback, hurt, or unmet expectations"
+    },
+    {
+      "prioritize": "Doing it scared with small, ugly, disposable actions",
+      "over": "Waiting for emotional regulation, confidence, or comprehensive mastery",
+      "because": "Emotions are physiological signals that follow action rather than precede it",
+      "when": "Facing high uncertainty, dread, or intimidation in starting a project or difficult conversation"
+    },
+    {
+      "prioritize": "The good enough framework with calibrated, progressive disclosure",
+      "over": "Demanding perfect soulmate alignment or zero-friction compatibility",
+      "because": "Compatibility is the hard-won ongoing achievement of adulthood rather than a magical starting condition",
+      "when": "Evaluating relationships or long-term collaborators"
+    },
+    {
+      "prioritize": "Deterministic structural contracts and tiny tuned lenses",
+      "over": "Giant catch-all mega-prompts and autonomous multi-agent swarms",
+      "because": "Probabilistic loops without hard schema gates compound errors and produce unfocused hype-slop",
+      "when": "Designing AI workflows or knowledge tools"
+    },
+    {
+      "prioritize": "Initiating a low-stakes reassuring check-in",
+      "over": "Waiting for the other person to notice and pursue you",
+      "because": "People rarely chase silence and silence gets filled with invented catastrophe",
+      "when": "A close relationship is in silent tension or distance"
+    }
+  ]
+}

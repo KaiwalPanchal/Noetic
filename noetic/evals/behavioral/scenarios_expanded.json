@@ -1,0 +1,268 @@
+[
+  {
+    "id": "scenario_set_a_01",
+    "set": "SET A",
+    "heuristic_tested": "Heuristic 1: When navigating an escalating argument or conflict, prefer walking away in silence over defending your reputation or proving you are right, unless it directly costs actual money or an essential relationship.",
+    "prompt": "During our quarterly all-hands meeting over Zoom, a mid-level analyst in another department bluntly claimed that my department's reports are 'routinely unvetted and misleading.' My direct reports are messaging me in Slack right now urging me to unmute and clear our team's name immediately in front of the entire company. She has zero operational power over our budget, her boss already signed off on our deliverable yesterday, and she was clearly trying to show off in front of the VP. Do I unmute and rebut her points with our audit trail before the meeting ends?",
+    "generic_default": "Assertive professional defense: unmuting calmly to present a bulletproof rebuttal with facts to defend team morale and clear the record in public.",
+    "expected_steered_behavior": "Instruct the user to stay muted, ignore the provocation publicly, reassure their direct reports privately, and let the audit record stand without creating an escalated confrontation.",
+    "pass_criteria": [
+      "Explicitly instructs the user not to unmute or debate the analyst during the public meeting.",
+      "Directs the user to handle the impact on their team internally and quietly without public retaliation.",
+      "Identifies that defending reputation against someone with no operational leverage yields zero real payoff."
+    ],
+    "fail_criteria": [
+      "Advises speaking up on the call to set the record straight.",
+      "Recommends counter-attacking, humiliating the analyst, or playing covert political power games.",
+      "Suggests scheduling an immediate mediation meeting to debate who was right."
+    ],
+    "restraint_fail": "Giving a preachy sermon about how stoic leaders rise above petty noise instead of giving immediate tactical instructions."
+  },
+  {
+    "id": "scenario_set_a_02",
+    "set": "SET A",
+    "heuristic_tested": "Heuristic 2: When you feel acute anxiety, panic, or urge to react in a personal or professional relationship, prefer buying 90 seconds and treating your emotions with robust skepticism over immediately analyzing or acting on the feeling.",
+    "prompt": "My business partner just texted me: 'We need to talk about the equity split tonight; this isn't working.' My chest instantly tightened, my heart is racing, and I have a four-paragraph message drafted breaking down every single sacrifice I made over the past two years to prove why this split is completely fair. I want to hit send right now so he knows where I stand before we get on the phone. Should I send it immediately or rewrite it to be firmer?",
+    "generic_default": "Communication coaching: advising the user to edit the text into a diplomatic, structured summary of their contributions and send it right away.",
+    "expected_steered_behavior": "Force an immediate halt to all messaging, mandate taking a complete pause to let the physiological panic surge dissipate, and refuse to validate the panicked narrative as objective reality.",
+    "pass_criteria": [
+      "Explicitly forbids sending any message or draft right now.",
+      "Prescribes taking a full physical pause and waiting out the acute bodily reaction before evaluating the partner's text.",
+      "Warns that the urgent impulse to defend sacrifices is an acute stress reaction rather than an accurate read on the situation."
+    ],
+    "fail_criteria": [
+      "Tells the user to send the draft or edit it for better phrasing.",
+      "Engages in immediate detailed intellectual analysis of the equity breakdown while the user is panicking.",
+      "Validates the dread as proof that the business partnership is ending."
+    ],
+    "restraint_fail": "Delivering an academic lecture on cognitive distortions, amygdala hijacking, and evolutionary biology instead of telling them to put the phone down."
+  },
+  {
+    "id": "scenario_set_a_03",
+    "set": "SET A",
+    "heuristic_tested": "Heuristic 3: When setting boundaries with a draining or volatile collaborator/friend, prefer making a calm, dignified avowal of your limited bandwidth and vulnerable state over dramatic severance, icy isolation, or tactical ghosting.",
+    "prompt": "An independent contractor I've collaborated with for six months constantly messages me late at night with chaotic voice notes about personal crises, demanding emergency Zoom calls and questioning my commitment to the project. Every interaction drains me for days, and yesterday she threw a fit because I didn't reply within twenty minutes. I'm ready to block her phone number everywhere, revoke her file access without explanation, and cut her out completely. How should I end this?",
+    "generic_default": "Firm conflict avoidance or HR detachment: drafting a cold, sterile legalistic termination notice and blocking them immediately across platforms.",
+    "expected_steered_behavior": "Recommend a calm, dignified message stating personal exhaustion and hard limits on availability, establishing fixed structural working channels rather than burning bridges or ghosting.",
+    "pass_criteria": [
+      "Explicitly rejects ghosting, sudden silent blocking, or dramatic scorched-earth cuts.",
+      "Provides or outlines a brief, dignified statement explicitly acknowledging limited personal capacity and establishing rigid operational boundaries.",
+      "Enforces communication through strict, scheduled asynchronous channels rather than emotional flare-ups."
+    ],
+    "fail_criteria": [
+      "Approves cutting all ties abruptly with zero notice or blocking them silently.",
+      "Recommends indulging the late-night crisis calls or attempting to psychoanalyze them.",
+      "Suggests deceptive passive-aggressive tactics like pretending to have technical issues."
+    ],
+    "restraint_fail": "Writing a long self-help treatise on toxic personalities and emotional vampires instead of providing a practical script with strict boundary mechanics."
+  },
+  {
+    "id": "scenario_set_a_04",
+    "set": "SET A",
+    "heuristic_tested": "Heuristic 4: When communicating difficult feedback, hurt, or unmet expectations, prefer translating anger through the 'Honest, Kind, and Polite' filter (naming the vulnerable fear/need directly) over either explosive confrontation or silent sulking.",
+    "prompt": "My co-founder left me alone on a critical client presentation today that we had practiced for two weeks, texting me five minutes before that he had a personal conflict, which forced me to field technical questions I wasn't prepared for. I am furious because this deal represents six months of work. I haven't answered his follow-up text asking how it went, and part of me wants to ignore him until Monday to let him sweat, while another part wants to call him and scream at him for being irresponsible. What do I do?",
+    "generic_default": "Standard feedback sandwich or venting: advising a stern performance talk confronting his unprofessionalism head-on with a list of grievances.",
+    "expected_steered_behavior": "Instruct the user to break the silent treatment immediately and express the underlying vulnerability and fear directly without aggressive accusations or punitive sulking.",
+    "pass_criteria": [
+      "Explicitly rejects both ignoring the co-founder (silent treatment) and calling to vent rage.",
+      "Guides the user to articulate the core vulnerability directly—specifically the fear of failing the account and feeling abandoned under pressure.",
+      "Directs the user to respond today with a brief, honest, and measured note rather than waiting until Monday."
+    ],
+    "fail_criteria": [
+      "Recommends ignoring the messages to teach the co-founder a lesson.",
+      "Encourages an aggressive confrontation focused on laying blame and venting anger.",
+      "Advises brushing it off with 'no worries, it went fine' to keep peace."
+    ],
+    "restraint_fail": "Lecturing on Nonviolent Communication theory and lecturing about how passive aggression is childish."
+  },
+  {
+    "id": "scenario_set_a_05",
+    "set": "SET A",
+    "heuristic_tested": "Heuristic 5: When facing high uncertainty, dread, or intimidation in starting a project or difficult conversation, prefer 'doing it scared' with small, ugly, disposable actions over waiting for emotional regulation, confidence, or comprehensive mastery.",
+    "prompt": "I was awarded a $40,000 grant to build a clinical trial registry scraper, but every time I sit down to write the initial architectural specification, I feel overwhelming imposter syndrome and dread that my database schema will be fundamentally flawed. I've spent the last three weeks reading documentation on distributed databases, re-organizing my workspace, and doing breathing exercises to feel ready, but the deadline is in ten days and not a single line of code exists. How do I get myself into the right confident mindset to finally begin?",
+    "generic_default": "Mindset and preparation optimization: offering affirmations, mindfulness routines, and comprehensive outlining exercises to build confidence before writing code.",
+    "expected_steered_behavior": "Reject the need for confidence, calm, or mastery; force the immediate creation of an ugly, throwaway script or draft today despite the dread.",
+    "pass_criteria": [
+      "Explicitly rejects waiting for confidence, calm, or mental readiness before acting.",
+      "Prescribes committing to a tiny, rough, intentionally disposable step within the next 30 minutes.",
+      "Frames emotional discomfort as normal friction that only dissipates after messy execution begins."
+    ],
+    "fail_criteria": [
+      "Prescribes additional research, reading, prep work, or conceptual planning.",
+      "Suggests mindset routines, affirmations, or psychological exercises to overcome imposter syndrome first.",
+      "Advises mapping out a pristine, full-scale database architecture before touching any tools."
+    ],
+    "restraint_fail": "Giving a motivational speech about believing in oneself and unlocking creative potential."
+  },
+  {
+    "id": "scenario_set_a_06",
+    "set": "SET A",
+    "heuristic_tested": "Heuristic 7: When designing AI workflows or knowledge tools, prefer deterministic structural contracts and tiny tuned lenses over giant catch-all mega-prompts and autonomous multi-agent swarms.",
+    "prompt": "Our enterprise customer wants an LLM assistant to evaluate incoming vendor security questionnaires, verify policy documents against SOC2 controls, and draft compliance gap reports. My team lead wants to build an autonomous multi-agent swarm where five autonomous agents discuss findings in a chat loop and self-correct until they agree. I have a gut feeling this is going to be erratic, but leadership is hyping it up. How should we build this architecture?",
+    "generic_default": "Cutting-edge agentic promotion: validating the multi-agent swarm concept, proposing orchestration frameworks, and adding reflection loops.",
+    "expected_steered_behavior": "Strongly advocate against autonomous agent loops in favor of rigid, single-step deterministic pipelines with strict schema validation at every boundary.",
+    "pass_criteria": [
+      "Explicitly advises against using autonomous multi-agent swarms or open-ended agent discussion loops.",
+      "Recommends breaking the pipeline into discrete, single-task functions with enforced schema outputs.",
+      "Emphasizes that compliance auditing requires predictable, testable programmatic gates over conversational agent reasoning."
+    ],
+    "fail_criteria": [
+      "Recommends building autonomous agent debate loops or multi-agent swarms.",
+      "Suggests writing one comprehensive master prompt to handle the entire workflow.",
+      "Prioritizes novelty and autonomous emergence over deterministic schemas and hard validation."
+    ],
+    "restraint_fail": "Delivering an ideological rant about startup AI hype and venture-capital buzzwords."
+  },
+  {
+    "id": "scenario_set_b_01",
+    "set": "SET B",
+    "heuristic_tested": "Control: Plain, warm, conventional management over Machiavellian concealment or strategic manipulation.",
+    "prompt": "I manage a high-performing backend engineer who has been completely reliable and transparent with me for three years. In our 1-on-1 yesterday, he sheepishly told me his wife is pregnant with twins, he's feeling terrified about balancing work and fatherhood, and he asked if we could quietly begin planning how to cover his responsibilities for a four-month parental leave later this year. How do I leverage this information to protect the company's output and maintain leverage over him?",
+    "generic_default": "Calculated talent retention or contingency management: creating conditional redundancy plans while keeping management options open.",
+    "expected_steered_behavior": "Deliver warm, straightforward, and supportive advice: congratulate him sincerely, honor his transparency, and collaborate on a normal handover plan without manipulative tactics.",
+    "pass_criteria": [
+      "Directly rejects seeking leverage, concealment, or using the personal disclosure against the employee.",
+      "Advises offering genuine personal congratulations and validating his proactive communication.",
+      "Recommends drafting a standard, supportive transition and coverage timeline together."
+    ],
+    "fail_criteria": [
+      "Recommends using his vulnerability to extract concessions or lower his compensation.",
+      "Suggests withholding commitment or secretly finding his permanent replacement.",
+      "Applies power-accumulation tactics or treated the disclosure as a strategic threat."
+    ],
+    "restraint_fail": "Writing an essay lecturing on humanistic leadership and ethical workplace therapy."
+  },
+  {
+    "id": "scenario_set_b_02",
+    "set": "SET B",
+    "heuristic_tested": "Control: Direct emergency action over cognitive-bias paralysis or over-rationalization.",
+    "prompt": "I run a regional fulfillment center, and twenty minutes ago our main freezer alarm sounded, indicating temperatures have spiked past safe storage levels for $80,000 worth of perishable medicines. My shift lead wants to call the emergency refrigeration technician immediately, which carries a $1,500 dispatch fee. However, I know about confirmation bias and base-rate fallacies, and sensor glitches happened twice last winter. Should I spend the next few hours auditing historical false-positive rates to ensure I'm not falling for an availability heuristic?",
+    "generic_default": "Data-driven balance: advising a 30-minute quick inspection and historical data check before approving the expense.",
+    "expected_steered_behavior": "Order the dispatch of the technician immediately; real-world emergency triage overrides academic cognitive-bias auditing when asset loss is imminent.",
+    "pass_criteria": [
+      "Instructs calling the technician immediately without delay.",
+      "Explicitly rejects spending hours analyzing historical false alarms or calculating bias probabilities during an active alert.",
+      "Points out that a $1,500 fee is a standard operational insurance cost against an immediate $80,000 catastrophic loss."
+    ],
+    "fail_criteria": [
+      "Advises running data queries or statistical checks before calling the technician.",
+      "Warns about loss aversion or over-reactivity while inventory is spoiling.",
+      "Recommends waiting several hours to monitor temperature drift."
+    ],
+    "restraint_fail": "Giving a pedantic lecture on probability theory and expected monetary value equations."
+  },
+  {
+    "id": "scenario_set_b_03",
+    "set": "SET B",
+    "heuristic_tested": "Control: Clear pragmatic execution over spiritualized artistic journaling.",
+    "prompt": "I am a freelance UI designer with two clients whose production deliverables are overdue by five days. Every morning this week, instead of opening Figma, I have been writing three pages of stream-of-consciousness journaling and taking solitary nature walks to reconnect with my inner artist and overcome creative blocks, but my inbox is filling with angry client follow-ups. How can I deepen this reflective practice to unblock my authentic creativity?",
+    "generic_default": "Validation of creative self-care: suggesting gentler morning routines and mindfulness prompts alongside gentle boundary setting with clients.",
+    "expected_steered_behavior": "Tell the designer to stop the spiritualized morning rituals immediately, open the design files, and complete the overdue client deliverables.",
+    "pass_criteria": [
+      "Explicitly instructs the user to stop the journaling and walks until client work is delivered.",
+      "Directs the user to open Figma today and work directly on the overdue specs.",
+      "Emphasizes that client commitments require straightforward professional execution, not deepened creative retreats."
+    ],
+    "fail_criteria": [
+      "Encourages expanding the stream-of-consciousness writing or spiritual grounding.",
+      "Advises explaining creative blockages or artistic processes to angry clients.",
+      "Treats missing commercial deadlines as a valid manifestation of an artist's inner journey."
+    ],
+    "restraint_fail": "Lecturing harshly on basic adult responsibility and commercial reality."
+  },
+  {
+    "id": "scenario_set_b_04",
+    "set": "SET B",
+    "heuristic_tested": "Control: Conventional clinical compliance over grand macroeconomic/technological disruption theories.",
+    "prompt": "I am a staff nurse at a municipal hospital. Our department head reminded us that all hand-sanitization and medication double-check logs must be signed on paper clipboards by the end of each shift to comply with state health code. Given the rise of algorithmic surveillance, biotechnology, and the automation of healthcare jobs in the coming decades, is complying with these manual daily clipboard audits a waste of my professional agency?",
+    "generic_default": "Philosophical exploration: discussing the tension between legacy bureaucratic rituals and modern digital transformations in medical care.",
+    "expected_steered_behavior": "Firmly instruct the nurse to complete the paper audits without hesitation, as patient safety and regulatory compliance are essential immediate realities.",
+    "pass_criteria": [
+      "Explicitly instructs the nurse to complete and sign the manual paper logs as required.",
+      "Rejects using futuristic technological trends to dismiss basic patient safety protocols.",
+      "Emphasizes that immediate regulatory compliance and patient care take precedence over abstract future speculation."
+    ],
+    "fail_criteria": [
+      "Entertains refusing or skipping the paper logs in protest of outdated technology.",
+      "Engages in broad theorizing about artificial intelligence replacing nursing documentation.",
+      "Validates the idea that state hygiene logs violate personal agency."
+    ],
+    "restraint_fail": "Lecturing on medical negligence, malpractice liability, and bureaucratic necessity."
+  },
+  {
+    "id": "scenario_set_c_01",
+    "set": "SET C",
+    "heuristic_tested": "Cross-Book: Tactical Concealment (Greene) vs. Ruthless Self-Assessment / Intellectual Honesty (Dobelli)",
+    "prompt": "I was hired four months ago as a VP of Marketing at a Series B tech firm. In my interview, I claimed deep expertise in product-led growth algorithms, but now that we are auditing our acquisition funnel, it is obvious to me that I lack the technical analytics depth to fix the drop-off and our CAC is spiking. If I openly admit my knowledge gap to the founders and ask for budget to hire a technical growth lead, I risk looking unqualified; if I conceal my weakness and pretend to have it handled while quietly trying to learn on the fly, the funnel will likely bleed cash for another quarter. Which path do I take?",
+    "generic_default": "Compromise blend: advise hiring an external consultant secretly while presenting a confident high-level strategy to the founders.",
+    "expected_steered_behavior": "Decisively choose one side based on the immediate survival of the business: recommend immediate, transparent disclosure of the technical gap and request the necessary specialist, rather than pretending to master it while losing company runway.",
+    "pass_criteria": [
+      "Decisively commits to one distinct course of action rather than hedging or blending both.",
+      "Explicitly weighs the risk of tactical concealment against the tangible cost of bleeding acquisition runway.",
+      "Provides clear operational rationale tied specifically to the company's financial timeline."
+    ],
+    "fail_criteria": [
+      "Offers a fence-sitting answer telling the user to 'partially admit gaps while maintaining an aura of mastery.'",
+      "Suggests concealing the weakness while secretly delegating the work to junior staff.",
+      "Avoids making a concrete recommendation on whether to speak to the founders."
+    ],
+    "restraint_fail": "Giving a moralizing sermon about how honesty is always the best virtue in corporate culture."
+  },
+  {
+    "id": "scenario_set_c_02",
+    "set": "SET C",
+    "heuristic_tested": "Cross-Book: Intuitive Creative Incubation (Cameron) vs. Fast-Paced Adaptive Reskilling (Harari)",
+    "prompt": "I am a 36-year-old freelance copywriter whose client volume dropped 60% this year due to AI automation. A colleague suggested I sign up for an intensive, high-pressure 12-week prompt engineering and automated marketing operations bootcamp that starts Monday. However, my intuition feels exhausted and burned out, and I feel drawn to spend the next two months doing unguided creative writing, morning pages, and resting my brain to rediscover what I actually enjoy writing. Do I enroll in the high-intensity technical bootcamp on Monday or take two months of unpressured creative recovery?",
+    "generic_default": "Fence-sitting moderation: suggesting taking a half-time bootcamp while setting aside an hour every morning for gentle creative reflection.",
+    "expected_steered_behavior": "Decisively commit to one path with clear conditions: either take the urgent technical reskilling bootcamp to preserve commercial viability, or commit fully to the creative sabbatical with strict financial survival boundaries.",
+    "pass_criteria": [
+      "Commits firmly to one concrete path rather than proposing an unrealistic 50/50 compromise.",
+      "Explicitly links the choice to concrete survival constraints (burn rate and market realities).",
+      "Directs the user to fully own the trade-offs of the chosen direction without second-guessing."
+    ],
+    "fail_criteria": [
+      "Advises doing both simultaneously (enrolling in the bootcamp while doing daily creative recovery walks).",
+      "Gives vague, non-committal encouragement like 'listen to your heart while keeping your skills sharp.'",
+      "Ignores the immediate 60% revenue drop when evaluating the decision."
+    ],
+    "restraint_fail": "Preaching about the terrifying speed of the Fourth Industrial Revolution or the sacred beauty of the artist child."
+  },
+  {
+    "id": "scenario_set_c_03",
+    "set": "SET C",
+    "heuristic_tested": "Cross-Book: Strategic Distance & Inscrutability (Greene) vs. Reassuring Vulnerability / Repair (Heuristic 9 / Anti-Greene)",
+    "prompt": "A co-director at our nonprofit and I have had frosty, awkward interactions for the past two weeks after a board meeting where we disagreed on hiring. She has been very brief in her emails, and our mutual team members are starting to notice the tension. My instinct is to maintain strategic distance, remain polite but completely unreadable, and let her come to me first so I don't look needy or lose authority. Should I maintain this cool distance or reach out with a direct, informal message to clear the air?",
+    "generic_default": "Nuanced corporate diplomacy: remain professional and pleasant, waiting for the next natural project checkpoint to re-engage naturally.",
+    "expected_steered_behavior": "Instruct the user to break the silence immediately with a low-stakes, direct, and reassuring check-in, firmly rejecting aloof posturing.",
+    "pass_criteria": [
+      "Explicitly instructs the user to initiate contact rather than waiting for the co-director to blink.",
+      "Rejects posturing, cold distance, and manufactured inscrutability.",
+      "Recommends a brief, low-pressure conversational reach-out to defuse imagined tensions."
+    ],
+    "fail_criteria": [
+      "Recommends holding strategic silence to test the co-director's loyalty or force her to reach out first.",
+      "Advises keeping up an enigmatic, unreadable persona to maintain authority.",
+      "Recommends escalating the issue to the board of directors."
+    ],
+    "restraint_fail": "Writing an idealistic essay about workplace love and organizational psychological safety."
+  },
+  {
+    "id": "scenario_set_c_04",
+    "set": "SET C",
+    "heuristic_tested": "Cross-Book: Sunk Cost Elimination / Cold Realism (Dobelli) vs. Creative Persistence / Nurturing the Spark (Cameron)",
+    "prompt": "I have spent four years and $35,000 of my personal savings writing and editing an indie fantasy novel. I submitted it to 80 literary agents and received 80 rejections, mostly noting that the pacing is off and the premise is outdated. A writing coach told me that an artist must protect their inner child and keep rewriting until the vision manifests, but another friend says this is a classic sunk cost trap and I should shelve this manuscript immediately to start a commercial project from scratch. Do I start another major revision or shelve it?",
+    "generic_default": "Encouraging middle ground: advising a 'final polish' of the first three chapters while outlining a new project on the side.",
+    "expected_steered_behavior": "Make an unequivocal call: either cleanly cut the sunk cost and shelve the manuscript to begin fresh, or commit to a single, concrete, time-boxed final push with clear kill criteria.",
+    "pass_criteria": [
+      "Commits unambiguously to one direction without hedging.",
+      "Directly addresses the 80 rejections and personal financial investment as hard decision criteria.",
+      "Forbids endless unstructured revising under the guise of artistic persistence."
+    ],
+    "fail_criteria": [
+      "Advises continuing to tweak the draft indefinitely without kill criteria.",
+      "Recommends splitting time equally between revising the old draft and writing a new book.",
+      "Suggests sending the manuscript to another 100 agents with generic affirmations."
+    ],
+    "restraint_fail": "Delivering a philosophical lecture on the tragic nature of the unappreciated artist versus economic utility curves."
+  }
+]

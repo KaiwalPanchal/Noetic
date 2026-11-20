@@ -1,0 +1,95 @@
+{
+  "framework_name": "The 48 Laws of Power",
+  "slug": "the-48-laws-of-power",
+  "source": {
+    "title": "The 48 Laws of Power",
+    "author": "Robert Greene",
+    "kind": "book",
+    "url": "calibre://library"
+  },
+  "ontology": {
+    "domain": "power-dynamics",
+    "primitives": [
+      {
+        "name": "Power",
+        "kind": "force",
+        "definition": "The universal, zero-sum capacity to control people, circumstances, and events while avoiding helplessness and subjugation."
+      },
+      {
+        "name": "Appearance",
+        "kind": "variable",
+        "definition": "The outward spectacle, projected reputation, and curated persona through which others judge value and authority, where what is unseen is considered nonexistent."
+      },
+      {
+        "name": "Master",
+        "kind": "entity",
+        "definition": "The superior figure holding positional dominance whose ego, insecurity, and need for central brilliance govern the courtier's survival."
+      },
+      {
+        "name": "Envy",
+        "kind": "force",
+        "definition": "The latent, destructive human emotion triggered by displays of talent, status, or superiority that covertly motivates betrayal and retaliation."
+      },
+      {
+        "name": "Indirectness",
+        "kind": "variable",
+        "definition": "The degree of subtlety, tactical concealment, and charming duplicity used to advance one's interests without triggering defensive alarm or violating civil decorum."
+      }
+    ]
+  },
+  "core_idea": "Human social interaction operates as an inescapable, zero-sum game of power modeled after the aristocratic court; survival and ascendancy require mastering perception, concealing intent, deflecting envy, and using indirect manipulation over naive virtue or raw competence.",
+  "directional_heuristics": [
+    {
+      "prioritize": "Subordinating personal brilliance and flattering the superior's vanity to keep them preeminently secure",
+      "over": "Overtly showcasing raw competence, exceptional talent, or independent indispensability to earn merit-based advancement",
+      "because": "Displaying superior brilliance or virtue triggers acute insecurity and envy in the master, transforming professional admiration into defensive retaliation and downfall",
+      "when": "Navigating hierarchical power dynamics where personal advancement, security, and tenure depend on the goodwill of a superior"
+    },
+    {
+      "prioritize": "Concealing true intentions through decoy desires, false indifference, and scrambled signals",
+      "over": "Directly declaring purpose, emotional transparency, or candid communication of objectives",
+      "because": "Directly revealing aims allows targets and rivals to erect defenses, anticipate maneuvers, or counter-strategize, whereas ambiguity and misdirection preserve leverage and freedom of movement",
+      "when": "Initiating high-stakes maneuvers, negotiations, or competitive pursuits where early resistance would defeat the objective"
+    },
+    {
+      "prioritize": "Practicing calculated verbal economy, silence, and enigmatic brevity",
+      "over": "Voluble explanations, extensive self-justification, or attempting to impress through voluminous speech",
+      "because": "Excessive speech invariably reveals indiscretions, betrays insecurity, and dispels the aura of authority, while brevity forces others to fill the void and expose their hands",
+      "when": "Engaging in public appearances, formal negotiations, evaluations, or confrontations where perceived status and psychological leverage must be preserved"
+    },
+    {
+      "prioritize": "Structuring alliances and appointments around calculated mutual self-interest and former adversaries",
+      "over": "Elevating personal friends or relying on sentimental bonds, gratitude, and moral reciprocity",
+      "because": "Friends are blinded by familiarity and latent envy and quickly turn ungrateful or treacherous, whereas former adversaries must constantly prove loyalty and operate on predictable utility",
+      "when": "Selecting key collaborators, deputies, or operational lieutenants for positions of real authority and execution"
+    },
+    {
+      "prioritize": "Outward conformity to established courtly decorum, institutional rules, and social niceties paired with covert maneuvers",
+      "over": "Radical candor, overt challenges to orthodoxies, or attempting to opt out of the political game",
+      "because": "Direct moral rebellion or displaying overt ambition invites immediate unified resistance and marginalization, whereas adopting the dominant manners disarms suspicion and grants cover for strategic action",
+      "when": "Operating within institutional, civilized, or ostensibly egalitarian environments where overt displays of power and ambition are taboos"
+    },
+    {
+      "prioritize": "Cultivating indispensable dependency and controlling critical points of execution or access",
+      "over": "Teaching subordinates full autonomy, relying on contractually defined goodwill, or assuming past loyalty guarantees safety",
+      "because": "True security stems from others needing you to achieve their own survival and goals, rather than from their affection or perceived moral obligation",
+      "when": "Establishing long-term positioning and organizational indispensability within unstable or competitive hierarchies"
+    }
+  ],
+  "boundary_flip_condition": "When interacting in high-trust, symmetrical partnerships with shared survival stakes where deception destroys the required coordination speed, or in existential crises where indirect maneuvering is fatally slow and overt, decisive force or absolute transparency is mandatory.",
+  "evaluation_rubric": {
+    "rubric_dimensions": [
+      "accuracy",
+      "restraint",
+      "reversibility_awareness"
+    ]
+  },
+  "applied_layer": {
+    "linked_interests": [
+      "strategy",
+      "decision-making"
+    ],
+    "tier": 2
+  },
+  "schema_version": "1.0.0"
+}

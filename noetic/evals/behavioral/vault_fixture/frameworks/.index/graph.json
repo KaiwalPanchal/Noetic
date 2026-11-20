@@ -1,0 +1,162 @@
+{
+  "schema_version": "1.0.0",
+  "nodes": [
+    {
+      "id": "boring-technology",
+      "label": "boring-technology",
+      "type": "framework",
+      "path": "C:\\External Apps\\overmind-taste-engine\\noetic\\evals\\behavioral\\vault_fixture\\frameworks\\boring-technology.md"
+    },
+    {
+      "id": "canary-ledger",
+      "label": "canary-ledger",
+      "type": "framework",
+      "path": "C:\\External Apps\\overmind-taste-engine\\noetic\\evals\\behavioral\\vault_fixture\\frameworks\\canary-ledger.md"
+    },
+    {
+      "id": "decoy-typography",
+      "label": "decoy-typography",
+      "type": "framework",
+      "path": "C:\\External Apps\\overmind-taste-engine\\noetic\\evals\\behavioral\\vault_fixture\\frameworks\\decoy-typography.md"
+    },
+    {
+      "id": "deep-modules",
+      "label": "deep-modules",
+      "type": "framework",
+      "path": "C:\\External Apps\\overmind-taste-engine\\noetic\\evals\\behavioral\\vault_fixture\\frameworks\\deep-modules.md"
+    },
+    {
+      "id": "hats-haircuts-tattoos",
+      "label": "hats-haircuts-tattoos",
+      "type": "framework",
+      "path": "C:\\External Apps\\overmind-taste-engine\\noetic\\evals\\behavioral\\vault_fixture\\frameworks\\hats-haircuts-tattoos.md"
+    },
+    {
+      "id": "local-first",
+      "label": "local-first",
+      "type": "framework",
+      "path": "C:\\External Apps\\overmind-taste-engine\\noetic\\evals\\behavioral\\vault_fixture\\frameworks\\local-first.md"
+    },
+    {
+      "id": "small-functions",
+      "label": "small-functions",
+      "type": "framework",
+      "path": "C:\\External Apps\\overmind-taste-engine\\noetic\\evals\\behavioral\\vault_fixture\\frameworks\\small-functions.md"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e04f44c968b8b6e1",
+      "source": "boring-technology",
+      "target": "hats-haircuts-tattoos",
+      "type": "contradiction",
+      "tension_point": "Operational tension in [governance]: 'Rigorous deliberation on Tattoos' vs 'Solving problem with existing installed tech'"
+    },
+    {
+      "id": "54e06948559ea812",
+      "source": "boring-technology",
+      "target": "hats-haircuts-tattoos",
+      "type": "contradiction",
+      "tension_point": "Operational tension in [governance]: 'Solving problem with existing installed tech' vs 'Rigorous deliberation on Tattoos'"
+    },
+    {
+      "id": "af843929f535bd86",
+      "source": "deep-modules",
+      "target": "small-functions",
+      "type": "contradiction",
+      "tension_point": "Priority inversion in [software-design]: 'Consolidated cohesive implementation' vs 'Aggressive decomposition into tiny functions'"
+    },
+    {
+      "id": "2d52ea331ab46c12",
+      "source": "boring-technology",
+      "target": "canary-ledger",
+      "type": "contradiction",
+      "tension_point": "Collision (Priority inversion in [data-architecture]: 'Append-only transition ledger tables' vs 'In-place mutable status updates')"
+    },
+    {
+      "id": "b129dcc8f281c4e5",
+      "source": "boring-technology",
+      "target": "canary-ledger",
+      "type": "contradiction",
+      "tension_point": "Collision (Priority inversion in [data-architecture]: 'In-place mutable status updates' vs 'Append-only transition ledger tables')"
+    },
+    {
+      "id": "99a580eea5d8ff03",
+      "source": "canary-ledger",
+      "target": "deep-modules",
+      "type": "contradiction",
+      "tension_point": "Collision (Priority inversion in [software-design]: 'Two-level maximum indentation with extracted step_ prefixed functions' vs 'Consolidated cohesive implementation')"
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "e04f44c968b8b6e1",
+      "framework_a": "boring-technology",
+      "framework_b": "hats-haircuts-tattoos",
+      "tension_point": "Operational tension in [governance]: 'Rigorous deliberation on Tattoos' vs 'Solving problem with existing installed tech'",
+      "competing_heuristics": [
+        "hats-haircuts-tattoos: Prioritize Rigorous deliberation on Tattoos over Uniform committee review across all tasks",
+        "boring-technology: Prioritize Solving problem with existing installed tech over Introducing a new service or database engine"
+      ],
+      "source": "stack_frameworks",
+      "recorded_at": "2026-11-09T11:03:05.526247+00:00"
+    },
+    {
+      "id": "54e06948559ea812",
+      "framework_a": "boring-technology",
+      "framework_b": "hats-haircuts-tattoos",
+      "tension_point": "Operational tension in [governance]: 'Solving problem with existing installed tech' vs 'Rigorous deliberation on Tattoos'",
+      "competing_heuristics": [
+        "hats-haircuts-tattoos: Prioritize Rigorous deliberation on Tattoos over Uniform committee review across all tasks",
+        "boring-technology: Prioritize Solving problem with existing installed tech over Introducing a new service or database engine"
+      ],
+      "source": "stack_frameworks",
+      "recorded_at": "2026-11-09T11:05:13.658603+00:00"
+    },
+    {
+      "id": "af843929f535bd86",
+      "framework_a": "deep-modules",
+      "framework_b": "small-functions",
+      "tension_point": "Priority inversion in [software-design]: 'Consolidated cohesive implementation' vs 'Aggressive decomposition into tiny functions'",
+      "competing_heuristics": [
+        "deep-modules: Prioritize Consolidated cohesive implementation over Aggressive decomposition into tiny functions",
+        "small-functions: Prioritize Aggressive decomposition into tiny functions over Consolidated cohesive implementation"
+      ],
+      "source": "stack_frameworks",
+      "recorded_at": "2026-11-09T11:05:13.671285+00:00"
+    },
+    {
+      "id": "2d52ea331ab46c12",
+      "framework_a": "boring-technology",
+      "framework_b": "canary-ledger",
+      "tension_point": "Collision (Priority inversion in [data-architecture]: 'Append-only transition ledger tables' vs 'In-place mutable status updates')",
+      "competing_heuristics": [
+        "Winner: canary-ledger. Rationale: Tier 1 (canary-ledger) overrides Tier 2 (boring-technology) under the 4-tier cognitive hierarchy."
+      ],
+      "source": "stack_frameworks_collision",
+      "recorded_at": "2026-11-09T11:04:06.209177+00:00"
+    },
+    {
+      "id": "b129dcc8f281c4e5",
+      "framework_a": "boring-technology",
+      "framework_b": "canary-ledger",
+      "tension_point": "Collision (Priority inversion in [data-architecture]: 'In-place mutable status updates' vs 'Append-only transition ledger tables')",
+      "competing_heuristics": [
+        "Winner: canary-ledger. Rationale: Tier 1 (canary-ledger) overrides Tier 2 (boring-technology) under the 4-tier cognitive hierarchy."
+      ],
+      "source": "stack_frameworks_collision",
+      "recorded_at": "2026-11-09T11:05:13.682941+00:00"
+    },
+    {
+      "id": "99a580eea5d8ff03",
+      "framework_a": "canary-ledger",
+      "framework_b": "deep-modules",
+      "tension_point": "Collision (Priority inversion in [software-design]: 'Two-level maximum indentation with extracted step_ prefixed functions' vs 'Consolidated cohesive implementation')",
+      "competing_heuristics": [
+        "Winner: canary-ledger. Rationale: Tier 1 (canary-ledger) overrides Tier 2 (deep-modules) under the 4-tier cognitive hierarchy."
+      ],
+      "source": "stack_frameworks_collision",
+      "recorded_at": "2026-11-09T11:05:13.696130+00:00"
+    }
+  ]
+}

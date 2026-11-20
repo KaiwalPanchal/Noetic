@@ -1,0 +1,96 @@
+{
+  "framework_name": "The Art of Thinking Clearly",
+  "slug": "the-art-of-thinking-clearly",
+  "source": {
+    "title": "The Art of Thinking Clearly",
+    "author": "Rolf Dobelli",
+    "kind": "book",
+    "url": "calibre://library"
+  },
+  "ontology": {
+    "domain": "decision-making",
+    "primitives": [
+      {
+        "name": "Cognitive Error",
+        "kind": "force",
+        "definition": "A predictable, systematic deviation from logic, rationality, and optimal thought that repeatedly distorts human judgment across generations."
+      },
+      {
+        "name": "Heuristic / Rule of Thumb",
+        "kind": "entity",
+        "definition": "An intuitive mental shortcut or rule that simplifies complex decision-making, often producing structural blind spots in non-primitive scenarios."
+      },
+      {
+        "name": "Base-Rate Reality",
+        "kind": "state",
+        "definition": "The true statistical, probabilistic, and empirical landscape of outcomes that exists independently of narratives, survivorship illusions, or emotional preferences."
+      },
+      {
+        "name": "Overconfidence / Asymmetric Distortion",
+        "kind": "variable",
+        "definition": "The directional tilt in human evaluation where individuals consistently overestimate their knowledge, competence, and control while discounting risk and failure."
+      }
+    ]
+  },
+  "core_idea": "Human reasoning deviates from logic and probability in predictable, systematic directions rather than through random mistakes. Because intuitive mental shortcuts are fundamentally mismatched with complex modern environments, clear thinking is achieved not by striving for unattainable cognitive perfection, but through the rigorous negative art of cataloging, spotting, and systematically eliminating recurring cognitive traps and mental fallacies.",
+  "directional_heuristics": [
+    {
+      "prioritize": "Compiling and referencing an explicit catalog of recurring cognitive errors to spot and mitigate systematic irrationality",
+      "over": "Relying on unassisted intuition or striving for unattainable, total cognitive perfection through sheer willpower",
+      "because": "Human reasoning errors are not random mistakes but systematic deviations from logic that repeat predictably in specific directions; maintaining clear categories and labels enables early recognition and course correction before lasting damage occurs.",
+      "when": "Making high-stakes financial, business, or personal decisions where intuitive judgments are vulnerable to well-documented psychological traps."
+    },
+    {
+      "prioritize": "Surveying the structured landscape of cognitive biases as an interconnected taxonomy",
+      "over": "Treating reasoning errors as isolated ad-hoc anomalies or diving into individual topics without structural orientation",
+      "because": "Human cognitive flaws are systematic, recurring, and directional; mapping out the full catalog provides an overarching navigational schema necessary for targeted bias-checking and debiasing.",
+      "when": "Approaching a comprehensive curriculum, audit, or system for error reduction and rational decision-making."
+    },
+    {
+      "prioritize": "Actively investigating the unseen graveyard of failures to calibrate realistic base rates of success",
+      "over": "Judging probabilities and success factors based solely on visible, high-profile winners",
+      "because": "Triumph is inherently more visible than failure in media and culture, leading to systematic overestimation of success odds and the false attribution of shared survivor traits as unique causal success factors.",
+      "when": "Evaluating high-risk ventures, investments, career choices, or analyzing purported 'success factors' of winning individuals and companies."
+    },
+    {
+      "prioritize": "Auditing innate selection criteria and pre-existing traits before pursuing an outcome",
+      "over": "Attributing desirable outcomes to associated training, institutions, products, or self-help habits",
+      "because": "Desirable traits (such as athletic physiques, elite graduates' success, or chronic happiness) are frequently prerequisites that select candidates into an activity rather than results produced by the activity itself, making efforts to replicate the outcome futile when confounding selection factors are mistaken for causal results.",
+      "when": "Evaluating marketing claims, elite institutional credentials, self-help regimens, or aspirational role models promising transformative results."
+    },
+    {
+      "prioritize": "Treating perceived regularities and predictive formulas in noisy data as pure chance until statistically verified",
+      "over": "Constructing causal narratives, trading rules, or predictive models based on intuitive pattern recognition",
+      "because": "The human brain is an oversensitive pattern seeker that routinely invents order, rules, and meaning out of random distributions and diffuse signals.",
+      "when": "Evaluating high-noise data streams, streaks, coincidences, or apparent predictive sequences (such as financial markets, random clusters, or sensory noise)."
+    },
+    {
+      "prioritize": "Independently evaluating intrinsic merits, objective evidence, and logic",
+      "over": "Defaulting to consensus, popularity, or the behavior of the crowd as a proxy for truth or correctness",
+      "because": "Social proof is an evolutionary survival heuristic that causes individuals to equate popularity with validity, warping common sense and fueling collective irrationality like market bubbles, panics, and conformity even when consensus is demonstrably foolish.",
+      "when": "Evaluating opinions, beliefs, claims, product superiority, or group actions, especially in ambiguous situations or when under peer or social pressure."
+    },
+    {
+      "prioritize": "Evaluating future costs, benefits, and alternative opportunities from the current moment forward",
+      "over": "Continuing an underperforming commitment to justify accumulated investments of time, money, or effort",
+      "because": "Past investments are irrecoverable and unchangeable regardless of whether you persist or exit, whereas staying committed out of an emotional need for consistency or face-saving merely compounds existing losses into a lost cause.",
+      "when": "Deciding whether to continue, finance, or terminate an ongoing project, investment, relationship, or activity that is failing to meet objectives."
+    }
+  ],
+  "boundary_flip_condition": "When operating in fast-moving, hostile, or emergency survival environments where instantaneous action is vital and the cost of analytical latency far exceeds the penalty of sub-optimal heuristic errors, or when operating in asymmetric, power-law exploratory domains where obsessive fixation on failure base rates causes paralysis and suppresses necessary, high-upside risk-taking.",
+  "evaluation_rubric": {
+    "rubric_dimensions": [
+      "accuracy",
+      "restraint",
+      "reversibility_awareness"
+    ]
+  },
+  "applied_layer": {
+    "linked_interests": [
+      "strategy",
+      "decision-making"
+    ],
+    "tier": 2
+  },
+  "schema_version": "1.0.0"
+}
